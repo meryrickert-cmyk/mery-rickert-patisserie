@@ -19,3 +19,4 @@ server/.env
 # Sistema operativo
 .DS_Store
 Thumbs.db
+server/mery.db

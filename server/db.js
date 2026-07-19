@@ -10,15 +10,7 @@ const dbPath = path.join(DATA_DIR, 'mery.db');
 const localDbPath = path.join(__dirname, 'mery.db');
 const flagPath = path.join(DATA_DIR, '.db_migrated_v1');
 
-// Migración de DB: copia el archivo bundled al volumen si no fue migrado antes
-// Usa un flag file para no sobreescribir nunca datos reales del usuario
-if (process.env.DATA_DIR && fs.existsSync(localDbPath) && !fs.existsSync(flagPath)) {
-  console.log('[db] Primera vez en este volumen — copiando DB al volumen...');
-  if (fs.existsSync(dbPath)) fs.unlinkSync(dbPath);
-  fs.copyFileSync(localDbPath, dbPath);
-  fs.writeFileSync(flagPath, '1');
-  console.log('[db] ✅ DB copiada al volumen');
-}
+// (migración via SQL — ver más abajo luego de abrir la DB)
 
 // Migración de uploads: copia las fotos al volumen si no están
 if (process.env.DATA_DIR) {
@@ -36,14 +28,23 @@ if (process.env.DATA_DIR) {
 }
 
 const db = new DatabaseSync(dbPath);
-// Diagnóstico: loguear estado real de la DB al abrir
-try {
-  const _n = db.prepare('SELECT COUNT(*) as n FROM producto_imagenes').get().n;
-  const _h = db.prepare('SELECT COUNT(*) as n FROM hero_imagenes').get().n;
-  const _localSize = fs.existsSync(localDbPath) ? fs.statSync(localDbPath).size : 0;
-  const _prodSize = fs.existsSync(dbPath) ? fs.statSync(dbPath).size : 0;
-  console.log(`[db] Abierta: ${dbPath} | size local:${_localSize} prod:${_prodSize} | img:${_n} hero:${_h}`);
-} catch(e) { console.log('[db] Error diagnóstico:', e.message); }
+// Migración de imágenes via SQL (solo corre una vez — flag file en DATA_DIR)
+if (process.env.DATA_DIR && !fs.existsSync(flagPath)) {
+  try {
+    const imgCount = db.prepare('SELECT COUNT(*) as n FROM producto_imagenes').get().n;
+    if (imgCount === 0) {
+      console.log('[db] Insertando imágenes desde SQL seed...');
+      const sqlPath = path.join(__dirname, 'seeds', 'imagenes.sql');
+      if (fs.existsSync(sqlPath)) {
+        const sql = fs.readFileSync(sqlPath, 'utf8');
+        db.exec(sql);
+        const after = db.prepare('SELECT COUNT(*) as n FROM producto_imagenes').get().n;
+        console.log(`[db] ✅ ${after} imágenes insertadas`);
+      }
+    }
+    fs.writeFileSync(flagPath, '1');
+  } catch(e) { console.log('[db] Error migración imágenes:', e.message); }
+}
 
 db.exec(`PRAGMA journal_mode = WAL`);
 db.exec(`PRAGMA foreign_keys = ON`);
