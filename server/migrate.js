@@ -34,10 +34,11 @@ if (fs.existsSync(localDbPath)) {
 
   if (!tieneImagenes) {
     console.log('[migrate] Copiando DB local al volumen...');
-    // Borrar la DB existente (vacía) antes de VACUUM INTO
     if (fs.existsSync(prodDbPath)) fs.unlinkSync(prodDbPath);
-    const localDb = new DatabaseSync(localDbPath);
-    localDb.exec(`VACUUM INTO '${prodDbPath}'`);
+    fs.copyFileSync(localDbPath, prodDbPath);
+    // Copiar también WAL si existe
+    const walPath = localDbPath + '-wal';
+    if (fs.existsSync(walPath)) fs.copyFileSync(walPath, prodDbPath + '-wal');
     console.log('[migrate] ✅ DB copiada al volumen');
   } else {
     console.log('[migrate] DB ya tiene datos, no se sobreescribe');
