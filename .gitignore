@@ -7,7 +7,7 @@ server/node_modules/
 client/dist/
 
 # Base de datos (queda en el volumen de Railway)
-server/mery.db
+# server/mery.db ← temporalmente incluida para migración inicial
 server/mery.db-shm
 server/mery.db-wal
 # server/uploads/ ← temporalmente incluido para migración inicial al volumen
