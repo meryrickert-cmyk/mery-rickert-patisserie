@@ -58,6 +58,15 @@ db.exec(`
   )
 `);
 
+// Imágenes del hero
+db.exec(`
+  CREATE TABLE IF NOT EXISTS hero_imagenes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    url TEXT NOT NULL,
+    orden INTEGER DEFAULT 0
+  )
+`);
+
 // Tabla de configuración de la página
 db.exec(`
   CREATE TABLE IF NOT EXISTS config (
