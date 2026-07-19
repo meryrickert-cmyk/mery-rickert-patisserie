@@ -1,0 +1,10 @@
+[build]
+# Instala dependencias del frontend, buildea React, instala dependencias del backend
+buildCommand = "npm install --prefix client && npm run build --prefix client && npm install --prefix server"
+
+[deploy]
+startCommand = "node server/index.js"
+healthcheckPath = "/api/health"
+healthcheckTimeout = 30
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3

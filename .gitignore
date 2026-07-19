@@ -1,0 +1,21 @@
+# Dependencias
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Build
+client/dist/
+
+# Base de datos y archivos subidos (quedan en el volumen de Railway)
+server/mery.db
+server/mery.db-shm
+server/mery.db-wal
+server/uploads/
+
+# Variables de entorno — nunca subir al repo
+server/.env
+.env
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
