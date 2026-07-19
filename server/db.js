@@ -36,6 +36,14 @@ if (process.env.DATA_DIR) {
 }
 
 const db = new DatabaseSync(dbPath);
+// Diagnóstico: loguear estado real de la DB al abrir
+try {
+  const _n = db.prepare('SELECT COUNT(*) as n FROM producto_imagenes').get().n;
+  const _h = db.prepare('SELECT COUNT(*) as n FROM hero_imagenes').get().n;
+  const _localSize = fs.existsSync(localDbPath) ? fs.statSync(localDbPath).size : 0;
+  const _prodSize = fs.existsSync(dbPath) ? fs.statSync(dbPath).size : 0;
+  console.log(`[db] Abierta: ${dbPath} | size local:${_localSize} prod:${_prodSize} | img:${_n} hero:${_h}`);
+} catch(e) { console.log('[db] Error diagnóstico:', e.message); }
 
 db.exec(`PRAGMA journal_mode = WAL`);
 db.exec(`PRAGMA foreign_keys = ON`);

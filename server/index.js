@@ -58,6 +58,7 @@ app.use('/api/insumos', insumosRoutes);
 
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 
+
 // Servir frontend buildeado (solo en producción / cuando existe dist/)
 const DIST = path.join(__dirname, '../client/dist');
 if (fs.existsSync(DIST)) {
