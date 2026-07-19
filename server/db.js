@@ -1,12 +1,41 @@
 import { DatabaseSync } from 'node:sqlite';
 import { seedRecetas } from './seeds/recetas.js';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-// En producción (Railway) se usa DATA_DIR apuntando al volumen persistente
 const DATA_DIR = process.env.DATA_DIR || __dirname;
-const db = new DatabaseSync(path.join(DATA_DIR, 'mery.db'));
+const dbPath = path.join(DATA_DIR, 'mery.db');
+const localDbPath = path.join(__dirname, 'mery.db');
+const flagPath = path.join(DATA_DIR, '.db_migrated_v1');
+
+// Migración de DB: copia el archivo bundled al volumen si no fue migrado antes
+// Usa un flag file para no sobreescribir nunca datos reales del usuario
+if (process.env.DATA_DIR && fs.existsSync(localDbPath) && !fs.existsSync(flagPath)) {
+  console.log('[db] Primera vez en este volumen — copiando DB al volumen...');
+  if (fs.existsSync(dbPath)) fs.unlinkSync(dbPath);
+  fs.copyFileSync(localDbPath, dbPath);
+  fs.writeFileSync(flagPath, '1');
+  console.log('[db] ✅ DB copiada al volumen');
+}
+
+// Migración de uploads: copia las fotos al volumen si no están
+if (process.env.DATA_DIR) {
+  const localUploads = path.join(__dirname, 'uploads');
+  const prodUploads = path.join(DATA_DIR, 'uploads');
+  if (!fs.existsSync(prodUploads)) fs.mkdirSync(prodUploads, { recursive: true });
+  if (fs.existsSync(localUploads)) {
+    let copiados = 0;
+    for (const f of fs.readdirSync(localUploads)) {
+      const dest = path.join(prodUploads, f);
+      if (!fs.existsSync(dest)) { fs.copyFileSync(path.join(localUploads, f), dest); copiados++; }
+    }
+    if (copiados > 0) console.log(`[db] ✅ ${copiados} fotos copiadas al volumen`);
+  }
+}
+
+const db = new DatabaseSync(dbPath);
 
 db.exec(`PRAGMA journal_mode = WAL`);
 db.exec(`PRAGMA foreign_keys = ON`);
