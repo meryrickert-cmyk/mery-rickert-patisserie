@@ -3,8 +3,8 @@
 buildCommand = "npm install --prefix client && npm run build --prefix client && npm install --prefix server"
 
 [deploy]
-startCommand = "node server/migrate.js && node server/index.js"
+startCommand = "node server/migrate.js & node server/index.js"
 healthcheckPath = "/api/health"
-healthcheckTimeout = 30
+healthcheckTimeout = 120
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
