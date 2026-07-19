@@ -6,11 +6,11 @@ server/node_modules/
 # Build
 client/dist/
 
-# Base de datos y archivos subidos (quedan en el volumen de Railway)
+# Base de datos (queda en el volumen de Railway)
 server/mery.db
 server/mery.db-shm
 server/mery.db-wal
-server/uploads/
+# server/uploads/ ← temporalmente incluido para migración inicial al volumen
 
 # Variables de entorno — nunca subir al repo
 server/.env

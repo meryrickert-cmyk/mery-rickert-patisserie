@@ -23,6 +23,22 @@ const DATA_DIR = process.env.DATA_DIR || __dirname;
 const UPLOADS_DIR = path.join(DATA_DIR, 'uploads');
 if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 
+// Migración única: copia fotos del repo al volumen si el volumen está vacío
+if (process.env.DATA_DIR) {
+  const localUploads = path.join(__dirname, 'uploads');
+  if (fs.existsSync(localUploads)) {
+    const enVolumen = fs.readdirSync(UPLOADS_DIR).length;
+    const enLocal = fs.readdirSync(localUploads);
+    if (enVolumen === 0 && enLocal.length > 0) {
+      console.log(`📦 Migrando ${enLocal.length} fotos al volumen...`);
+      for (const f of enLocal) {
+        fs.copyFileSync(path.join(localUploads, f), path.join(UPLOADS_DIR, f));
+      }
+      console.log('✅ Fotos migradas al volumen');
+    }
+  }
+}
+
 app.use(cors({
   origin: isProd
     ? (process.env.CORS_ORIGIN || true)     // en prod: mismo origen o dominio Railway
