@@ -234,7 +234,7 @@ function ParaElTeLayout({ productos }) {
       {mixGroup.length > 0 && (
         <div>
           <SubSecTitle>Mixes</SubSecTitle>
-          <div className="grid-2up">
+          <div className="product-grid">
             {mixGroup.map(p => <ProductCard key={p.id} producto={p} />)}
           </div>
         </div>
@@ -250,7 +250,7 @@ function ParaElTeLayout({ productos }) {
 
       {/* 3. Caja de 8 + Trufas — cards */}
       {(cajaGroup.length > 0 || trufaGroup.length > 0) && (
-        <div className="grid-2up">
+        <div className="product-grid">
           {[...cajaGroup, ...trufaGroup].map(p => <ProductCard key={p.id} producto={p} />)}
         </div>
       )}
