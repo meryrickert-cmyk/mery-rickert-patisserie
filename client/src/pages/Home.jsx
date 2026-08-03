@@ -173,7 +173,7 @@ const ProductosSection = forwardRef(function ProductosSection({ productos, loadi
         </div>
       </div>
 
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 16px' }}>
+      <div style={{ maxWidth: 1440, margin: '0 auto', padding: '0 24px' }}>
 
         {/* TORTAS */}
         <div ref={tortasRef} id="tortas" style={{ paddingTop: 48, paddingBottom: 72 }}>
@@ -255,9 +255,9 @@ function ParaElTeLayout({ productos }) {
         </div>
       )}
 
-      {/* 4. Individuales — Brownie, Masitas, Pavlovitas: siempre 2 columnas */}
+      {/* 4. Individuales — Brownie, Masitas, Pavlovitas: mismas proporciones que tortas */}
       {individGroup.length > 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+        <div className="product-grid">
           {individGroup.map(p => <ProductCard key={p.id} producto={p} />)}
         </div>
       )}

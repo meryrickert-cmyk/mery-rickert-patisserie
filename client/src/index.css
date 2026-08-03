@@ -45,6 +45,9 @@ body {
 @media (min-width: 1200px) {
   .product-grid { grid-template-columns: repeat(5, 1fr); gap: 20px; }
 }
+@media (min-width: 1440px) {
+  .product-grid { grid-template-columns: repeat(6, 1fr); gap: 20px; }
+}
 
 /* Grid 2 columnas mínimo en mobile */
 .grid-2up {
