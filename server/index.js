@@ -27,14 +27,21 @@ if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 if (process.env.DATA_DIR) {
   const localUploads = path.join(__dirname, 'uploads');
   if (fs.existsSync(localUploads)) {
-    const enVolumen = fs.readdirSync(UPLOADS_DIR).length;
     const enLocal = fs.readdirSync(localUploads);
-    if (enVolumen === 0 && enLocal.length > 0) {
-      console.log(`📦 Migrando ${enLocal.length} fotos al volumen...`);
+    if (enLocal.length > 0) {
+      // Sync: copies new files and overwrites if local version is smaller (recompressed)
+      let copiadas = 0;
       for (const f of enLocal) {
-        fs.copyFileSync(path.join(localUploads, f), path.join(UPLOADS_DIR, f));
+        const src = path.join(localUploads, f);
+        const dst = path.join(UPLOADS_DIR, f);
+        const srcSize = fs.statSync(src).size;
+        const dstSize = fs.existsSync(dst) ? fs.statSync(dst).size : Infinity;
+        if (!fs.existsSync(dst) || srcSize < dstSize) {
+          fs.copyFileSync(src, dst);
+          copiadas++;
+        }
       }
-      console.log('✅ Fotos migradas al volumen');
+      if (copiadas > 0) console.log(`📦 ${copiadas} fotos sincronizadas al volumen`);
     }
   }
 }
@@ -45,7 +52,10 @@ app.use(cors({
     : ['http://localhost:3003', 'http://localhost:5173'],
 }));
 app.use(express.json());
-app.use('/uploads', express.static(UPLOADS_DIR));
+app.use('/uploads', express.static(UPLOADS_DIR, {
+  maxAge: '30d',
+  immutable: true,
+}));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/productos', productosRoutes);
