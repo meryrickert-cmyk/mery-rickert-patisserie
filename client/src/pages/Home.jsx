@@ -61,7 +61,7 @@ function HeroSection({ config, onScroll }) {
           </div>
         ) : imagenes.map((img, i) => (
           <div key={img.id} style={{ position: 'absolute', inset: 0, opacity: i === idx ? 1 : 0, transition: 'opacity 1.2s ease-in-out' }}>
-            <img src={img.url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            <img src={img.url} alt="" fetchPriority={i === 0 ? 'high' : 'low'} loading={i === 0 ? 'eager' : 'lazy'} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           </div>
         ))}
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(43,10,18,0.72) 0%, rgba(43,10,18,0.2) 50%, transparent 100%)', zIndex: 1 }} />
@@ -83,9 +83,12 @@ function HeroSection({ config, onScroll }) {
         </>
       )}
 
-      <div style={{ position: 'relative', zIndex: 2, marginTop: 'auto', textAlign: 'center', padding: '0 24px 44px' }}>
-        <h1 style={{ fontFamily: 'var(--serif)', color: '#FAF7F2', fontSize: 'clamp(48px, 10vw, 90px)', fontWeight: 300, fontStyle: 'italic', lineHeight: 1.0, margin: 0 }}>
-          {config.hero_tagline || 'hecho con tiempo'}
+      <div style={{ position: 'relative', zIndex: 2, marginTop: 'auto', textAlign: 'center', padding: '0 24px 48px' }}>
+        <p style={{ color: 'rgba(250,247,242,0.55)', fontSize: 11, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 14, fontFamily: 'var(--sans)' }}>
+          Pastelería artesanal
+        </p>
+        <h1 style={{ fontFamily: 'var(--serif)', color: '#FAF7F2', fontSize: 'clamp(38px, 9vw, 82px)', fontWeight: 300, lineHeight: 1.05, margin: 0 }}>
+          Mery Rickert<br />Patisserie
         </h1>
       </div>
     </section>
@@ -97,16 +100,16 @@ function InfoBar() {
   return (
     <div style={{
       background: 'var(--bordeaux)',
-      padding: '13px 24px',
+      padding: '11px 16px',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      gap: 32, flexWrap: 'wrap',
+      gap: 'clamp(14px, 4vw, 32px)', flexWrap: 'nowrap',
     }}>
       {[
-        { icon: '📍', text: 'Retiros en Km 47.5, Pilar' },
-        { icon: '⏱', text: 'Pedidos con 48hs de anticipación' },
+        { icon: '📍', text: 'Retiros km 47.5, Pilar' },
+        { icon: '⏱', text: 'Pedidos con 48hs' },
       ].map(({ icon, text }) => (
-        <span key={text} style={{ display: 'flex', alignItems: 'center', gap: 7, color: 'rgba(250,247,242,0.9)', fontSize: 13, letterSpacing: '0.01em' }}>
-          <span style={{ fontSize: 14 }}>{icon}</span>
+        <span key={text} style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'rgba(250,247,242,0.9)', fontSize: 12, letterSpacing: '0.01em', whiteSpace: 'nowrap' }}>
+          <span style={{ fontSize: 13 }}>{icon}</span>
           {text}
         </span>
       ))}
@@ -177,7 +180,6 @@ const ProductosSection = forwardRef(function ProductosSection({ productos, loadi
 
         {/* TORTAS */}
         <div ref={tortasRef} id="tortas" style={{ paddingTop: 48, paddingBottom: 72 }}>
-          <SecDesc>Para cada ocasión especial</SecDesc>
           {loading ? <Spinner /> : (
             <div className="product-grid">
               {byCat('tortas').map(p => <ProductCard key={p.id} producto={p} />)}
@@ -187,13 +189,11 @@ const ProductosSection = forwardRef(function ProductosSection({ productos, loadi
 
         {/* PARA EL TÉ */}
         <div ref={teRef} id="para-el-te" style={{ paddingTop: 48, paddingBottom: 72, borderTop: '1px solid var(--crema-oscuro)' }}>
-          <SecDesc>Alfajores, brownies, masitas y más</SecDesc>
           {loading ? <Spinner /> : <ParaElTeLayout productos={byCat('para el te')} />}
         </div>
 
         {/* BUDINES */}
         <div ref={budinesRef} id="budines" style={{ paddingTop: 48, paddingBottom: 72, borderTop: '1px solid var(--crema-oscuro)' }}>
-          <SecDesc>Húmedos y llenos de sabor</SecDesc>
           {loading ? <Spinner /> : <FotoLista productos={byCat('budines')} />}
         </div>
 
@@ -238,7 +238,7 @@ function ParaElTeLayout({ productos }) {
       {mixGroup.length > 0 && (
         <div>
           <SubSecTitle>Mixes</SubSecTitle>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 24 }}>
+          <div className="grid-2up">
             {mixGroup.map(p => <ProductCard key={p.id} producto={p} />)}
           </div>
         </div>
@@ -254,14 +254,14 @@ function ParaElTeLayout({ productos }) {
 
       {/* 3. Caja de 8 + Trufas — cards */}
       {(cajaGroup.length > 0 || trufaGroup.length > 0) && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 24 }}>
+        <div className="grid-2up">
           {[...cajaGroup, ...trufaGroup].map(p => <ProductCard key={p.id} producto={p} />)}
         </div>
       )}
 
       {/* 4. Individuales — Brownie, Masitas, Pavlovitas */}
       {individGroup.length > 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 24 }}>
+        <div className="grid-2up">
           {individGroup.map(p => <ProductCard key={p.id} producto={p} />)}
         </div>
       )}
@@ -283,18 +283,18 @@ function FotoLista({ productos }) {
   const fotoUrl = fotoProducto?.imagen || fotoProducto?.imagenes?.[0]?.url || null;
 
   return (
-    <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap', alignItems: 'flex-start' }}>
-      {/* Foto */}
-      <div style={{ flexShrink: 0, width: '100%', maxWidth: 260 }}>
-        <div style={{ aspectRatio: '1/1', borderRadius: 20, overflow: 'hidden', background: 'var(--crema-oscuro)' }}>
+    <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+      {/* Foto — tamaño proporcional para que coexista con la lista en mobile */}
+      <div style={{ flexShrink: 0, width: 'clamp(100px, 28vw, 220px)' }}>
+        <div style={{ aspectRatio: '1/1', borderRadius: 16, overflow: 'hidden', background: 'var(--crema-oscuro)' }}>
           {fotoUrl
-            ? <img src={fotoUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 64, opacity: 0.2 }}>🧁</div>
+            ? <img src={fotoUrl} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40, opacity: 0.2 }}>🧁</div>
           }
         </div>
       </div>
       {/* Lista */}
-      <div style={{ flex: 1, minWidth: 240 }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ background: '#fff', borderRadius: 16, border: '1px solid var(--crema-oscuro)', overflow: 'hidden' }}>
           {productos.map((p, i) => (
             <ListaItem key={p.id} producto={p} isLast={i === productos.length - 1} />
@@ -373,7 +373,7 @@ function ProductCard({ producto: p }) {
       {/* Imagen */}
       <div style={{ position: 'relative', aspectRatio: '1/1', overflow: 'hidden', background: 'var(--crema-oscuro)' }}>
         {fotos.length > 0
-          ? <img src={fotos[imgIdx]} alt={p.nombre} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.4s' }}
+          ? <img src={fotos[imgIdx]} alt={p.nombre} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.4s' }}
               onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
               onMouseLeave={e => e.target.style.transform = 'scale(1)'} />
           : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 56, opacity: 0.2 }}>🧁</div>

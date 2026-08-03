@@ -46,6 +46,16 @@ body {
   .product-grid { grid-template-columns: repeat(5, 1fr); gap: 20px; }
 }
 
+/* Grid 2 columnas mínimo en mobile */
+.grid-2up {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+@media (min-width: 600px) {
+  .grid-2up { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+}
+
 /* Line clamp */
 .line-clamp-2 {
   display: -webkit-box;
