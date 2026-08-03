@@ -357,8 +357,8 @@ function ProductCard({ producto: p }) {
   const cantidad = itemEnCarrito?.cantidad || 0;
 
   const fotos = [];
-  if (p.imagen) fotos.push(p.imagen);
-  if (p.imagenes) p.imagenes.forEach(i => { if (!fotos.includes(i.url)) fotos.push(i.url); });
+  if (p.imagen) fotos.push({ url: p.imagen, posicion: p.posicion || '50% 50%' });
+  if (p.imagenes) p.imagenes.forEach(i => { if (!fotos.find(f => f.url === i.url)) fotos.push({ url: i.url, posicion: i.posicion || '50% 50%' }); });
   const [imgIdx, setImgIdx] = useState(0);
 
   return (
@@ -367,9 +367,9 @@ function ProductCard({ producto: p }) {
       onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 2px 12px rgba(0,0,0,0.06)'; e.currentTarget.style.transform = 'translateY(0)'; }}>
 
       {/* Imagen */}
-      <div style={{ position: 'relative', aspectRatio: '4/3', overflow: 'hidden', background: 'var(--crema-oscuro)' }}>
+      <div style={{ position: 'relative', aspectRatio: '3/4', overflow: 'hidden', background: 'var(--crema-oscuro)' }}>
         {fotos.length > 0
-          ? <img src={fotos[imgIdx]} alt={p.nombre} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.4s' }}
+          ? <img src={fotos[imgIdx].url} alt={p.nombre} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: fotos[imgIdx].posicion, display: 'block', transition: 'transform 0.4s' }}
               onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
               onMouseLeave={e => e.target.style.transform = 'scale(1)'} />
           : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 56, opacity: 0.2 }}>🧁</div>
@@ -383,7 +383,7 @@ function ProductCard({ producto: p }) {
               <button onClick={e => { e.stopPropagation(); setImgIdx(i => i + 1); }} style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', width: 28, height: 28, borderRadius: '50%', border: 'none', cursor: 'pointer', background: 'rgba(255,255,255,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 1px 4px rgba(0,0,0,0.15)', fontSize: 13, color: 'var(--bordeaux)' }}>›</button>
             )}
             <div style={{ position: 'absolute', bottom: 8, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 4 }}>
-              {fotos.map((_, i) => (
+              {fotos.map((f, i) => (
                 <div key={i} style={{ width: 5, height: 5, borderRadius: '50%', background: i === imgIdx ? 'var(--bordeaux)' : 'rgba(255,255,255,0.7)' }} />
               ))}
             </div>
@@ -559,21 +559,32 @@ function AboutSection({ config }) {
 /* ══ INSTAGRAM ═════════════════════════════════════════════ */
 function InstagramSection({ config }) {
   const handle = config.instagram_handle || '@meryrickertpatisserie';
+  const username = handle.replace('@', '');
   return (
-    <section style={{ background: 'var(--crema)', padding: '72px 24px' }}>
-      <div style={{ maxWidth: 840, margin: '0 auto', textAlign: 'center' }}>
-        <p style={{ color: 'var(--bordeaux)', fontSize: 11, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 10 }}>Seguinos</p>
-        <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 300, fontSize: 'clamp(28px, 5vw, 42px)', color: 'var(--texto)', marginBottom: 8 }}>{handle}</h2>
-        <p style={{ color: 'var(--texto-suave)', fontSize: 14, marginBottom: 36 }}>Mirá nuestras últimas creaciones</p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 8, marginBottom: 36 }}>
-          {[...Array(6)].map((_, i) => (
-            <div key={i} style={{ aspectRatio: '1/1', borderRadius: 12, background: i % 2 === 0 ? '#d4c5b8' : '#c9b5a8' }} />
-          ))}
+    <section style={{ background: 'var(--crema-oscuro)', padding: '80px 24px' }}>
+      <div style={{ maxWidth: 560, margin: '0 auto', textAlign: 'center' }}>
+        {/* Instagram icon */}
+        <div style={{ marginBottom: 20 }}>
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ opacity: 0.55 }}>
+            <rect x="2" y="2" width="20" height="20" rx="6" stroke="var(--texto)" strokeWidth="1.5"/>
+            <circle cx="12" cy="12" r="4" stroke="var(--texto)" strokeWidth="1.5"/>
+            <circle cx="17.5" cy="6.5" r="1" fill="var(--texto)"/>
+          </svg>
         </div>
-        <a href={`https://instagram.com/${handle.replace('@', '')}`} target="_blank" rel="noreferrer"
-          style={{ display: 'inline-block', border: '1.5px solid var(--bordeaux)', color: 'var(--bordeaux)', padding: '12px 36px', borderRadius: 50, fontSize: 12, letterSpacing: '0.12em', textTransform: 'uppercase', textDecoration: 'none', transition: 'all 0.2s' }}
-          onMouseEnter={e => { e.target.style.background = 'var(--bordeaux)'; e.target.style.color = '#FAF7F2'; }}
-          onMouseLeave={e => { e.target.style.background = 'transparent'; e.target.style.color = 'var(--bordeaux)'; }}>
+        <p style={{ color: 'var(--bordeaux)', fontSize: 11, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 14 }}>
+          Seguinos en Instagram
+        </p>
+        <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 300, fontSize: 'clamp(28px, 5vw, 44px)', color: 'var(--texto)', marginBottom: 12, lineHeight: 1.1 }}>
+          Mirá nuestras últimas<br />creaciones
+        </h2>
+        <div style={{ width: 32, height: 1, background: 'var(--bordeaux)', margin: '0 auto 28px', opacity: 0.35 }} />
+        <p style={{ color: 'var(--texto-suave)', fontSize: 15, marginBottom: 36 }}>
+          {handle}
+        </p>
+        <a href={`https://www.instagram.com/${username}`} target="_blank" rel="noreferrer"
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'var(--bordeaux)', color: '#FAF7F2', padding: '14px 40px', borderRadius: 50, fontSize: 12, letterSpacing: '0.12em', textTransform: 'uppercase', textDecoration: 'none', transition: 'opacity 0.2s' }}
+          onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
+          onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
           Ver en Instagram
         </a>
       </div>

@@ -63,7 +63,8 @@ router.post('/', authAdmin, handleUpload, (req, res) => {
   // Guardar imágenes adicionales
   if (req.files?.length) {
     req.files.forEach((f, i) => {
-      db.prepare('INSERT INTO producto_imagenes (producto_id, url, orden) VALUES (?, ?, ?)').run(result.lastInsertRowid, `/uploads/${f.filename}`, i);
+      const posicion = req.body[`posicion_${i}`] || '50% 50%';
+      db.prepare('INSERT INTO producto_imagenes (producto_id, url, orden, posicion) VALUES (?, ?, ?, ?)').run(result.lastInsertRowid, `/uploads/${f.filename}`, i, posicion);
     });
   }
 
@@ -96,7 +97,8 @@ router.put('/:id', authAdmin, handleUpload, (req, res) => {
   if (req.files?.length) {
     const maxOrden = db.prepare('SELECT MAX(orden) as m FROM producto_imagenes WHERE producto_id = ?').get(req.params.id).m ?? -1;
     req.files.forEach((f, i) => {
-      db.prepare('INSERT INTO producto_imagenes (producto_id, url, orden) VALUES (?, ?, ?)').run(req.params.id, `/uploads/${f.filename}`, maxOrden + i + 1);
+      const posicion = req.body[`posicion_${i}`] || '50% 50%';
+      db.prepare('INSERT INTO producto_imagenes (producto_id, url, orden, posicion) VALUES (?, ?, ?, ?)').run(req.params.id, `/uploads/${f.filename}`, maxOrden + i + 1, posicion);
     });
   }
 

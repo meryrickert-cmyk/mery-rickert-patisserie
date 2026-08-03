@@ -70,6 +70,19 @@ export default function AdminLayout() {
 
       {/* Contenido */}
       <main style={{ flex: 1, overflowY: 'auto', minHeight: '100svh' }}>
+        {/* Barra top con "Ver sitio" */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '12px 24px', borderBottom: '1px solid var(--crema-oscuro)', background: '#fff', position: 'sticky', top: 0, zIndex: 10 }}>
+          <a href="/" target="_blank" rel="noreferrer" style={{
+            display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px',
+            borderRadius: 20, border: '1.5px solid var(--crema-oscuro)',
+            color: 'var(--texto-suave)', fontSize: 12, textDecoration: 'none',
+            fontFamily: 'var(--sans)', transition: 'all 0.15s',
+          }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--bordeaux)'; e.currentTarget.style.color = 'var(--bordeaux)'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--crema-oscuro)'; e.currentTarget.style.color = 'var(--texto-suave)'; }}>
+            🌐 Ver sitio
+          </a>
+        </div>
         <Outlet />
       </main>
     </div>
