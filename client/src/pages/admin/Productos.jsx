@@ -72,6 +72,7 @@ export default function Productos() {
   const [editando, setEditando] = useState(null);
   const [imagenes, setImagenes] = useState([]); // array de File
   const [focos, setFocos] = useState([]); // array de {x, y} por imagen
+  const [variantes, setVariantes] = useState([]); // [{nombre, precio}]
   const [modal, setModal] = useState(false);
   const [error, setError] = useState('');
   const [guardando, setGuardando] = useState(false);
@@ -83,10 +84,11 @@ export default function Productos() {
 
   function abrirNuevo() {
     setForm({ ...FORM_VACIO, categoria: catFiltro });
-    setEditando(null); setImagenes([]); setFocos([]); setError(''); setModal(true);
+    setEditando(null); setImagenes([]); setFocos([]); setVariantes([]); setError(''); setModal(true);
   }
   function abrirEditar(p) {
     setForm({ nombre: p.nombre, descripcion: p.descripcion || '', precio: p.precio, stock: p.stock, categoria: p.categoria, orden: p.orden ?? 0 });
+    setVariantes(Array.isArray(p.variantes) ? p.variantes : []);
     setEditando(p); setImagenes([]); setFocos([]); setError(''); setModal(true);
   }
 
@@ -100,6 +102,7 @@ export default function Productos() {
     e.preventDefault(); setError(''); setGuardando(true);
     const fd = new FormData();
     Object.entries(form).forEach(([k, v]) => fd.append(k, v));
+    fd.append('variantes', JSON.stringify(variantes));
     for (let i = 0; i < imagenes.length; i++) {
       const comprimida = await comprimirImagen(imagenes[i]);
       fd.append('imagenes', comprimida);
@@ -229,6 +232,36 @@ export default function Productos() {
                 <select value={form.categoria} onChange={e => setForm(f => ({...f, categoria: e.target.value}))} style={{ ...inputStyle, cursor: 'pointer' }}>
                   {CATS.map(c => <option key={c} value={c} style={{ textTransform: 'capitalize' }}>{c}</option>)}
                 </select>
+              </div>
+
+              {/* Variantes de precio */}
+              <div>
+                <label style={{ ...labelStyle, marginBottom: 8 }}>
+                  Variantes de precio <span style={{ color: '#bbb', fontWeight: 400 }}>(opcional — ej: Number Cake, torta por persona)</span>
+                </label>
+                {variantes.length > 0 && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 8 }}>
+                    {variantes.map((v, i) => (
+                      <div key={i} style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                        <input value={v.nombre} onChange={e => setVariantes(arr => arr.map((x, j) => j === i ? { ...x, nombre: e.target.value } : x))}
+                          placeholder="Ej: Para 1 persona" style={{ ...inputStyle, flex: 2 }} />
+                        <input type="number" value={v.precio} onChange={e => setVariantes(arr => arr.map((x, j) => j === i ? { ...x, precio: e.target.value } : x))}
+                          placeholder="55000" style={{ ...inputStyle, flex: 1, minWidth: 0 }} />
+                        <button type="button" onClick={() => setVariantes(arr => arr.filter((_, j) => j !== i))}
+                          style={{ width: 26, height: 26, borderRadius: '50%', border: 'none', background: '#fee', color: '#c0392b', fontSize: 15, cursor: 'pointer', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>×</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <button type="button" onClick={() => setVariantes(arr => [...arr, { nombre: '', precio: '' }])}
+                  style={{ fontSize: 12, color: 'var(--bordeaux)', background: 'none', border: '1.5px dashed var(--crema-oscuro)', borderRadius: 8, padding: '7px 14px', cursor: 'pointer', width: '100%' }}>
+                  + Agregar variante de precio
+                </button>
+                {variantes.length > 0 && (
+                  <p style={{ fontSize: 11, color: 'var(--texto-suave)', marginTop: 6 }}>
+                    Con variantes se muestra "desde $X" en el frente. El precio base queda como mínimo de referencia.
+                  </p>
+                )}
               </div>
 
               {/* Fotos actuales con reordenamiento */}

@@ -19,6 +19,7 @@ const upload = multer({ storage, limits: { fileSize: 20 * 1024 * 1024 } }); // 2
 
 function withImagenes(producto) {
   producto.imagenes = db.prepare('SELECT * FROM producto_imagenes WHERE producto_id = ? ORDER BY orden').all(producto.id);
+  try { producto.variantes = JSON.parse(producto.variantes || '[]'); } catch { producto.variantes = []; }
   return producto;
 }
 
@@ -56,9 +57,10 @@ router.post('/', authAdmin, handleUpload, (req, res) => {
   const { nombre, descripcion, precio, stock, categoria, orden } = req.body;
   if (!nombre || !precio) return res.status(400).json({ error: 'Nombre y precio requeridos' });
   const imagen = req.files?.[0] ? `/uploads/${req.files[0].filename}` : null;
+  const variantes = req.body.variantes || '[]';
   const result = db.prepare(
-    'INSERT INTO productos (nombre, descripcion, precio, stock, categoria, imagen, orden) VALUES (?, ?, ?, ?, ?, ?, ?)'
-  ).run(nombre, descripcion || '', parseFloat(precio), parseInt(stock ?? 99), categoria || 'tortas', imagen, parseInt(orden ?? 0));
+    'INSERT INTO productos (nombre, descripcion, precio, stock, categoria, imagen, orden, variantes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+  ).run(nombre, descripcion || '', parseFloat(precio), parseInt(stock ?? 99), categoria || 'tortas', imagen, parseInt(orden ?? 0), variantes);
 
   // Guardar imágenes adicionales
   if (req.files?.length) {
@@ -73,14 +75,14 @@ router.post('/', authAdmin, handleUpload, (req, res) => {
 
 // PUT admin — editar producto
 router.put('/:id', authAdmin, handleUpload, (req, res) => {
-  const { nombre, descripcion, precio, stock, categoria, activo, orden } = req.body;
+  const { nombre, descripcion, precio, stock, categoria, activo, orden, variantes } = req.body;
   const actual = db.prepare('SELECT * FROM productos WHERE id = ?').get(req.params.id);
   if (!actual) return res.status(404).json({ error: 'No encontrado' });
 
   const imagen = req.files?.[0] ? `/uploads/${req.files[0].filename}` : actual.imagen;
 
   db.prepare(
-    'UPDATE productos SET nombre=?, descripcion=?, precio=?, stock=?, categoria=?, imagen=?, activo=?, orden=? WHERE id=?'
+    'UPDATE productos SET nombre=?, descripcion=?, precio=?, stock=?, categoria=?, imagen=?, activo=?, orden=?, variantes=? WHERE id=?'
   ).run(
     nombre ?? actual.nombre,
     descripcion ?? actual.descripcion,
@@ -90,6 +92,7 @@ router.put('/:id', authAdmin, handleUpload, (req, res) => {
     imagen,
     activo != null ? parseInt(activo) : actual.activo,
     orden != null ? parseInt(orden) : actual.orden,
+    variantes ?? actual.variantes ?? '[]',
     req.params.id
   );
 

@@ -79,9 +79,10 @@ db.exec(`
   )
 `);
 
-// Migración: columna posicion en producto_imagenes y productos
+// Migraciones de columnas
 try { db.exec(`ALTER TABLE producto_imagenes ADD COLUMN posicion TEXT DEFAULT '50% 50%'`); } catch {}
 try { db.exec(`ALTER TABLE productos ADD COLUMN posicion TEXT DEFAULT '50% 50%'`); } catch {}
+try { db.exec(`ALTER TABLE productos ADD COLUMN variantes TEXT DEFAULT '[]'`); } catch {}
 
 // Imágenes del hero
 db.exec(`

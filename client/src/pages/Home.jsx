@@ -311,41 +311,42 @@ function ListaItem({ producto: p, isLast }) {
   function handleAgregar() { agregar(p, cantLocal); }
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', padding: '14px 16px', gap: 14, borderBottom: isLast ? 'none' : '1px solid var(--crema-oscuro)', transition: 'background 0.15s' }}
+    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', padding: '12px 14px', gap: '6px 10px', borderBottom: isLast ? 'none' : '1px solid var(--crema-oscuro)', transition: 'background 0.15s' }}
       onMouseEnter={e => e.currentTarget.style.background = 'var(--crema)'}
       onMouseLeave={e => e.currentTarget.style.background = '#fff'}>
 
-      {/* Nombre + descripción */}
-      <div style={{ flex: 1, minWidth: 80 }}>
-        <p style={{ fontFamily: 'var(--serif)', color: 'var(--texto)', fontSize: 15, margin: '0 0 2px', lineHeight: 1.3 }}>{p.nombre}</p>
-        {p.descripcion && <p style={{ fontSize: 12, color: 'var(--texto-suave)', margin: 0 }}>{p.descripcion}</p>}
+      {/* Nombre */}
+      <div style={{ flex: 1, minWidth: 120 }}>
+        <p style={{ fontFamily: 'var(--serif)', color: 'var(--texto)', fontSize: 14, margin: '0 0 1px', lineHeight: 1.3 }}>{p.nombre}</p>
+        {p.descripcion && <p style={{ fontSize: 11, color: 'var(--texto-suave)', margin: 0 }}>{p.descripcion}</p>}
       </div>
 
-      {/* Precio */}
-      <p style={{ fontFamily: 'var(--serif)', fontSize: 16, color: 'var(--bordeaux)', margin: 0, flexShrink: 0, minWidth: 80, textAlign: 'right' }}>
-        ${p.precio.toLocaleString('es-AR')}
-      </p>
+      {/* Precio + controles en línea — si no caben, bajan solos */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+        <span style={{ fontFamily: 'var(--serif)', fontSize: 14, color: 'var(--bordeaux)', whiteSpace: 'nowrap' }}>
+          ${p.precio.toLocaleString('es-AR')}
+        </span>
 
-      {/* Controles */}
-      {!enCarrito ? (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', border: '1px solid var(--crema-oscuro)', borderRadius: 50 }}>
-            <button onClick={() => setCantLocal(q => Math.max(1, q - 1))} style={{ width: 28, height: 28, border: 'none', background: 'transparent', color: 'var(--bordeaux)', fontSize: 17, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>−</button>
-            <span style={{ width: 20, textAlign: 'center', fontSize: 13, color: 'var(--texto)' }}>{cantLocal}</span>
-            <button onClick={() => setCantLocal(q => q + 1)} style={{ width: 28, height: 28, border: 'none', background: 'transparent', color: 'var(--bordeaux)', fontSize: 17, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
+        {!enCarrito ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <div style={{ display: 'flex', alignItems: 'center', border: '1px solid var(--crema-oscuro)', borderRadius: 50 }}>
+              <button onClick={() => setCantLocal(q => Math.max(1, q - 1))} style={{ width: 26, height: 26, border: 'none', background: 'transparent', color: 'var(--bordeaux)', fontSize: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>−</button>
+              <span style={{ width: 18, textAlign: 'center', fontSize: 12, color: 'var(--texto)' }}>{cantLocal}</span>
+              <button onClick={() => setCantLocal(q => q + 1)} style={{ width: 26, height: 26, border: 'none', background: 'transparent', color: 'var(--bordeaux)', fontSize: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
+            </div>
+            <button onClick={handleAgregar} style={{ padding: '6px 12px', borderRadius: 50, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 11, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+              Agregar
+            </button>
           </div>
-          <button onClick={handleAgregar} style={{ padding: '7px 14px', borderRadius: 50, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 12, cursor: 'pointer', whiteSpace: 'nowrap' }}>
-            Agregar
-          </button>
-        </div>
-      ) : (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-          <button onClick={() => cambiarCantidad(p.id, cantidad - 1)} style={{ width: 28, height: 28, borderRadius: '50%', border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 17, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>−</button>
-          <span style={{ width: 20, textAlign: 'center', fontSize: 14, fontWeight: 500 }}>{cantidad}</span>
-          <button onClick={() => cambiarCantidad(p.id, cantidad + 1)} style={{ width: 28, height: 28, borderRadius: '50%', border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 17, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
-          <span style={{ fontSize: 11, color: '#2d7a3a', fontWeight: 600 }}>✓</span>
-        </div>
-      )}
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <button onClick={() => cambiarCantidad(p.id, cantidad - 1)} style={{ width: 26, height: 26, borderRadius: '50%', border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 15, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>−</button>
+            <span style={{ width: 18, textAlign: 'center', fontSize: 13, fontWeight: 500 }}>{cantidad}</span>
+            <button onClick={() => cambiarCantidad(p.id, cantidad + 1)} style={{ width: 26, height: 26, borderRadius: '50%', border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 15, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
+            <span style={{ fontSize: 11, color: '#2d7a3a', fontWeight: 600 }}>✓</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -355,6 +356,19 @@ function ProductCard({ producto: p }) {
   const { agregar, cambiarCantidad, items } = useCart();
   const itemEnCarrito = items.find(i => i.producto_id === p.id);
   const cantidad = itemEnCarrito?.cantidad || 0;
+
+  const variantes = Array.isArray(p.variantes) ? p.variantes : [];
+  const tieneVariantes = variantes.length > 0;
+  const precioMostrar = tieneVariantes
+    ? Math.min(...variantes.map(v => parseFloat(v.precio)))
+    : p.precio;
+
+  const [mostrandoVariantes, setMostrandoVariantes] = useState(false);
+
+  function agregarVariante(v) {
+    agregar({ ...p, nombre: `${p.nombre} — ${v.nombre}`, precio: parseFloat(v.precio) }, 1);
+    setMostrandoVariantes(false);
+  }
 
   const fotos = [];
   if (p.imagen) fotos.push({ url: p.imagen, posicion: p.posicion || '50% 50%' });
@@ -395,27 +409,59 @@ function ProductCard({ producto: p }) {
       <div style={{ padding: '12px 14px 16px', display: 'flex', flexDirection: 'column', flex: 1 }}>
         <p style={{ fontFamily: 'var(--serif)', color: 'var(--bordeaux)', fontSize: 15, lineHeight: 1.25, marginBottom: 4, fontWeight: 400 }}>{p.nombre}</p>
         {p.descripcion && <p style={{ color: '#9B8F93', fontSize: 11, marginBottom: 8, lineHeight: 1.4 }}>{p.descripcion}</p>}
-        <p style={{ fontSize: 18, fontWeight: 600, color: 'var(--texto)', marginBottom: 10, marginTop: 'auto', paddingTop: 6 }}>
-          ${p.precio.toLocaleString('es-AR')}
-        </p>
 
-        {!itemEnCarrito ? (
-          <button onClick={() => agregar(p, 1)} style={{ width: '100%', padding: '13px 0', borderRadius: 50, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 13, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer', transition: 'background 0.2s' }}
-            onMouseEnter={e => e.target.style.background = 'var(--bordeaux-claro)'}
-            onMouseLeave={e => e.target.style.background = 'var(--bordeaux)'}>
-            Agregar
-          </button>
-        ) : (
-          <div>
-            <button style={{ width: '100%', padding: '12px 0', borderRadius: 50, border: '1.5px solid var(--bordeaux)', background: 'transparent', color: 'var(--bordeaux)', fontSize: 13, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'default', marginBottom: 12 }}>
-              Agregado ✓
+        {/* Precio — con "desde" si tiene variantes */}
+        <div style={{ marginBottom: 10, marginTop: 'auto', paddingTop: 6 }}>
+          {tieneVariantes && (
+            <p style={{ fontSize: 10, color: 'var(--texto-suave)', letterSpacing: '0.1em', textTransform: 'uppercase', margin: '0 0 2px' }}>desde</p>
+          )}
+          <p style={{ fontSize: 18, fontWeight: 600, color: 'var(--texto)', margin: 0 }}>
+            ${precioMostrar.toLocaleString('es-AR')}
+          </p>
+        </div>
+
+        {/* Selector de variantes */}
+        {mostrandoVariantes && (
+          <div style={{ marginBottom: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {variantes.map((v, i) => (
+              <button key={i} onClick={() => agregarVariante(v)} style={{
+                width: '100%', padding: '10px 12px', borderRadius: 12,
+                border: '1.5px solid var(--crema-oscuro)', background: '#fff',
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                cursor: 'pointer', transition: 'all 0.15s', fontSize: 13, color: 'var(--texto)',
+              }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--bordeaux)'; e.currentTarget.style.background = 'var(--crema)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--crema-oscuro)'; e.currentTarget.style.background = '#fff'; }}>
+                <span style={{ fontFamily: 'var(--serif)', fontSize: 14 }}>{v.nombre}</span>
+                <span style={{ color: 'var(--bordeaux)', fontWeight: 600, fontSize: 13 }}>${parseFloat(v.precio).toLocaleString('es-AR')}</span>
+              </button>
+            ))}
+            <button onClick={() => setMostrandoVariantes(false)} style={{ fontSize: 11, color: 'var(--texto-suave)', background: 'none', border: 'none', cursor: 'pointer', paddingTop: 2 }}>
+              Cancelar
             </button>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
-              <button onClick={() => cambiarCantidad(p.id, cantidad - 1)} style={{ width: 36, height: 36, borderRadius: '50%', border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>−</button>
-              <span style={{ fontSize: 18, fontWeight: 500, color: 'var(--texto)', minWidth: 24, textAlign: 'center' }}>{cantidad}</span>
-              <button onClick={() => cambiarCantidad(p.id, cantidad + 1)} style={{ width: 36, height: 36, borderRadius: '50%', border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
-            </div>
           </div>
+        )}
+
+        {!mostrandoVariantes && (
+          !itemEnCarrito ? (
+            <button onClick={() => tieneVariantes ? setMostrandoVariantes(true) : agregar(p, 1)}
+              style={{ width: '100%', padding: '13px 0', borderRadius: 50, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 13, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer', transition: 'background 0.2s' }}
+              onMouseEnter={e => e.target.style.background = 'var(--bordeaux-claro)'}
+              onMouseLeave={e => e.target.style.background = 'var(--bordeaux)'}>
+              {tieneVariantes ? 'Elegir tamaño' : 'Agregar'}
+            </button>
+          ) : (
+            <div>
+              <button style={{ width: '100%', padding: '12px 0', borderRadius: 50, border: '1.5px solid var(--bordeaux)', background: 'transparent', color: 'var(--bordeaux)', fontSize: 13, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'default', marginBottom: 12 }}>
+                Agregado ✓
+              </button>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
+                <button onClick={() => cambiarCantidad(p.id, cantidad - 1)} style={{ width: 36, height: 36, borderRadius: '50%', border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>−</button>
+                <span style={{ fontSize: 18, fontWeight: 500, color: 'var(--texto)', minWidth: 24, textAlign: 'center' }}>{cantidad}</span>
+                <button onClick={() => cambiarCantidad(p.id, cantidad + 1)} style={{ width: 36, height: 36, borderRadius: '50%', border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
+              </div>
+            </div>
+          )
         )}
       </div>
     </div>
@@ -438,15 +484,14 @@ function ShotsLayout({ productos }) {
 
   return (
     <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-      {/* Foto — igual alto que la lista */}
-      <div style={{ flexShrink: 0, width: 'clamp(110px, 28vw, 220px)', alignSelf: 'stretch' }}>
-        <div style={{ height: '100%', minHeight: 160, borderRadius: 16, overflow: 'hidden', background: 'var(--crema-oscuro)' }}>
-          {fotoUrl
-            ? <img src={fotoUrl} alt="shots" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40, opacity: 0.2 }}>🧁</div>
-          }
+      {/* Foto — solo si hay imagen real */}
+      {fotoUrl && (
+        <div style={{ flexShrink: 0, width: 'clamp(90px, 22vw, 200px)', alignSelf: 'stretch' }}>
+          <div style={{ height: '100%', minHeight: 140, borderRadius: 16, overflow: 'hidden', background: 'var(--crema-oscuro)' }}>
+            <img src={fotoUrl} alt="shots" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Lista */}
       <div style={{ flex: 1, minWidth: 0 }}>
@@ -455,13 +500,13 @@ function ShotsLayout({ productos }) {
         </p>
         <div style={{ background: '#fff', borderRadius: 16, border: '1px solid var(--crema-oscuro)', overflow: 'hidden' }}>
           {productos.map((p, i) => (
-            <div key={p.id} style={{ display: 'flex', alignItems: 'center', padding: '12px 14px', borderBottom: i === productos.length - 1 ? 'none' : '1px solid var(--crema-oscuro)', gap: 10 }}>
-              <span style={{ color: 'var(--texto)', fontSize: 13, flex: 1, lineHeight: 1.3 }}>{p.nombre.replace('Shot: ', '')}</span>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-                <button onClick={() => setCantidades(c => ({ ...c, [p.id]: Math.max(10, (c[p.id] || 10) - 1) }))} style={{ width: 26, height: 26, borderRadius: '50%', border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--bordeaux)', fontSize: 15, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>−</button>
-                <span style={{ width: 24, textAlign: 'center', fontSize: 13, color: 'var(--texto)' }}>{cantidades[p.id] || 10}</span>
-                <button onClick={() => setCantidades(c => ({ ...c, [p.id]: (c[p.id] || 10) + 1 }))} style={{ width: 26, height: 26, borderRadius: '50%', border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--bordeaux)', fontSize: 15, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
-                <button onClick={() => handleAgregar(p)} style={{ padding: '5px 12px', borderRadius: 50, border: 'none', background: agregados[p.id] ? '#2d7a3a' : 'var(--bordeaux)', color: '#FAF7F2', fontSize: 11, cursor: 'pointer', transition: 'background 0.2s', whiteSpace: 'nowrap' }}>
+            <div key={p.id} style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', padding: '10px 14px', borderBottom: i === productos.length - 1 ? 'none' : '1px solid var(--crema-oscuro)', gap: '6px 10px' }}>
+              <span style={{ color: 'var(--texto)', fontSize: 13, flex: 1, minWidth: 80, lineHeight: 1.3 }}>{p.nombre.replace(/^Shot:\s*/i, '')}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
+                <button onClick={() => setCantidades(c => ({ ...c, [p.id]: Math.max(10, (c[p.id] || 10) - 1) }))} style={{ width: 24, height: 24, borderRadius: '50%', border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--bordeaux)', fontSize: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>−</button>
+                <span style={{ width: 22, textAlign: 'center', fontSize: 12, color: 'var(--texto)' }}>{cantidades[p.id] || 10}</span>
+                <button onClick={() => setCantidades(c => ({ ...c, [p.id]: (c[p.id] || 10) + 1 }))} style={{ width: 24, height: 24, borderRadius: '50%', border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--bordeaux)', fontSize: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
+                <button onClick={() => handleAgregar(p)} style={{ padding: '5px 10px', borderRadius: 50, border: 'none', background: agregados[p.id] ? '#2d7a3a' : 'var(--bordeaux)', color: '#FAF7F2', fontSize: 11, cursor: 'pointer', transition: 'background 0.2s', whiteSpace: 'nowrap' }}>
                   {agregados[p.id] ? '✓' : 'Agregar'}
                 </button>
               </div>
@@ -535,12 +580,19 @@ function EventosSection({ config }) {
 
 /* ══ ABOUT ═════════════════════════════════════════════════ */
 function AboutSection({ config }) {
+  const aboutImg = config.about_imagen;
   return (
     <section style={{ background: 'var(--crema-oscuro)', padding: '80px 24px' }}>
       <div style={{ maxWidth: 960, margin: '0 auto' }}>
-        <div style={{ width: '100%', height: 320, borderRadius: 20, overflow: 'hidden', background: '#d4c5b8', marginBottom: 56, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <span style={{ fontSize: 80, opacity: 0.2 }}>🧁</span>
-        </div>
+        {aboutImg ? (
+          <div style={{ width: '100%', height: 'clamp(220px, 36vw, 400px)', borderRadius: 20, overflow: 'hidden', marginBottom: 56 }}>
+            <img src={aboutImg} alt="Quiénes somos" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: '50% 40%' }} />
+          </div>
+        ) : (
+          <div style={{ width: '100%', height: 'clamp(200px, 32vw, 320px)', borderRadius: 20, overflow: 'hidden', background: '#d4c5b8', marginBottom: 56, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ fontSize: 80, opacity: 0.2 }}>🧁</span>
+          </div>
+        )}
         <div style={{ maxWidth: 640, margin: '0 auto', textAlign: 'center' }}>
           <p style={{ color: 'var(--bordeaux)', fontSize: 11, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 14 }}>Nuestra historia</p>
           <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 300, fontSize: 'clamp(34px, 6vw, 50px)', color: 'var(--texto)', marginBottom: 24, lineHeight: 1.1 }}>
@@ -563,14 +615,6 @@ function InstagramSection({ config }) {
   return (
     <section style={{ background: 'var(--crema-oscuro)', padding: '80px 24px' }}>
       <div style={{ maxWidth: 560, margin: '0 auto', textAlign: 'center' }}>
-        {/* Instagram icon */}
-        <div style={{ marginBottom: 20 }}>
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ opacity: 0.55 }}>
-            <rect x="2" y="2" width="20" height="20" rx="6" stroke="var(--texto)" strokeWidth="1.5"/>
-            <circle cx="12" cy="12" r="4" stroke="var(--texto)" strokeWidth="1.5"/>
-            <circle cx="17.5" cy="6.5" r="1" fill="var(--texto)"/>
-          </svg>
-        </div>
         <p style={{ color: 'var(--bordeaux)', fontSize: 11, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 14 }}>
           Seguinos en Instagram
         </p>

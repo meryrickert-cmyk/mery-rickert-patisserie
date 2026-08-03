@@ -1,6 +1,26 @@
 import { useEffect, useState, useRef } from 'react';
 import api from '../../api/index.js';
 
+async function comprimirImagen(file, maxPx = 1800, quality = 0.85) {
+  return new Promise(resolve => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let w = img.width, h = img.height;
+      if (w > maxPx || h > maxPx) {
+        if (w > h) { h = Math.round(h * maxPx / w); w = maxPx; }
+        else { w = Math.round(w * maxPx / h); h = maxPx; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      canvas.toBlob(blob => resolve(new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: 'image/jpeg' })), 'image/jpeg', quality);
+    };
+    img.src = url;
+  });
+}
+
 const CAMPOS = [
   { seccion: 'Hero', campos: [
     { clave: 'hero_tagline', label: 'Frase principal', tipo: 'text', placeholder: 'hecho con tiempo' },
@@ -38,8 +58,16 @@ export default function Contenido() {
   const [subiendo, setSubiendo] = useState(false);
   const fileRef = useRef();
 
+  // About image
+  const [aboutImg, setAboutImg] = useState(null);
+  const [subiendoAbout, setSubiendoAbout] = useState(false);
+  const aboutFileRef = useRef();
+
   useEffect(() => {
-    api.get('/config').then(r => setValues(r.data));
+    api.get('/config').then(r => {
+      setValues(r.data);
+      if (r.data.about_imagen) setAboutImg(r.data.about_imagen);
+    });
     cargarHero();
   }, []);
 
@@ -56,6 +84,20 @@ export default function Contenido() {
     setGuardando(false);
     setOk(true);
     setTimeout(() => setOk(false), 2500);
+  }
+
+  async function subirAbout(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setSubiendoAbout(true);
+    const comprimida = await comprimirImagen(file);
+    const fd = new FormData();
+    fd.append('imagen', comprimida);
+    fd.append('clave', 'about_imagen');
+    const { data } = await api.post('/config/imagen', fd);
+    setAboutImg(data.url);
+    setSubiendoAbout(false);
+    if (aboutFileRef.current) aboutFileRef.current.value = '';
   }
 
   async function subirFoto(e) {
@@ -175,6 +217,39 @@ export default function Contenido() {
           {subiendo && (
             <p style={{ fontSize: 13, color: 'var(--bordeaux)', margin: '8px 0 0' }}>Subiendo fotos...</p>
           )}
+        </div>
+      </div>
+
+      {/* ── Foto de "Quiénes somos" ── */}
+      <div style={{ marginBottom: 40 }}>
+        <p style={{ color: 'var(--bordeaux)', fontSize: 11, letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 16, fontWeight: 500 }}>
+          Foto — Quiénes somos
+        </p>
+        <div style={{ background: '#fff', borderRadius: 16, border: '1px solid var(--crema-oscuro)', padding: '20px 22px' }}>
+          <p style={{ ...labelStyle, marginBottom: 14 }}>
+            Imagen que se muestra en la sección "Nuestra historia". Recomendado: horizontal, 1600px o más de ancho.
+          </p>
+          <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+            {/* Preview */}
+            {aboutImg && (
+              <div style={{ width: 200, height: 120, borderRadius: 10, overflow: 'hidden', border: '2px solid var(--crema-oscuro)', flexShrink: 0 }}>
+                <img src={aboutImg} alt="about" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
+            )}
+            {/* Uploader */}
+            <label style={{
+              width: aboutImg ? 110 : '100%', height: aboutImg ? 120 : 90,
+              borderRadius: 10, border: '1.5px dashed var(--crema-oscuro)',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', gap: 6,
+            }}>
+              <span style={{ fontSize: 22, color: 'var(--crema-oscuro)' }}>{subiendoAbout ? '…' : '+'}</span>
+              <span style={{ fontSize: 11, color: 'var(--texto-suave)' }}>
+                {subiendoAbout ? 'Subiendo...' : aboutImg ? 'Cambiar' : 'Subir foto'}
+              </span>
+              <input type="file" accept="image/*" onChange={subirAbout} ref={aboutFileRef} style={{ display: 'none' }} />
+            </label>
+          </div>
         </div>
       </div>
 
