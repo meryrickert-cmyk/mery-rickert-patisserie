@@ -279,16 +279,15 @@ function FotoLista({ productos }) {
   const fotoUrl = fotoProducto?.imagen || fotoProducto?.imagenes?.[0]?.url || null;
 
   return (
-    <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-      {/* Foto — ocupa el mismo alto que la lista */}
-      <div style={{ flexShrink: 0, width: 'clamp(110px, 28vw, 220px)', alignSelf: 'stretch' }}>
-        <div style={{ height: '100%', minHeight: 160, borderRadius: 16, overflow: 'hidden', background: 'var(--crema-oscuro)' }}>
-          {fotoUrl
-            ? <img src={fotoUrl} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40, opacity: 0.2 }}>🧁</div>
-          }
+    <div className="fotolist-wrap">
+      {/* Foto */}
+      {fotoUrl && (
+        <div className="fotolist-foto">
+          <div style={{ height: '100%', minHeight: 160, borderRadius: 16, overflow: 'hidden', background: 'var(--crema-oscuro)' }}>
+            <img src={fotoUrl} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          </div>
         </div>
-      </div>
+      )}
       {/* Lista */}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ background: '#fff', borderRadius: 16, border: '1px solid var(--crema-oscuro)', overflow: 'hidden' }}>
@@ -310,39 +309,43 @@ function ListaItem({ producto: p, isLast }) {
 
   function handleAgregar() { agregar(p, cantLocal); }
 
+  const btn = (onClick, children, extraStyle = {}) => (
+    <button onClick={onClick} style={{ width: 24, height: 24, borderRadius: '50%', border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, ...extraStyle }}>
+      {children}
+    </button>
+  );
+
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', padding: '12px 14px', gap: '6px 10px', borderBottom: isLast ? 'none' : '1px solid var(--crema-oscuro)', transition: 'background 0.15s' }}
+    <div style={{ padding: '11px 14px', borderBottom: isLast ? 'none' : '1px solid var(--crema-oscuro)', transition: 'background 0.15s' }}
       onMouseEnter={e => e.currentTarget.style.background = 'var(--crema)'}
       onMouseLeave={e => e.currentTarget.style.background = '#fff'}>
 
       {/* Nombre */}
-      <div style={{ flex: 1, minWidth: 120 }}>
-        <p style={{ fontFamily: 'var(--serif)', color: 'var(--texto)', fontSize: 14, margin: '0 0 1px', lineHeight: 1.3 }}>{p.nombre}</p>
-        {p.descripcion && <p style={{ fontSize: 11, color: 'var(--texto-suave)', margin: 0 }}>{p.descripcion}</p>}
-      </div>
+      <p style={{ fontFamily: 'var(--serif)', color: 'var(--texto)', fontSize: 14, margin: '0 0 1px', lineHeight: 1.3 }}>{p.nombre}</p>
+      {p.descripcion && <p style={{ fontSize: 11, color: 'var(--texto-suave)', margin: '0 0 6px' }}>{p.descripcion}</p>}
 
-      {/* Precio + controles en línea — si no caben, bajan solos */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-        <span style={{ fontFamily: 'var(--serif)', fontSize: 14, color: 'var(--bordeaux)', whiteSpace: 'nowrap' }}>
+      {/* Precio + controles — siempre en su propia fila */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginTop: p.descripcion ? 0 : 6 }}>
+        <span style={{ fontFamily: 'var(--serif)', fontSize: 14, color: 'var(--bordeaux)', whiteSpace: 'nowrap', flexShrink: 0 }}>
           ${p.precio.toLocaleString('es-AR')}
         </span>
 
         {!enCarrito ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', border: '1px solid var(--crema-oscuro)', borderRadius: 50 }}>
-              <button onClick={() => setCantLocal(q => Math.max(1, q - 1))} style={{ width: 26, height: 26, border: 'none', background: 'transparent', color: 'var(--bordeaux)', fontSize: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>−</button>
-              <span style={{ width: 18, textAlign: 'center', fontSize: 12, color: 'var(--texto)' }}>{cantLocal}</span>
-              <button onClick={() => setCantLocal(q => q + 1)} style={{ width: 26, height: 26, border: 'none', background: 'transparent', color: 'var(--bordeaux)', fontSize: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
+              <button onClick={() => setCantLocal(q => Math.max(1, q - 1))} style={{ width: 24, height: 24, border: 'none', background: 'transparent', color: 'var(--bordeaux)', fontSize: 15, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>−</button>
+              <span style={{ width: 16, textAlign: 'center', fontSize: 12, color: 'var(--texto)' }}>{cantLocal}</span>
+              <button onClick={() => setCantLocal(q => q + 1)} style={{ width: 24, height: 24, border: 'none', background: 'transparent', color: 'var(--bordeaux)', fontSize: 15, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
             </div>
-            <button onClick={handleAgregar} style={{ padding: '6px 12px', borderRadius: 50, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 11, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+            <button onClick={handleAgregar} style={{ padding: '5px 11px', borderRadius: 50, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 11, cursor: 'pointer', whiteSpace: 'nowrap' }}>
               Agregar
             </button>
           </div>
         ) : (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            <button onClick={() => cambiarCantidad(p.id, cantidad - 1)} style={{ width: 26, height: 26, borderRadius: '50%', border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 15, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>−</button>
-            <span style={{ width: 18, textAlign: 'center', fontSize: 13, fontWeight: 500 }}>{cantidad}</span>
-            <button onClick={() => cambiarCantidad(p.id, cantidad + 1)} style={{ width: 26, height: 26, borderRadius: '50%', border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 15, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            {btn(() => cambiarCantidad(p.id, cantidad - 1), '−')}
+            <span style={{ width: 16, textAlign: 'center', fontSize: 13, fontWeight: 500, color: 'var(--texto)' }}>{cantidad}</span>
+            {btn(() => cambiarCantidad(p.id, cantidad + 1), '+')}
             <span style={{ fontSize: 11, color: '#2d7a3a', fontWeight: 600 }}>✓</span>
           </div>
         )}
@@ -483,10 +486,10 @@ function ShotsLayout({ productos }) {
   }
 
   return (
-    <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+    <div className="fotolist-wrap">
       {/* Foto — solo si hay imagen real */}
       {fotoUrl && (
-        <div style={{ flexShrink: 0, width: 'clamp(90px, 22vw, 200px)', alignSelf: 'stretch' }}>
+        <div className="shots-foto">
           <div style={{ height: '100%', minHeight: 140, borderRadius: 16, overflow: 'hidden', background: 'var(--crema-oscuro)' }}>
             <img src={fotoUrl} alt="shots" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           </div>
@@ -500,13 +503,13 @@ function ShotsLayout({ productos }) {
         </p>
         <div style={{ background: '#fff', borderRadius: 16, border: '1px solid var(--crema-oscuro)', overflow: 'hidden' }}>
           {productos.map((p, i) => (
-            <div key={p.id} style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', padding: '10px 14px', borderBottom: i === productos.length - 1 ? 'none' : '1px solid var(--crema-oscuro)', gap: '6px 10px' }}>
-              <span style={{ color: 'var(--texto)', fontSize: 13, flex: 1, minWidth: 80, lineHeight: 1.3 }}>{p.nombre.replace(/^Shot:\s*/i, '')}</span>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
-                <button onClick={() => setCantidades(c => ({ ...c, [p.id]: Math.max(10, (c[p.id] || 10) - 1) }))} style={{ width: 24, height: 24, borderRadius: '50%', border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--bordeaux)', fontSize: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>−</button>
+            <div key={p.id} style={{ padding: '10px 14px', borderBottom: i === productos.length - 1 ? 'none' : '1px solid var(--crema-oscuro)' }}>
+              <span style={{ color: 'var(--texto)', fontSize: 13, display: 'block', marginBottom: 6, lineHeight: 1.3 }}>{p.nombre.replace(/^Shot:\s*/i, '')}</span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 5 }}>
+                <button onClick={() => setCantidades(c => ({ ...c, [p.id]: Math.max(10, (c[p.id] || 10) - 1) }))} style={{ width: 24, height: 24, borderRadius: '50%', border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--bordeaux)', fontSize: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>−</button>
                 <span style={{ width: 22, textAlign: 'center', fontSize: 12, color: 'var(--texto)' }}>{cantidades[p.id] || 10}</span>
-                <button onClick={() => setCantidades(c => ({ ...c, [p.id]: (c[p.id] || 10) + 1 }))} style={{ width: 24, height: 24, borderRadius: '50%', border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--bordeaux)', fontSize: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
-                <button onClick={() => handleAgregar(p)} style={{ padding: '5px 10px', borderRadius: 50, border: 'none', background: agregados[p.id] ? '#2d7a3a' : 'var(--bordeaux)', color: '#FAF7F2', fontSize: 11, cursor: 'pointer', transition: 'background 0.2s', whiteSpace: 'nowrap' }}>
+                <button onClick={() => setCantidades(c => ({ ...c, [p.id]: (c[p.id] || 10) + 1 }))} style={{ width: 24, height: 24, borderRadius: '50%', border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--bordeaux)', fontSize: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>+</button>
+                <button onClick={() => handleAgregar(p)} style={{ padding: '5px 10px', borderRadius: 50, border: 'none', background: agregados[p.id] ? '#2d7a3a' : 'var(--bordeaux)', color: '#FAF7F2', fontSize: 11, cursor: 'pointer', transition: 'background 0.2s', whiteSpace: 'nowrap', flexShrink: 0 }}>
                   {agregados[p.id] ? '✓' : 'Agregar'}
                 </button>
               </div>

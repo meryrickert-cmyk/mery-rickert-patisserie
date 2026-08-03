@@ -64,6 +64,34 @@ body {
   .admin-login-panel { display: none !important; }
 }
 
+/* FotoLista + ShotsLayout: foto al lado en desktop, arriba en mobile */
+.fotolist-wrap {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.fotolist-foto {
+  flex-shrink: 0;
+  width: clamp(110px, 28vw, 220px);
+  align-self: stretch;
+}
+.shots-foto {
+  flex-shrink: 0;
+  width: clamp(90px, 22vw, 200px);
+  align-self: stretch;
+}
+@media (max-width: 460px) {
+  .fotolist-wrap {
+    flex-direction: column;
+  }
+  .fotolist-foto,
+  .shots-foto {
+    width: 100% !important;
+    height: 180px !important;
+    align-self: auto;
+  }
+}
+
 /* Line clamp */
 .line-clamp-2 {
   display: -webkit-box;
