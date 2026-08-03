@@ -1,4 +1,24 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+
+async function comprimirImagen(file, maxPx = 1600, quality = 0.82) {
+  return new Promise(resolve => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let w = img.width, h = img.height;
+      if (w > maxPx || h > maxPx) {
+        if (w > h) { h = Math.round(h * maxPx / w); w = maxPx; }
+        else { w = Math.round(w * maxPx / h); h = maxPx; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      canvas.toBlob(blob => resolve(new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: 'image/jpeg' })), 'image/jpeg', quality);
+    };
+    img.src = url;
+  });
+}
 import api from '../../api/index.js';
 
 const CATS = ['tortas', 'para el te', 'budines', 'shots'];
@@ -34,7 +54,10 @@ export default function Productos() {
     e.preventDefault(); setError(''); setGuardando(true);
     const fd = new FormData();
     Object.entries(form).forEach(([k, v]) => fd.append(k, v));
-    for (const f of imagenes) fd.append('imagenes', f);
+    for (const f of imagenes) {
+      const comprimida = await comprimirImagen(f);
+      fd.append('imagenes', comprimida);
+    }
     try {
       if (editando) await api.put(`/productos/${editando.id}`, fd);
       else await api.post('/productos', fd);
@@ -106,10 +129,10 @@ export default function Productos() {
             opacity: p.activo ? 1 : 0.5,
             transition: 'box-shadow 0.2s',
           }}>
-            {/* Imagen */}
+            {/* Imagen — usa imagen principal o primera del array como fallback */}
             <div style={{ aspectRatio: '4/3', background: 'var(--crema-oscuro)', overflow: 'hidden', position: 'relative' }}>
-              {p.imagen
-                ? <img src={p.imagen} alt={p.nombre} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              {(p.imagen || p.imagenes?.[0]?.url)
+                ? <img src={p.imagen || p.imagenes[0].url} alt={p.nombre} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40, opacity: 0.2 }}>🧁</div>
               }
               {!p.activo && (

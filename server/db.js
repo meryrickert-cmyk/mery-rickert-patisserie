@@ -28,23 +28,6 @@ if (process.env.DATA_DIR) {
 }
 
 const db = new DatabaseSync(dbPath);
-// Migración de imágenes via SQL (solo corre una vez — flag file en DATA_DIR)
-if (process.env.DATA_DIR && !fs.existsSync(flagPath)) {
-  try {
-    const imgCount = db.prepare('SELECT COUNT(*) as n FROM producto_imagenes').get().n;
-    if (imgCount === 0) {
-      console.log('[db] Insertando imágenes desde SQL seed...');
-      const sqlPath = path.join(__dirname, 'seeds', 'imagenes.sql');
-      if (fs.existsSync(sqlPath)) {
-        const sql = fs.readFileSync(sqlPath, 'utf8');
-        db.exec(sql);
-        const after = db.prepare('SELECT COUNT(*) as n FROM producto_imagenes').get().n;
-        console.log(`[db] ✅ ${after} imágenes insertadas`);
-      }
-    }
-    fs.writeFileSync(flagPath, '1');
-  } catch(e) { console.log('[db] Error migración imágenes:', e.message); }
-}
 
 db.exec(`PRAGMA journal_mode = WAL`);
 db.exec(`PRAGMA foreign_keys = ON`);
@@ -116,6 +99,7 @@ db.exec(`
 // Seed de configuración inicial
 const configDefaults = [
   ['hero_tagline', 'hecho con tiempo'],
+  ['whatsapp_template', 'Hola Mery! 🧁 Quiero hacer el siguiente pedido:\n\n{items}\n\n*Total: {total}*\n\n¡Muchas gracias!'],
   ['hero_subtitulo', 'Pastelería artesanal'],
   ['about_titulo', 'Quiénes somos'],
   ['about_texto', 'Mery Rickert Patisserie nació de la pasión por la pastelería artesanal y el deseo de crear momentos dulces especiales. Cada preparación lleva tiempo, dedicación y los mejores ingredientes. Trabajamos con amor y sin apuros, porque las cosas ricas no se hacen rápido.'],
@@ -278,6 +262,14 @@ if (insumosCount.n === 0) {
     ['Azúcar invertido', 'kg', 37],
   ].forEach(([n, u, c]) => ins.run(n, u, c));
 }
+
+// Migración: sincronizar campo imagen desde producto_imagenes donde esté vacío
+db.exec(`
+  UPDATE productos
+  SET imagen = (SELECT url FROM producto_imagenes WHERE producto_id = productos.id ORDER BY orden LIMIT 1)
+  WHERE imagen IS NULL
+  AND EXISTS (SELECT 1 FROM producto_imagenes WHERE producto_id = productos.id)
+`);
 
 // Seed de recetas (solo corre una vez, ver seeds/recetas.js)
 seedRecetas(db);

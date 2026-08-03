@@ -19,6 +19,10 @@ const CAMPOS = [
   { seccion: 'Footer', campos: [
     { clave: 'footer_direccion', label: 'Dirección / Ubicación', tipo: 'text', placeholder: 'Buenos Aires, Argentina' },
   ]},
+  { seccion: 'WhatsApp', campos: [
+    { clave: 'whatsapp_numero', label: 'Número (sin +, con código de país)', tipo: 'text', placeholder: '5491164936089' },
+    { clave: 'whatsapp_template', label: 'Mensaje del carrito', tipo: 'textarea', placeholder: 'Usá {items} para la lista y {total} para el monto' },
+  ]},
 ];
 
 const inputStyle = { padding: '10px 14px', borderRadius: 10, border: '1.5px solid var(--crema-oscuro)', fontSize: 13, color: 'var(--texto)', outline: 'none', fontFamily: 'var(--sans)', width: '100%', boxSizing: 'border-box', background: '#fff' };

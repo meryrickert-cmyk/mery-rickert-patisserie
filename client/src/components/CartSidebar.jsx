@@ -1,15 +1,24 @@
+import { useEffect, useState } from 'react';
 import { useCart } from '../context/CartContext';
+import api from '../api/index.js';
 
 export default function CartSidebar({ open, onClose }) {
   const { items, quitar, cambiarCantidad, total, vaciar } = useCart();
+  const [config, setConfig] = useState({});
+
+  useEffect(() => { api.get('/config').then(r => setConfig(r.data)); }, []);
 
   function enviarWhatsapp() {
     if (!items.length) return;
     const lineas = items.map(i =>
       `• ${i.nombre} x${i.cantidad} — $${(i.precio * i.cantidad).toLocaleString('es-AR')}`
     ).join('\n');
-    const msg = `Hola Mery! 🧁 Quiero hacer el siguiente pedido:\n\n${lineas}\n\n*Total: $${total.toLocaleString('es-AR')}*\n\n¡Muchas gracias!`;
-    window.open(`https://wa.me/5491164936089?text=${encodeURIComponent(msg)}`, '_blank');
+    const template = config.whatsapp_template || 'Hola Mery! 🧁 Quiero hacer el siguiente pedido:\n\n{items}\n\n*Total: {total}*\n\n¡Muchas gracias!';
+    const msg = template
+      .replace('{items}', lineas)
+      .replace('{total}', `$${total.toLocaleString('es-AR')}`);
+    const numero = config.whatsapp_numero || '5491164936089';
+    window.open(`https://wa.me/${numero}?text=${encodeURIComponent(msg)}`, '_blank');
   }
 
   return (

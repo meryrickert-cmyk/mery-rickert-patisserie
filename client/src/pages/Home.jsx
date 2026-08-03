@@ -84,9 +84,6 @@ function HeroSection({ config, onScroll }) {
       )}
 
       <div style={{ position: 'relative', zIndex: 2, marginTop: 'auto', textAlign: 'center', padding: '0 24px 48px' }}>
-        <p style={{ color: 'rgba(250,247,242,0.55)', fontSize: 11, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 14, fontFamily: 'var(--sans)' }}>
-          Pastelería artesanal
-        </p>
         <h1 style={{ fontFamily: 'var(--serif)', color: '#FAF7F2', fontSize: 'clamp(38px, 9vw, 82px)', fontWeight: 300, lineHeight: 1.05, margin: 0 }}>
           Mery Rickert<br />Patisserie
         </h1>
@@ -199,7 +196,6 @@ const ProductosSection = forwardRef(function ProductosSection({ productos, loadi
 
         {/* SHOTS */}
         <div ref={shotsRef} id="shots" style={{ paddingTop: 48, paddingBottom: 80, borderTop: '1px solid var(--crema-oscuro)' }}>
-          <SecDesc>Mínimo 10 unidades por sabor · $5.000 c/u</SecDesc>
           {loading ? <Spinner /> : <ShotsLayout productos={byCat('shots')} />}
         </div>
 
@@ -259,9 +255,9 @@ function ParaElTeLayout({ productos }) {
         </div>
       )}
 
-      {/* 4. Individuales — Brownie, Masitas, Pavlovitas */}
+      {/* 4. Individuales — Brownie, Masitas, Pavlovitas: siempre 2 columnas */}
       {individGroup.length > 0 && (
-        <div className="grid-2up">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
           {individGroup.map(p => <ProductCard key={p.id} producto={p} />)}
         </div>
       )}
@@ -284,9 +280,9 @@ function FotoLista({ productos }) {
 
   return (
     <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-      {/* Foto — tamaño proporcional para que coexista con la lista en mobile */}
-      <div style={{ flexShrink: 0, width: 'clamp(100px, 28vw, 220px)' }}>
-        <div style={{ aspectRatio: '1/1', borderRadius: 16, overflow: 'hidden', background: 'var(--crema-oscuro)' }}>
+      {/* Foto — ocupa el mismo alto que la lista */}
+      <div style={{ flexShrink: 0, width: 'clamp(110px, 28vw, 220px)', alignSelf: 'stretch' }}>
+        <div style={{ height: '100%', minHeight: 160, borderRadius: 16, overflow: 'hidden', background: 'var(--crema-oscuro)' }}>
           {fotoUrl
             ? <img src={fotoUrl} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40, opacity: 0.2 }}>🧁</div>
@@ -371,7 +367,7 @@ function ProductCard({ producto: p }) {
       onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 2px 12px rgba(0,0,0,0.06)'; e.currentTarget.style.transform = 'translateY(0)'; }}>
 
       {/* Imagen */}
-      <div style={{ position: 'relative', aspectRatio: '1/1', overflow: 'hidden', background: 'var(--crema-oscuro)' }}>
+      <div style={{ position: 'relative', aspectRatio: '4/3', overflow: 'hidden', background: 'var(--crema-oscuro)' }}>
         {fotos.length > 0
           ? <img src={fotos[imgIdx]} alt={p.nombre} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.4s' }}
               onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
@@ -396,10 +392,10 @@ function ProductCard({ producto: p }) {
       </div>
 
       {/* Contenido */}
-      <div style={{ padding: '16px 18px 20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-        <p style={{ fontFamily: 'var(--serif)', color: 'var(--bordeaux)', fontSize: 18, lineHeight: 1.25, marginBottom: 6, fontWeight: 400 }}>{p.nombre}</p>
-        {p.descripcion && <p style={{ color: '#9B8F93', fontSize: 13, marginBottom: 14, lineHeight: 1.4 }}>{p.descripcion}</p>}
-        <p style={{ fontSize: 22, fontWeight: 600, color: 'var(--texto)', marginBottom: 14, marginTop: 'auto', paddingTop: 8 }}>
+      <div style={{ padding: '12px 14px 16px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+        <p style={{ fontFamily: 'var(--serif)', color: 'var(--bordeaux)', fontSize: 15, lineHeight: 1.25, marginBottom: 4, fontWeight: 400 }}>{p.nombre}</p>
+        {p.descripcion && <p style={{ color: '#9B8F93', fontSize: 11, marginBottom: 8, lineHeight: 1.4 }}>{p.descripcion}</p>}
+        <p style={{ fontSize: 18, fontWeight: 600, color: 'var(--texto)', marginBottom: 10, marginTop: 'auto', paddingTop: 6 }}>
           ${p.precio.toLocaleString('es-AR')}
         </p>
 
@@ -431,7 +427,8 @@ function ShotsLayout({ productos }) {
   const { agregar } = useCart();
   const [cantidades, setCantidades] = useState({});
   const [agregados, setAgregados] = useState({});
-  const conFoto = productos.find(p => p.imagen);
+  const conFoto = productos.find(p => p.imagen || p.imagenes?.length > 0);
+  const fotoUrl = conFoto?.imagen || conFoto?.imagenes?.[0]?.url || null;
 
   function handleAgregar(p) {
     agregar(p, cantidades[p.id] || 10);
@@ -440,33 +437,37 @@ function ShotsLayout({ productos }) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 32, maxWidth: 780, margin: '0 auto' }}>
-      <div style={{ flexShrink: 0, width: '100%', maxWidth: 260 }}>
-        <div style={{ aspectRatio: '1/1', borderRadius: 20, overflow: 'hidden', background: 'var(--crema-oscuro)' }}>
-          {conFoto?.imagen
-            ? <img src={conFoto.imagen} alt="shots" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 64, opacity: 0.2 }}>🧁</div>
+    <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+      {/* Foto — igual alto que la lista */}
+      <div style={{ flexShrink: 0, width: 'clamp(110px, 28vw, 220px)', alignSelf: 'stretch' }}>
+        <div style={{ height: '100%', minHeight: 160, borderRadius: 16, overflow: 'hidden', background: 'var(--crema-oscuro)' }}>
+          {fotoUrl
+            ? <img src={fotoUrl} alt="shots" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40, opacity: 0.2 }}>🧁</div>
           }
         </div>
-        <p style={{ color: 'var(--texto-suave)', fontSize: 12, marginTop: 10, lineHeight: 1.5 }}>
-          Precio: $5.000 c/u<br />Mínimo 10 unidades por sabor
-        </p>
       </div>
 
-      <div style={{ flex: 1 }}>
-        {productos.map(p => (
-          <div key={p.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 0', borderBottom: '1px solid var(--crema-oscuro)', gap: 12 }}>
-            <span style={{ color: 'var(--texto)', fontSize: 14, flex: 1 }}>{p.nombre.replace('Shot: ', '')}</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-              <button onClick={() => setCantidades(c => ({ ...c, [p.id]: Math.max(10, (c[p.id] || 10) - 1) }))} style={{ width: 28, height: 28, borderRadius: '50%', border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--bordeaux)', fontSize: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>−</button>
-              <span style={{ width: 28, textAlign: 'center', fontSize: 14, color: 'var(--texto)' }}>{cantidades[p.id] || 10}</span>
-              <button onClick={() => setCantidades(c => ({ ...c, [p.id]: (c[p.id] || 10) + 1 }))} style={{ width: 28, height: 28, borderRadius: '50%', border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--bordeaux)', fontSize: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
-              <button onClick={() => handleAgregar(p)} style={{ padding: '6px 16px', borderRadius: 50, border: 'none', background: agregados[p.id] ? '#2d7a3a' : 'var(--bordeaux)', color: '#FAF7F2', fontSize: 12, cursor: 'pointer', transition: 'background 0.2s', whiteSpace: 'nowrap' }}>
-                {agregados[p.id] ? '✓ Listo' : 'Agregar'}
-              </button>
+      {/* Lista */}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p style={{ fontSize: 12, color: 'var(--texto-suave)', marginBottom: 10, lineHeight: 1.5 }}>
+          $5.000 c/u · Mínimo 10 unidades por sabor
+        </p>
+        <div style={{ background: '#fff', borderRadius: 16, border: '1px solid var(--crema-oscuro)', overflow: 'hidden' }}>
+          {productos.map((p, i) => (
+            <div key={p.id} style={{ display: 'flex', alignItems: 'center', padding: '12px 14px', borderBottom: i === productos.length - 1 ? 'none' : '1px solid var(--crema-oscuro)', gap: 10 }}>
+              <span style={{ color: 'var(--texto)', fontSize: 13, flex: 1, lineHeight: 1.3 }}>{p.nombre.replace('Shot: ', '')}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                <button onClick={() => setCantidades(c => ({ ...c, [p.id]: Math.max(10, (c[p.id] || 10) - 1) }))} style={{ width: 26, height: 26, borderRadius: '50%', border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--bordeaux)', fontSize: 15, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>−</button>
+                <span style={{ width: 24, textAlign: 'center', fontSize: 13, color: 'var(--texto)' }}>{cantidades[p.id] || 10}</span>
+                <button onClick={() => setCantidades(c => ({ ...c, [p.id]: (c[p.id] || 10) + 1 }))} style={{ width: 26, height: 26, borderRadius: '50%', border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--bordeaux)', fontSize: 15, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
+                <button onClick={() => handleAgregar(p)} style={{ padding: '5px 12px', borderRadius: 50, border: 'none', background: agregados[p.id] ? '#2d7a3a' : 'var(--bordeaux)', color: '#FAF7F2', fontSize: 11, cursor: 'pointer', transition: 'background 0.2s', whiteSpace: 'nowrap' }}>
+                  {agregados[p.id] ? '✓' : 'Agregar'}
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
