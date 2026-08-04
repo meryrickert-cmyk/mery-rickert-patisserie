@@ -84,10 +84,13 @@ body {
   .fotolist-wrap {
     flex-direction: column;
   }
+  .fotolist-wrap > * {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
   .fotolist-foto,
   .shots-foto {
-    width: 100% !important;
-    height: 180px !important;
+    height: 180px;
     align-self: auto;
   }
 }
