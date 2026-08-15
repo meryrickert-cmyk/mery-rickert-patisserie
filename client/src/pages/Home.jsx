@@ -193,12 +193,18 @@ const ProductosSection = forwardRef(function ProductosSection({ productos, loadi
 
         {/* BUDINES */}
         <div ref={budinesRef} id="budines" style={{ paddingTop: 48, paddingBottom: 72, borderTop: '1px solid var(--crema-oscuro)' }}>
-          {loading ? <Spinner /> : <FotoLista productos={byCat('budines')} />}
+          {loading ? <Spinner /> : <>
+            <SubSecTitle>Budines</SubSecTitle>
+            <FotoLista productos={byCat('budines')} />
+          </>}
         </div>
 
         {/* SHOTS */}
         <div ref={shotsRef} id="shots" style={{ paddingTop: 48, paddingBottom: 80, borderTop: '1px solid var(--crema-oscuro)' }}>
-          {loading ? <Spinner /> : <ShotsLayout productos={byCat('shots')} />}
+          {loading ? <Spinner /> : <>
+            <SubSecTitle>Shots</SubSecTitle>
+            <ShotsLayout productos={byCat('shots')} />
+          </>}
         </div>
 
       </div>
