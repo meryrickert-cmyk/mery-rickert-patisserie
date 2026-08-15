@@ -98,11 +98,21 @@ router.put('/:id', authAdmin, handleUpload, (req, res) => {
 
   // Agregar nuevas imágenes si se subieron
   if (req.files?.length) {
-    const maxOrden = db.prepare('SELECT MAX(orden) as m FROM producto_imagenes WHERE producto_id = ?').get(req.params.id).m ?? -1;
-    req.files.forEach((f, i) => {
-      const posicion = req.body[`posicion_${i}`] || '50% 50%';
-      db.prepare('INSERT INTO producto_imagenes (producto_id, url, orden, posicion) VALUES (?, ?, ?, ?)').run(req.params.id, `/uploads/${f.filename}`, maxOrden + i + 1, posicion);
-    });
+    const existentes = db.prepare('SELECT id FROM producto_imagenes WHERE producto_id = ? ORDER BY orden ASC').all(req.params.id);
+    // Si hay exactamente 1 foto existente y se sube 1 nueva → reemplazar (no acumular)
+    if (existentes.length === 1 && req.files.length === 1) {
+      db.prepare('DELETE FROM producto_imagenes WHERE producto_id = ?').run(req.params.id);
+      const posicion = req.body[`posicion_0`] || '50% 50%';
+      db.prepare('INSERT INTO producto_imagenes (producto_id, url, orden, posicion) VALUES (?, ?, ?, ?)').run(req.params.id, `/uploads/${req.files[0].filename}`, 0, posicion);
+    } else {
+      const maxOrden = existentes.length > 0
+        ? db.prepare('SELECT MAX(orden) as m FROM producto_imagenes WHERE producto_id = ?').get(req.params.id).m ?? -1
+        : -1;
+      req.files.forEach((f, i) => {
+        const posicion = req.body[`posicion_${i}`] || '50% 50%';
+        db.prepare('INSERT INTO producto_imagenes (producto_id, url, orden, posicion) VALUES (?, ?, ?, ?)').run(req.params.id, `/uploads/${f.filename}`, maxOrden + i + 1, posicion);
+      });
+    }
   }
 
   res.json(withImagenes(db.prepare('SELECT * FROM productos WHERE id = ?').get(req.params.id)));
@@ -116,7 +126,17 @@ router.delete('/:id', authAdmin, (req, res) => {
 
 // DELETE imagen individual
 router.delete('/:id/imagenes/:imgId', authAdmin, (req, res) => {
+  const img = db.prepare('SELECT url FROM producto_imagenes WHERE id = ? AND producto_id = ?').get(req.params.imgId, req.params.id);
   db.prepare('DELETE FROM producto_imagenes WHERE id = ? AND producto_id = ?').run(req.params.imgId, req.params.id);
+
+  if (img) {
+    // Si la foto borrada era la principal (campo imagen), actualizar al siguiente disponible
+    const producto = db.prepare('SELECT imagen FROM productos WHERE id = ?').get(req.params.id);
+    if (producto?.imagen === img.url) {
+      const siguiente = db.prepare('SELECT url FROM producto_imagenes WHERE producto_id = ? ORDER BY orden ASC LIMIT 1').get(req.params.id);
+      db.prepare('UPDATE productos SET imagen = ? WHERE id = ?').run(siguiente?.url ?? null, req.params.id);
+    }
+  }
   res.json({ ok: true });
 });
 
