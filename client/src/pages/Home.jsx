@@ -6,18 +6,26 @@ import { useCart } from '../context/CartContext';
 export default function Home() {
   const [config, setConfig] = useState({});
   const [productos, setProductos] = useState([]);
+  const [heroImagenes, setHeroImagenes] = useState([]);
   const [loading, setLoading] = useState(true);
   const catalogoRef = useRef(null);
 
   useEffect(() => {
-    Promise.all([api.get('/config'), api.get('/productos')])
-      .then(([c, p]) => { setConfig(c.data); setProductos(p.data); })
-      .finally(() => setLoading(false));
+    // Fetch config+hero+productos en paralelo — 2 requests totales en vez de 3
+    Promise.all([
+      api.get('/config'),
+      api.get('/productos'),
+      api.get('/hero'),
+    ]).then(([c, p, h]) => {
+      setConfig(c.data);
+      setProductos(p.data);
+      setHeroImagenes(h.data);
+    }).finally(() => setLoading(false));
   }, []);
 
   return (
     <div style={{ background: 'var(--crema)' }}>
-      <HeroSection config={config} onScroll={() => catalogoRef.current?.scrollIntoView({ behavior: 'smooth' })} />
+      <HeroSection imagenes={heroImagenes} config={config} onScroll={() => catalogoRef.current?.scrollIntoView({ behavior: 'smooth' })} />
       <InfoBar />
       <ProductosSection ref={catalogoRef} productos={productos} loading={loading} />
       <EventosSection config={config} />
@@ -29,14 +37,9 @@ export default function Home() {
 }
 
 /* ══ HERO ══════════════════════════════════════════════════ */
-function HeroSection({ config, onScroll }) {
-  const [imagenes, setImagenes] = useState([]);
+function HeroSection({ imagenes, config, onScroll }) {
   const [idx, setIdx] = useState(0);
   const timerRef = useRef(null);
-
-  useEffect(() => {
-    api.get('/hero').then(r => setImagenes(r.data));
-  }, []);
 
   useEffect(() => {
     if (imagenes.length < 2) return;
@@ -52,6 +55,9 @@ function HeroSection({ config, onScroll }) {
     }
   }
 
+  // Solo renderizar la imagen actual + la siguiente — evita descargar todas de golpe
+  const visibles = new Set([idx, (idx + 1) % Math.max(imagenes.length, 1)]);
+
   return (
     <section style={{ position: 'relative', minHeight: '62vh', maxHeight: '75vh', height: '70vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#e8ddd4' }}>
       <div style={{ position: 'absolute', inset: 0 }}>
@@ -59,7 +65,7 @@ function HeroSection({ config, onScroll }) {
           <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #e8ddd4, #c9b5a8)' }}>
             <span style={{ fontSize: 140, opacity: 0.12 }}>🧁</span>
           </div>
-        ) : imagenes.map((img, i) => (
+        ) : imagenes.map((img, i) => !visibles.has(i) ? null : (
           <div key={img.id} style={{ position: 'absolute', inset: 0, opacity: i === idx ? 1 : 0, transition: 'opacity 1.2s ease-in-out' }}>
             <img src={img.url} alt="" fetchPriority={i === 0 ? 'high' : 'low'} loading={i === 0 ? 'eager' : 'lazy'} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           </div>

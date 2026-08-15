@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import compression from 'compression';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
@@ -46,6 +47,7 @@ if (process.env.DATA_DIR) {
   }
 }
 
+app.use(compression());
 app.use(cors({
   origin: isProd
     ? (process.env.CORS_ORIGIN || true)     // en prod: mismo origen o dominio Railway
@@ -72,7 +74,13 @@ app.get('/api/health', (req, res) => res.json({ ok: true }));
 // Servir frontend buildeado (solo en producción / cuando existe dist/)
 const DIST = path.join(__dirname, '../client/dist');
 if (fs.existsSync(DIST)) {
-  app.use(express.static(DIST));
+  // Assets con hash en el nombre → cacheo agresivo
+  app.use('/assets', express.static(path.join(DIST, 'assets'), {
+    maxAge: '1y',
+    immutable: true,
+  }));
+  // HTML — nunca cachear para que el SW y el router funcionen
+  app.use(express.static(DIST, { maxAge: 0 }));
   // SPA fallback — rutas de React (debe ir DESPUÉS de las rutas /api)
   app.get('*', (req, res) => res.sendFile(path.join(DIST, 'index.html')));
 }
