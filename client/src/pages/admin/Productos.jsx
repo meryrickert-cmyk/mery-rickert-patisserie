@@ -76,11 +76,35 @@ export default function Productos() {
   const [modal, setModal] = useState(false);
   const [error, setError] = useState('');
   const [guardando, setGuardando] = useState(false);
+  const dragSrc = useRef(null);
+  const [dragOver, setDragOver] = useState(null);
 
   function cargar() {
     api.get(`/productos/admin/todos?categoria=${catFiltro}`).then(r => setProductos(r.data));
   }
   useEffect(cargar, [catFiltro]);
+
+  function onDragStart(idx) {
+    dragSrc.current = idx;
+  }
+  function onDragEnter(idx) {
+    if (dragSrc.current === idx) return;
+    setDragOver(idx);
+  }
+  function onDragEnd() {
+    setDragOver(null);
+  }
+  async function onDrop(destIdx) {
+    setDragOver(null);
+    const srcIdx = dragSrc.current;
+    if (srcIdx === null || srcIdx === destIdx) return;
+    const nueva = [...productos];
+    const [movido] = nueva.splice(srcIdx, 1);
+    nueva.splice(destIdx, 0, movido);
+    setProductos(nueva);
+    dragSrc.current = null;
+    await api.patch('/productos/reordenar', { items: nueva.map((p, i) => ({ id: p.id, orden: i })) });
+  }
 
   function abrirNuevo() {
     setForm({ ...FORM_VACIO, categoria: catFiltro });
@@ -161,9 +185,31 @@ export default function Productos() {
         ))}
       </div>
 
+      <p style={{ fontSize: 12, color: 'var(--texto-suave)', marginBottom: 12 }}>
+        Arrastrá las cards para cambiar el orden en el que aparecen en el sitio.
+      </p>
+
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16 }}>
-        {productos.map(p => (
-          <div key={p.id} style={{ background: '#fff', borderRadius: 16, overflow: 'hidden', border: '1px solid var(--crema-oscuro)', opacity: p.activo ? 1 : 0.5 }}>
+        {productos.map((p, idx) => (
+          <div key={p.id}
+            draggable
+            onDragStart={() => onDragStart(idx)}
+            onDragEnter={() => onDragEnter(idx)}
+            onDragOver={e => e.preventDefault()}
+            onDragEnd={onDragEnd}
+            onDrop={() => onDrop(idx)}
+            style={{
+              background: '#fff', borderRadius: 16, overflow: 'hidden',
+              border: dragOver === idx ? '2px solid var(--bordeaux)' : '1px solid var(--crema-oscuro)',
+              opacity: p.activo ? 1 : 0.5,
+              transform: dragOver === idx ? 'scale(1.02)' : 'scale(1)',
+              transition: 'transform 0.15s, border 0.15s',
+              cursor: 'grab',
+            }}>
+            {/* Handle de arrastre */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '6px 0 2px', color: 'var(--crema-oscuro)', fontSize: 16, letterSpacing: 3, userSelect: 'none' }}>
+              ⠿
+            </div>
             <div style={{ aspectRatio: '3/4', background: 'var(--crema-oscuro)', overflow: 'hidden', position: 'relative' }}>
               {(p.imagen || p.imagenes?.[0]?.url)
                 ? <img src={p.imagen || p.imagenes[0].url} alt={p.nombre} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: p.imagenes?.[0]?.posicion || '50% 50%' }} />
@@ -173,13 +219,13 @@ export default function Productos() {
                 <div style={{ position: 'absolute', top: 8, right: 8, background: 'rgba(0,0,0,0.5)', color: '#fff', fontSize: 10, padding: '3px 8px', borderRadius: 50 }}>Oculto</div>
               )}
             </div>
-            <div style={{ padding: '12px 14px' }}>
+            <div style={{ padding: '10px 14px 14px' }}>
               <p style={{ fontFamily: 'var(--serif)', color: 'var(--bordeaux)', fontSize: 15, marginBottom: 2, lineHeight: 1.3 }} className="line-clamp-2">{p.nombre}</p>
               {p.descripcion && <p style={{ fontSize: 11, color: 'var(--texto-suave)', marginBottom: 6 }} className="line-clamp-2">{p.descripcion}</p>}
               <p style={{ fontSize: 16, fontWeight: 600, color: 'var(--texto)', marginBottom: 10 }}>${parseFloat(p.precio).toLocaleString('es-AR')}</p>
               <div style={{ display: 'flex', gap: 6 }}>
-                <button onClick={() => abrirEditar(p)} style={{ flex: 1, padding: '7px 0', borderRadius: 8, border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', fontSize: 12, cursor: 'pointer' }}>Editar</button>
-                <button onClick={() => toggleActivo(p)} style={{ flex: 1, padding: '7px 0', borderRadius: 8, border: 'none', background: p.activo ? 'var(--crema-oscuro)' : 'var(--bordeaux)', color: p.activo ? 'var(--texto-suave)' : '#FAF7F2', fontSize: 12, cursor: 'pointer' }}>
+                <button onClick={e => { e.stopPropagation(); abrirEditar(p); }} style={{ flex: 1, padding: '7px 0', borderRadius: 8, border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', fontSize: 12, cursor: 'pointer' }}>Editar</button>
+                <button onClick={e => { e.stopPropagation(); toggleActivo(p); }} style={{ flex: 1, padding: '7px 0', borderRadius: 8, border: 'none', background: p.activo ? 'var(--crema-oscuro)' : 'var(--bordeaux)', color: p.activo ? 'var(--texto-suave)' : '#FAF7F2', fontSize: 12, cursor: 'pointer' }}>
                   {p.activo ? 'Ocultar' : 'Mostrar'}
                 </button>
               </div>
