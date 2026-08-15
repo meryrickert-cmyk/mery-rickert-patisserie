@@ -61,11 +61,7 @@ function HeroSection({ imagenes, config, onScroll }) {
   return (
     <section style={{ position: 'relative', minHeight: '62vh', maxHeight: '75vh', height: '70vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#e8ddd4' }}>
       <div style={{ position: 'absolute', inset: 0 }}>
-        {imagenes.length === 0 ? (
-          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #e8ddd4, #c9b5a8)' }}>
-            <span style={{ fontSize: 140, opacity: 0.12 }}>🧁</span>
-          </div>
-        ) : imagenes.map((img, i) => !visibles.has(i) ? null : (
+        {imagenes.map((img, i) => !visibles.has(i) ? null : (
           <div key={img.id} style={{ position: 'absolute', inset: 0, opacity: i === idx ? 1 : 0, transition: 'opacity 1.2s ease-in-out' }}>
             <img src={img.url} alt="" fetchPriority={i === 0 ? 'high' : 'low'} loading={i === 0 ? 'eager' : 'lazy'} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           </div>
