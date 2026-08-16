@@ -8,7 +8,7 @@ export default function Insumos() {
   const [tab, setTab] = useState('insumos');
 
   return (
-    <div style={{ padding: '32px 32px 80px', maxWidth: 1100, margin: '0 auto' }}>
+    <div className="admin-page" style={{ maxWidth: 1100, margin: '0 auto', paddingBottom: 80 }}>
       <h1 style={{ fontFamily: 'var(--serif)', fontSize: 28, fontWeight: 400, color: 'var(--texto)', marginBottom: 6 }}>
         Insumos & Costos
       </h1>

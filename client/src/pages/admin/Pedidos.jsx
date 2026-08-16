@@ -48,7 +48,7 @@ export default function Pedidos() {
   });
 
   return (
-    <div style={{ padding: '36px 32px', maxWidth: 900 }}>
+    <div className="admin-page" style={{ maxWidth: 900 }}>
       {/* Encabezado */}
       <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 28, flexWrap: 'wrap', gap: 12 }}>
         <div>

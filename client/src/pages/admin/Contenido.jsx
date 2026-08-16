@@ -129,7 +129,7 @@ export default function Contenido() {
   }
 
   return (
-    <div style={{ padding: '36px 32px', maxWidth: 720 }}>
+    <div className="admin-page" style={{ maxWidth: 720 }}>
       <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 300, fontSize: 32, color: 'var(--texto)', margin: '0 0 4px' }}>
         Contenido del sitio
       </h2>

@@ -95,6 +95,102 @@ body {
   }
 }
 
+/* ── Admin layout ─────────────────────────────────────────── */
+.admin-shell {
+  min-height: 100svh;
+  display: flex;
+  background: var(--crema);
+  font-family: var(--sans);
+}
+
+/* Sidebar — visible en desktop */
+.admin-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: #fff;
+  border-right: 1px solid var(--crema-oscuro);
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  position: sticky;
+  top: 0;
+  height: 100svh;
+}
+
+/* Contenido principal */
+.admin-main {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 100svh;
+  min-width: 0;
+}
+
+/* Top bar — solo en mobile */
+.admin-topbar {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--crema-oscuro);
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* Bottom nav — solo en mobile */
+.admin-bottomnav {
+  display: none;
+}
+
+/* Padding de páginas admin */
+.admin-page {
+  padding: 36px 32px;
+  max-width: 1000px;
+}
+
+@media (max-width: 640px) {
+  .admin-sidebar { display: none; }
+
+  .admin-main {
+    padding-bottom: 68px; /* espacio para bottom nav */
+  }
+
+  .admin-topbar {
+    display: flex;
+  }
+
+  .admin-bottomnav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-top: 1px solid var(--crema-oscuro);
+    z-index: 100;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .admin-page {
+    padding: 20px 16px;
+  }
+
+  /* Grilla admin de productos: 2 columnas en mobile */
+  .admin-page .admin-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  /* Filtros de categoría: scroll horizontal sin wrap */
+  .admin-cat-filters {
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .admin-cat-filters button { flex-shrink: 0; }
+}
+
 /* Line clamp */
 .line-clamp-2 {
   display: -webkit-box;

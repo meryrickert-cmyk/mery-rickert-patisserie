@@ -1,4 +1,4 @@
-import { NavLink, useNavigate, Outlet } from 'react-router-dom';
+import { NavLink, useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 
 const links = [
@@ -6,11 +6,12 @@ const links = [
   { to: '/admin/pedidos',   icon: '📦', label: 'Pedidos' },
   { to: '/admin/productos', icon: '🧁', label: 'Productos' },
   { to: '/admin/contenido', icon: '✏️', label: 'Contenido' },
-  { to: '/admin/insumos',  icon: '🧾', label: 'Insumos & Costos' },
+  { to: '/admin/insumos',  icon: '🧾', label: 'Insumos' },
 ];
 
 export default function AdminLayout() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const token = localStorage.getItem('mr_token');
@@ -21,16 +22,12 @@ export default function AdminLayout() {
     } catch { navigate('/admin/login'); }
   }, []);
 
+  const currentLabel = links.find(l => location.pathname.startsWith(l.to))?.label ?? 'Admin';
+
   return (
-    <div style={{ minHeight: '100svh', display: 'flex', background: 'var(--crema)', fontFamily: 'var(--sans)' }}>
-      {/* Sidebar */}
-      <aside style={{
-        width: 220, flexShrink: 0, background: '#fff',
-        borderRight: '1px solid var(--crema-oscuro)',
-        display: 'flex', flexDirection: 'column', minHeight: '100svh',
-        position: 'sticky', top: 0, height: '100svh',
-      }}>
-        {/* Logo */}
+    <div className="admin-shell">
+      {/* ── Sidebar desktop ── */}
+      <aside className="admin-sidebar">
         <div style={{ padding: '24px 20px 20px', borderBottom: '1px solid var(--crema-oscuro)' }}>
           <p style={{ fontFamily: 'var(--serif)', color: 'var(--bordeaux)', fontSize: 18, fontWeight: 400, margin: 0 }}>
             Mery Rickert
@@ -40,7 +37,6 @@ export default function AdminLayout() {
           </p>
         </div>
 
-        {/* Nav */}
         <nav style={{ flex: 1, padding: '16px 12px', display: 'flex', flexDirection: 'column', gap: 2 }}>
           {links.map(l => (
             <NavLink key={l.to} to={l.to} style={({ isActive }) => ({
@@ -57,9 +53,8 @@ export default function AdminLayout() {
           ))}
         </nav>
 
-        {/* Footer sidebar */}
         <div style={{ padding: '16px 12px 20px', borderTop: '1px solid var(--crema-oscuro)' }}>
-          <button onClick={() => { window.open('/', '_blank'); }} style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '9px 14px', borderRadius: 10, border: 'none', background: 'transparent', color: 'var(--texto-suave)', fontSize: 13, cursor: 'pointer', marginBottom: 4 }}>
+          <button onClick={() => window.open('/', '_blank')} style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '9px 14px', borderRadius: 10, border: 'none', background: 'transparent', color: 'var(--texto-suave)', fontSize: 13, cursor: 'pointer', marginBottom: 4 }}>
             🌐 Ver sitio
           </button>
           <button onClick={() => { localStorage.removeItem('mr_token'); navigate('/'); }} style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '9px 14px', borderRadius: 10, border: 'none', background: 'transparent', color: 'var(--texto-suave)', fontSize: 13, cursor: 'pointer' }}>
@@ -68,23 +63,36 @@ export default function AdminLayout() {
         </div>
       </aside>
 
-      {/* Contenido */}
-      <main style={{ flex: 1, overflowY: 'auto', minHeight: '100svh' }}>
-        {/* Barra top con "Ver sitio" */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '12px 24px', borderBottom: '1px solid var(--crema-oscuro)', background: '#fff', position: 'sticky', top: 0, zIndex: 10 }}>
+      {/* ── Contenido ── */}
+      <main className="admin-main">
+        {/* Top bar mobile */}
+        <div className="admin-topbar">
+          <span style={{ fontFamily: 'var(--serif)', color: 'var(--bordeaux)', fontSize: 16 }}>
+            {currentLabel}
+          </span>
           <a href="/" target="_blank" rel="noreferrer" style={{
-            display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px',
+            display: 'flex', alignItems: 'center', gap: 6, padding: '7px 14px',
             borderRadius: 20, border: '1.5px solid var(--crema-oscuro)',
             color: 'var(--texto-suave)', fontSize: 12, textDecoration: 'none',
-            fontFamily: 'var(--sans)', transition: 'all 0.15s',
-          }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--bordeaux)'; e.currentTarget.style.color = 'var(--bordeaux)'; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--crema-oscuro)'; e.currentTarget.style.color = 'var(--texto-suave)'; }}>
+          }}>
             🌐 Ver sitio
           </a>
         </div>
         <Outlet />
       </main>
+
+      {/* ── Bottom nav mobile ── */}
+      <nav className="admin-bottomnav">
+        {links.map(l => {
+          const isActive = location.pathname.startsWith(l.to);
+          return (
+            <NavLink key={l.to} to={l.to} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, textDecoration: 'none', flex: 1, padding: '8px 4px 6px', color: isActive ? 'var(--bordeaux)' : 'var(--texto-suave)' }}>
+              <span style={{ fontSize: 20 }}>{l.icon}</span>
+              <span style={{ fontSize: 10, fontWeight: isActive ? 600 : 400, letterSpacing: '0.02em' }}>{l.label}</span>
+            </NavLink>
+          );
+        })}
+      </nav>
     </div>
   );
 }

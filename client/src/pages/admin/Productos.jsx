@@ -165,7 +165,7 @@ export default function Productos() {
   }
 
   return (
-    <div style={{ padding: '36px 32px', maxWidth: 1000 }}>
+    <div className="admin-page">
       <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 28, gap: 12, flexWrap: 'wrap' }}>
         <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 300, fontSize: 32, color: 'var(--texto)', margin: 0 }}>Productos</h2>
         <button onClick={abrirNuevo} style={{ padding: '10px 20px', borderRadius: 10, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 13, cursor: 'pointer', fontFamily: 'var(--sans)' }}>
@@ -173,7 +173,7 @@ export default function Productos() {
         </button>
       </div>
 
-      <div style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
+      <div className="admin-cat-filters" style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
         {CATS.map(c => (
           <button key={c} onClick={() => setCatFiltro(c)} style={{
             padding: '8px 18px', borderRadius: 50, fontSize: 13, cursor: 'pointer',
@@ -189,7 +189,7 @@ export default function Productos() {
         Arrastrá las cards para cambiar el orden en el que aparecen en el sitio.
       </p>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16 }}>
+      <div className="admin-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16 }}>
         {productos.map((p, idx) => (
           <div key={p.id}
             draggable

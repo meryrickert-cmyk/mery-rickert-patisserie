@@ -29,7 +29,7 @@ export default function Dashboard() {
   const grafData = data.mesMes.map(m => ({ mes: formatMes(m.mes), ventas: m.ventas, pedidos: m.pedidos }));
 
   return (
-    <div style={{ padding: '36px 32px', maxWidth: 1000 }}>
+    <div className="admin-page">
       {/* Título */}
       <div style={{ marginBottom: 32 }}>
         <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 300, fontSize: 32, color: 'var(--texto)', margin: 0 }}>Dashboard</h2>
