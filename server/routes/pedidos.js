@@ -2,6 +2,27 @@ import { Router } from 'express';
 import db from '../db.js';
 import { authAdmin } from '../middleware/auth.js';
 
+// Calcula el costo unitario actual de un producto según su receta
+function costoUnitario(producto_id) {
+  if (!producto_id) return null;
+  const receta = db.prepare(
+    `SELECT id, rendimiento FROM recetas WHERE producto_id = ? AND activo = 1 LIMIT 1`
+  ).get(producto_id);
+  if (!receta || !receta.rendimiento) return null;
+  const ings = db.prepare(
+    `SELECT ri.cantidad, i.unidad, i.costo
+     FROM receta_ingredientes ri JOIN insumos i ON i.id = ri.insumo_id
+     WHERE ri.receta_id = ?`
+  ).all(receta.id);
+  let total = 0;
+  for (const ing of ings) {
+    total += (ing.unidad === 'kg' || ing.unidad === 'L')
+      ? (ing.cantidad / 1000) * ing.costo
+      : ing.cantidad * ing.costo;
+  }
+  return receta.rendimiento > 0 ? total / receta.rendimiento : null;
+}
+
 const router = Router();
 
 // POST público — pedido desde la web
@@ -73,8 +94,8 @@ router.post('/manual', authAdmin, (req, res) => {
 
     for (const item of items) {
       db.prepare(
-        'INSERT INTO pedido_items (pedido_id, nombre_producto, precio_unitario, cantidad) VALUES (?, ?, ?, ?)'
-      ).run(pedido.lastInsertRowid, item.nombre_producto, parseFloat(item.precio_unitario), parseInt(item.cantidad));
+        'INSERT INTO pedido_items (pedido_id, nombre_producto, precio_unitario, cantidad, producto_id, costo_unitario) VALUES (?, ?, ?, ?, ?, ?)'
+      ).run(pedido.lastInsertRowid, item.nombre_producto, parseFloat(item.precio_unitario), parseInt(item.cantidad), item.producto_id || null, costoUnitario(item.producto_id));
     }
 
     db.exec('COMMIT');
@@ -133,9 +154,13 @@ router.put('/:id', authAdmin, (req, res) => {
 
     db.prepare('DELETE FROM pedido_items WHERE pedido_id = ?').run(req.params.id);
     for (const item of items) {
+      // Solo recalcular costo si el ítem tiene producto_id (fue seleccionado del catálogo)
+      const costo = item.costo_unitario !== undefined
+        ? item.costo_unitario  // mantener el snapshot existente si viene del frontend
+        : costoUnitario(item.producto_id);
       db.prepare(
-        'INSERT INTO pedido_items (pedido_id, nombre_producto, precio_unitario, cantidad) VALUES (?, ?, ?, ?)'
-      ).run(req.params.id, item.nombre_producto, parseFloat(item.precio_unitario), parseInt(item.cantidad));
+        'INSERT INTO pedido_items (pedido_id, nombre_producto, precio_unitario, cantidad, producto_id, costo_unitario) VALUES (?, ?, ?, ?, ?, ?)'
+      ).run(req.params.id, item.nombre_producto, parseFloat(item.precio_unitario), parseInt(item.cantidad), item.producto_id || null, costo);
     }
 
     db.exec('COMMIT');

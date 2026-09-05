@@ -18,7 +18,7 @@ function labelMes(ym) {
   return `${MESES_LABEL[parseInt(m)-1]} ${y}`;
 }
 
-const ITEM_VACIO = { nombre_producto: '', cantidad: 1, precio_unitario: '' };
+const ITEM_VACIO = { nombre_producto: '', cantidad: 1, precio_unitario: '', producto_id: null, costo_unitario: null };
 
 /* ── Autocomplete genérico ── */
 function Autocomplete({ value, onChange, onSelect, opciones, precios, placeholder, extraOption }) {
@@ -302,10 +302,14 @@ function ModalNuevoPedido({ onClose, onGuardado }) {
               <div key={idx} style={{ display: 'grid', gridTemplateColumns: '1fr 60px 100px 28px', gap: 8, alignItems: 'center' }}>
                 <Autocomplete
                   value={item.nombre_producto}
-                  onChange={val => setItem(idx, 'nombre_producto', val)}
+                  onChange={val => setItemMulti(idx, { nombre_producto: val, producto_id: null })}
                   onSelect={nombre => {
-                    const precio = precioDeProducto(nombre);
-                    setItemMulti(idx, { nombre_producto: nombre, ...(precio ? { precio_unitario: precio } : {}) });
+                    const prod = productosData.find(p => p.nombre === nombre);
+                    setItemMulti(idx, {
+                      nombre_producto: nombre,
+                      ...(prod?.precio ? { precio_unitario: prod.precio } : {}),
+                      producto_id: prod?.id || null,
+                    });
                   }}
                   opciones={nombresProductos}
                   precios={preciosMap}
@@ -354,7 +358,7 @@ function ModalNuevoPedido({ onClose, onGuardado }) {
 function ModalEditarPedido({ pedido, onClose, onGuardado }) {
   const [cliente, setCliente] = useState(pedido.nombre_cliente || '');
   const [items, setItems] = useState(
-    pedido.items?.map(i => ({ nombre_producto: i.nombre_producto, cantidad: i.cantidad, precio_unitario: i.precio_unitario })) || [{ ...ITEM_VACIO }]
+    pedido.items?.map(i => ({ nombre_producto: i.nombre_producto, cantidad: i.cantidad, precio_unitario: i.precio_unitario, producto_id: i.producto_id || null, costo_unitario: i.costo_unitario ?? null })) || [{ ...ITEM_VACIO }]
   );
   const [nota, setNota] = useState(pedido.nota || '');
   const [fecha, setFecha] = useState(pedido.creado_en?.slice(0, 10) || new Date().toISOString().slice(0, 10));
@@ -414,10 +418,14 @@ function ModalEditarPedido({ pedido, onClose, onGuardado }) {
               <div key={idx} style={{ display: 'grid', gridTemplateColumns: '1fr 60px 100px 28px', gap: 8, alignItems: 'center' }}>
                 <Autocomplete
                   value={item.nombre_producto}
-                  onChange={val => setItem(idx, 'nombre_producto', val)}
+                  onChange={val => setItemMulti(idx, { nombre_producto: val, producto_id: null })}
                   onSelect={nombre => {
-                    const precio = precioDeProducto(nombre);
-                    setItemMulti(idx, { nombre_producto: nombre, ...(precio ? { precio_unitario: precio } : {}) });
+                    const prod = productosData.find(p => p.nombre === nombre);
+                    setItemMulti(idx, {
+                      nombre_producto: nombre,
+                      ...(prod?.precio ? { precio_unitario: prod.precio } : {}),
+                      producto_id: prod?.id || null,
+                    });
                   }}
                   opciones={nombresProductos}
                   precios={preciosMap}

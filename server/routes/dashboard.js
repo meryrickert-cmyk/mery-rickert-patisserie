@@ -34,13 +34,20 @@ router.get('/', authAdmin, (req, res) => {
   const hastaAnt = new Date(msDesde - 86400000).toISOString().slice(0, 10);
 
   const kpiActual = db.prepare(`
-    SELECT COUNT(*) as pedidos, COALESCE(SUM(total), 0) as ventas
-    FROM pedidos WHERE date(creado_en) BETWEEN ? AND ? AND estado != 'cancelado'
+    SELECT
+      COUNT(DISTINCT p.id) as pedidos,
+      COALESCE(SUM(p.total), 0) as ventas,
+      COALESCE(SUM(pi.cantidad * pi.precio_unitario), 0) as ventas_items,
+      COALESCE(SUM(CASE WHEN pi.costo_unitario IS NOT NULL THEN pi.cantidad * pi.costo_unitario ELSE NULL END), 0) as costo_total,
+      COUNT(CASE WHEN pi.costo_unitario IS NOT NULL THEN 1 END) as items_con_costo
+    FROM pedidos p
+    LEFT JOIN pedido_items pi ON pi.pedido_id = p.id
+    WHERE date(p.creado_en) BETWEEN ? AND ? AND p.estado != 'cancelado'
   `).get(desde, hasta);
 
   const kpiPasado = db.prepare(`
-    SELECT COUNT(*) as pedidos, COALESCE(SUM(total), 0) as ventas
-    FROM pedidos WHERE date(creado_en) BETWEEN ? AND ? AND estado != 'cancelado'
+    SELECT COUNT(DISTINCT p.id) as pedidos, COALESCE(SUM(p.total), 0) as ventas
+    FROM pedidos p WHERE date(p.creado_en) BETWEEN ? AND ? AND p.estado != 'cancelado'
   `).get(desdeAnt, hastaAnt);
 
   const itemsVendidos = db.prepare(`
@@ -100,9 +107,19 @@ router.get('/', authAdmin, (req, res) => {
     p.items = db.prepare('SELECT * FROM pedido_items WHERE pedido_id = ?').all(p.id);
   }
 
+  // Ganancia y margen solo sobre ítems con costo cargado
+  const ganancia = kpiActual.costo_total > 0
+    ? kpiActual.ventas_items - kpiActual.costo_total
+    : null;
+  const margen_pct = (ganancia !== null && kpiActual.ventas_items > 0)
+    ? Math.round((ganancia / kpiActual.ventas_items) * 100)
+    : null;
+
   res.json({
     desde, hasta,
     kpiActual, kpiPasado,
+    ganancia, margen_pct,
+    items_con_costo: kpiActual.items_con_costo,
     itemsVendidos: itemsVendidos.total,
     porCategoria,
     mesMes, topProductos, topCompradores, ultimosPedidos,

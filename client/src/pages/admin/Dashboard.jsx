@@ -136,6 +136,18 @@ export default function Dashboard() {
           valor={data.kpiActual.pedidos ? `$${Math.round(data.kpiActual.ventas / data.kpiActual.pedidos).toLocaleString('es-AR')}` : '—'}
         />
         <KpiCard label="Unidades vendidas" valor={data.itemsVendidos ?? 0} sub="Ítems en pedidos" />
+        <KpiCard
+          label="Ganancia estimada"
+          valor={data.ganancia !== null ? `$${Math.round(data.ganancia).toLocaleString('es-AR')}` : '—'}
+          sub={data.ganancia !== null ? `${data.items_con_costo} ítems con costo cargado` : 'Cargá recetas para calcular'}
+          color={data.ganancia > 0 ? '#2d7a3a' : data.ganancia !== null ? '#c0392b' : undefined}
+        />
+        <KpiCard
+          label="Margen"
+          valor={data.margen_pct !== null ? `${data.margen_pct}%` : '—'}
+          sub={data.margen_pct !== null ? 'Sobre ítems con receta' : 'Sin datos de costo aún'}
+          color={data.margen_pct > 30 ? '#2d7a3a' : data.margen_pct !== null ? '#c0392b' : undefined}
+        />
       </div>
 
       {/* Gráfico de barras */}

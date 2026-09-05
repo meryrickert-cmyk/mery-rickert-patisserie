@@ -305,6 +305,9 @@ db.exec(`
 try { db.exec(`CREATE INDEX IF NOT EXISTS idx_analytics_event ON analytics_events(event, creado_en)`); } catch {}
 try { db.exec(`CREATE INDEX IF NOT EXISTS idx_analytics_session ON analytics_events(session_id)`); } catch {}
 
+// Costo snapshot por ítem (congelado al momento del pedido)
+try { db.exec(`ALTER TABLE pedido_items ADD COLUMN costo_unitario REAL DEFAULT NULL`); } catch {}
+
 // Seed de recetas (solo corre una vez, ver seeds/recetas.js)
 seedRecetas(db);
 
