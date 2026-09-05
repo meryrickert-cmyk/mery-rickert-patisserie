@@ -88,13 +88,14 @@ function Autocomplete({ value, onChange, onSelect, opciones, precios, placeholde
 /* ══════════════════════════════════════════════════════════ */
 export default function Pedidos() {
   const [pedidos, setPedidos] = useState([]);
-  const [mesFiltro, setMesFiltro] = useState(getMesActual());
+  const [mesFiltro, setMesFiltro] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [detalle, setDetalle] = useState(null);
   const [editando, setEditando] = useState(null);
 
   function cargar() {
-    api.get(`/pedidos?mes=${mesFiltro}`).then(r => setPedidos(r.data));
+    const url = mesFiltro ? `/pedidos?mes=${mesFiltro}` : '/pedidos';
+    api.get(url).then(r => setPedidos(r.data));
   }
   useEffect(cargar, [mesFiltro]);
 
@@ -116,32 +117,41 @@ export default function Pedidos() {
   return (
     <div className="admin-page" style={{ maxWidth: 900 }}>
       {/* Encabezado */}
-      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 28, flexWrap: 'wrap', gap: 12 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
         <div>
           <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 300, fontSize: 32, color: 'var(--texto)', margin: 0 }}>Pedidos</h2>
           <p style={{ color: 'var(--texto-suave)', fontSize: 13, marginTop: 4 }}>
             {pedidos.length} pedido{pedidos.length !== 1 ? 's' : ''} · Total: <strong style={{ color: 'var(--bordeaux)' }}>${totalMes.toLocaleString('es-AR')}</strong>
           </p>
         </div>
-        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-          {/* Filtro de mes */}
-          <select value={mesFiltro} onChange={e => setMesFiltro(e.target.value)} style={{
-            padding: '9px 14px', borderRadius: 10, border: '1.5px solid var(--crema-oscuro)',
-            fontSize: 13, color: 'var(--texto)', background: '#fff', cursor: 'pointer', outline: 'none',
-          }}>
-            {mesesOpciones.map(m => (
-              <option key={m} value={m}>{labelMes(m)}</option>
-            ))}
-          </select>
-          <Btn onClick={() => setModalOpen(true)}>+ Cargar pedido</Btn>
-        </div>
+        <Btn onClick={() => setModalOpen(true)}>+ Cargar pedido</Btn>
+      </div>
+
+      {/* Filtro de mes — pills */}
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 20 }}>
+        <button onClick={() => setMesFiltro('')} style={{
+          padding: '5px 14px', borderRadius: 20, fontSize: 12, cursor: 'pointer',
+          border: mesFiltro === '' ? '1.5px solid var(--bordeaux)' : '1.5px solid var(--crema-oscuro)',
+          background: mesFiltro === '' ? 'var(--bordeaux)' : '#fff',
+          color: mesFiltro === '' ? '#FAF7F2' : 'var(--texto-suave)',
+          fontFamily: 'var(--sans)', transition: 'all 0.15s',
+        }}>Todos</button>
+        {mesesOpciones.map(m => (
+          <button key={m} onClick={() => setMesFiltro(m)} style={{
+            padding: '5px 14px', borderRadius: 20, fontSize: 12, cursor: 'pointer',
+            border: mesFiltro === m ? '1.5px solid var(--bordeaux)' : '1.5px solid var(--crema-oscuro)',
+            background: mesFiltro === m ? 'var(--bordeaux)' : '#fff',
+            color: mesFiltro === m ? '#FAF7F2' : 'var(--texto-suave)',
+            fontFamily: 'var(--sans)', transition: 'all 0.15s',
+          }}>{labelMes(m)}</button>
+        ))}
       </div>
 
       {/* Lista */}
       {pedidos.length === 0 ? (
         <div style={{ background: '#fff', borderRadius: 16, border: '1px solid var(--crema-oscuro)', padding: '48px 24px', textAlign: 'center' }}>
           <p style={{ fontFamily: 'var(--serif)', fontStyle: 'italic', color: 'var(--texto-suave)', fontSize: 18 }}>
-            Sin pedidos en {labelMes(mesFiltro)}
+            Sin pedidos{mesFiltro ? ` en ${labelMes(mesFiltro)}` : ''}
           </p>
         </div>
       ) : (
