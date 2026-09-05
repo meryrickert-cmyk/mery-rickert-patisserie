@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import api from '../../api/index.js';
 
 function fmt(n) { return (n || 0).toLocaleString('es-AR'); }
@@ -8,42 +8,95 @@ function fmtMin(secs) {
   return `${Math.floor(secs / 60)}m ${secs % 60}s`;
 }
 
-const labelStyle = { fontSize: 12, color: 'var(--texto-suave)', marginBottom: 4, display: 'block' };
+function periodos() {
+  const ahora = new Date();
+  const y = ahora.getFullYear();
+  const m = ahora.getMonth();
+  const esteDesde = `${y}-${String(m + 1).padStart(2, '0')}-01`;
+  const esteHasta = `${y}-${String(m + 1).padStart(2, '0')}-31`;
+  const pasadoD = new Date(y, m - 1, 1);
+  const pasadoH = new Date(y, m - 1, 31);
+  return {
+    '7d':       { label: '7 días',     dias: 7 },
+    '30d':      { label: '30 días',    dias: 30 },
+    '90d':      { label: '90 días',    dias: 90 },
+    este_mes:   { label: 'Este mes',   desde: esteDesde, hasta: esteHasta },
+    mes_pasado: { label: 'Mes pasado', desde: pasadoD.toISOString().slice(0,10), hasta: pasadoH.toISOString().slice(0,10) },
+    este_anio:  { label: 'Este año',   desde: `${y}-01-01`, hasta: `${y}-12-31` },
+  };
+}
+
+const pillStyle = (activo) => ({
+  padding: '6px 16px', borderRadius: 20, fontSize: 13, cursor: 'pointer',
+  border: activo ? '1.5px solid var(--bordeaux)' : '1.5px solid var(--crema-oscuro)',
+  background: activo ? 'var(--bordeaux)' : '#fff',
+  color: activo ? '#FAF7F2' : 'var(--texto-suave)',
+  fontFamily: 'var(--sans)', transition: 'all 0.15s',
+});
 
 export default function Analytics() {
   const [data, setData] = useState(null);
-  const [dias, setDias] = useState(30);
+  const [periodo, setPeriodo] = useState('30d');
+  const [customDesde, setCustomDesde] = useState('');
+  const [customHasta, setCustomHasta] = useState('');
+  const [showCustom, setShowCustom] = useState(false);
 
-  function cargar(d) {
-    api.get(`/analytics/summary?dias=${d}`).then(r => setData(r.data));
-  }
-  useEffect(() => { cargar(dias); }, [dias]);
+  const cargar = useCallback(() => {
+    const ps = periodos();
+    const p = ps[periodo];
+    let url;
+    if (periodo === 'custom' && customDesde && customHasta) {
+      url = `/analytics/summary?desde=${customDesde}&hasta=${customHasta}`;
+    } else if (p?.dias) {
+      url = `/analytics/summary?dias=${p.dias}`;
+    } else if (p?.desde) {
+      url = `/analytics/summary?desde=${p.desde}&hasta=${p.hasta}`;
+    } else {
+      url = '/analytics/summary?dias=30';
+    }
+    api.get(url).then(r => setData(r.data));
+  }, [periodo, customDesde, customHasta]);
+
+  useEffect(() => { cargar(); }, [cargar]);
+
+  const setPeriodoPreset = (p) => { setPeriodo(p); setShowCustom(false); };
+  const toggleCustom = () => { setShowCustom(v => !v); if (!showCustom) setPeriodo('custom'); };
 
   if (!data) return <div className="admin-page" style={{ maxWidth: 900 }}><p style={{ color: 'var(--texto-suave)' }}>Cargando...</p></div>;
 
   const { funnel } = data;
   const convCart = funnel.page_view ? Math.round((funnel.add_to_cart / funnel.page_view) * 100) : 0;
   const convWsp = funnel.add_to_cart ? Math.round((funnel.whatsapp_send / funnel.add_to_cart) * 100) : 0;
+  const ps = periodos();
 
   return (
     <div className="admin-page" style={{ maxWidth: 900 }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 32, flexWrap: 'wrap', gap: 12 }}>
-        <div>
-          <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 300, fontSize: 32, color: 'var(--texto)', margin: 0 }}>Analytics</h2>
-          <p style={{ color: 'var(--texto-suave)', fontSize: 13, marginTop: 4 }}>Tráfico y comportamiento del sitio</p>
-        </div>
-        <div style={{ display: 'flex', gap: 6 }}>
-          {[7, 30, 90].map(d => (
-            <button key={d} onClick={() => setDias(d)} style={{
-              padding: '8px 16px', borderRadius: 20, border: '1.5px solid var(--crema-oscuro)',
-              background: dias === d ? 'var(--bordeaux)' : '#fff',
-              color: dias === d ? '#FAF7F2' : 'var(--texto-suave)',
-              fontSize: 13, cursor: 'pointer', fontFamily: 'var(--sans)',
-            }}>
-              {d === 7 ? '7 días' : d === 30 ? '30 días' : '90 días'}
+      <div style={{ marginBottom: 24 }}>
+        <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 300, fontSize: 32, color: 'var(--texto)', margin: 0 }}>Analytics</h2>
+        <p style={{ color: 'var(--texto-suave)', fontSize: 13, marginTop: 4 }}>Tráfico y comportamiento del sitio público</p>
+
+        {/* Period selector */}
+        <div style={{ marginTop: 14, display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
+          {Object.entries(ps).map(([key, val]) => (
+            <button key={key} onClick={() => setPeriodoPreset(key)} style={pillStyle(periodo === key)}>
+              {val.label}
             </button>
           ))}
+          <button onClick={toggleCustom} style={pillStyle(periodo === 'custom')}>Personalizado</button>
+
+          {showCustom && (
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+              <input type="date" value={customDesde} onChange={e => setCustomDesde(e.target.value)}
+                style={{ padding: '5px 10px', borderRadius: 8, border: '1.5px solid var(--crema-oscuro)', fontSize: 13, color: 'var(--texto)', outline: 'none' }} />
+              <span style={{ fontSize: 12, color: 'var(--texto-suave)' }}>→</span>
+              <input type="date" value={customHasta} onChange={e => setCustomHasta(e.target.value)}
+                style={{ padding: '5px 10px', borderRadius: 8, border: '1.5px solid var(--crema-oscuro)', fontSize: 13, color: 'var(--texto)', outline: 'none' }} />
+              {customDesde && customHasta && (
+                <button onClick={cargar} style={{ padding: '5px 14px', borderRadius: 8, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 13, cursor: 'pointer' }}>Aplicar</button>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -102,7 +155,7 @@ export default function Analytics() {
               </tr>
             ))}
             {data.eventos.length === 0 && (
-              <tr><td colSpan={3} style={{ padding: '32px', textAlign: 'center', color: 'var(--texto-suave)', fontStyle: 'italic' }}>Sin datos aún — los eventos aparecen en cuanto haya visitas al sitio</td></tr>
+              <tr><td colSpan={3} style={{ padding: '32px', textAlign: 'center', color: 'var(--texto-suave)', fontStyle: 'italic' }}>Sin datos aún</td></tr>
             )}
           </tbody>
         </table>

@@ -10,7 +10,12 @@ function getSessionId() {
 
 const SESSION_START = Date.now();
 
+function esAdmin() {
+  return window.location.pathname.startsWith('/admin');
+}
+
 export function track(event, meta = {}) {
+  if (esAdmin()) return; // no trackear sesiones del panel admin
   const payload = {
     session_id: getSessionId(),
     event,
@@ -19,7 +24,6 @@ export function track(event, meta = {}) {
     ua: navigator.userAgent,
     path: window.location.pathname,
   };
-  // fire-and-forget
   fetch('/api/analytics/event', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -28,13 +32,12 @@ export function track(event, meta = {}) {
   }).catch(() => {});
 }
 
-// Tiempo en página — llama al salir
 export function trackExit() {
+  if (esAdmin()) return;
   const seconds = Math.round((Date.now() - SESSION_START) / 1000);
   track('time_on_page', { seconds });
 }
 
-// Registrar trackExit automáticamente
 if (typeof window !== 'undefined') {
   window.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') trackExit();
