@@ -1,3 +1,6 @@
+import { track } from '../utils/analytics.js';
+import { fbTrack } from '../utils/pixel.js';
+
 export default function WhatsAppButton() {
   return (
     <a
@@ -5,6 +8,7 @@ export default function WhatsAppButton() {
       target="_blank"
       rel="noreferrer"
       title="Escribinos por WhatsApp"
+      onClick={() => { track('whatsapp_bubble'); fbTrack('Contact'); }}
       className="fixed bottom-6 right-5 z-50 flex items-center justify-center w-14 h-14 rounded-full shadow-lg transition-transform hover:scale-105"
       style={{ background: '#25D366' }}
     >

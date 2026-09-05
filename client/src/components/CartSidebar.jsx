@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useCart } from '../context/CartContext';
 import api from '../api/index.js';
+import { track } from '../utils/analytics.js';
+import { fbTrack } from '../utils/pixel.js';
 
 export default function CartSidebar({ open, onClose }) {
   const { items, quitar, cambiarCantidad, total, vaciar } = useCart();
@@ -18,6 +20,8 @@ export default function CartSidebar({ open, onClose }) {
       .replace('{items}', lineas)
       .replace('{total}', `$${total.toLocaleString('es-AR')}`);
     const numero = config.whatsapp_numero || '5491164936089';
+    track('whatsapp_send', { tipo: 'carrito', total, items: items.length });
+    fbTrack('InitiateCheckout', { value: total, currency: 'ARS', num_items: items.length });
     window.open(`https://wa.me/${numero}?text=${encodeURIComponent(msg)}`, '_blank');
   }
 

@@ -41,12 +41,12 @@ export default function Navbar() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
           <button onClick={() => setCartOpen(true)} style={{
             position: 'relative',
-            width: 42, height: 42, borderRadius: '50%', flexShrink: 0,
-            border: scrolled ? '1.5px solid var(--bordeaux)' : '1.5px solid rgba(255,255,255,0.55)',
-            background: scrolled ? 'transparent' : 'rgba(255,255,255,0.15)',
-            backdropFilter: 'blur(4px)',
-            color: scrolled ? 'var(--bordeaux)' : '#FAF7F2',
-            fontSize: 17, cursor: 'pointer',
+            width: 44, height: 44, borderRadius: '50%', flexShrink: 0,
+            border: scrolled ? '1.5px solid var(--bordeaux)' : 'none',
+            background: scrolled ? 'transparent' : 'rgba(250,247,242,0.95)',
+            boxShadow: scrolled ? 'none' : '0 2px 12px rgba(0,0,0,0.25)',
+            color: 'var(--bordeaux)',
+            fontSize: 18, cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             transition: 'all 0.3s',
           }}>

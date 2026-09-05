@@ -289,6 +289,22 @@ db.exec(`
   AND EXISTS (SELECT 1 FROM producto_imagenes WHERE producto_id = productos.id)
 `);
 
+// Tabla de analytics
+db.exec(`
+  CREATE TABLE IF NOT EXISTS analytics_events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    session_id TEXT NOT NULL,
+    event TEXT NOT NULL,
+    meta TEXT DEFAULT '{}',
+    referrer TEXT,
+    ua TEXT,
+    path TEXT,
+    creado_en TEXT NOT NULL DEFAULT (datetime('now'))
+  )
+`);
+try { db.exec(`CREATE INDEX IF NOT EXISTS idx_analytics_event ON analytics_events(event, creado_en)`); } catch {}
+try { db.exec(`CREATE INDEX IF NOT EXISTS idx_analytics_session ON analytics_events(session_id)`); } catch {}
+
 // Seed de recetas (solo corre una vez, ver seeds/recetas.js)
 seedRecetas(db);
 

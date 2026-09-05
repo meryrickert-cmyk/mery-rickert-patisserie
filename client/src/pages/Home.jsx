@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef, forwardRef } from 'react';
 import api from '../api/index.js';
 import { useCart } from '../context/CartContext';
+import { track } from '../utils/analytics.js';
+import { fbTrack } from '../utils/pixel.js';
 
 /* ══════════════════════════════════════════════════════════ */
 export default function Home() {
@@ -11,7 +13,8 @@ export default function Home() {
   const catalogoRef = useRef(null);
 
   useEffect(() => {
-    // Fetch config+hero+productos en paralelo — 2 requests totales en vez de 3
+    track('page_view');
+    fbTrack('PageView');
     Promise.all([
       api.get('/config'),
       api.get('/productos'),
@@ -315,7 +318,11 @@ function ListaItem({ producto: p, isLast }) {
   const cantidad = enCarrito?.cantidad || 0;
   const [cantLocal, setCantLocal] = useState(1);
 
-  function handleAgregar() { agregar(p, cantLocal); }
+  function handleAgregar() {
+    agregar(p, cantLocal);
+    track('add_to_cart', { nombre: p.nombre, precio: p.precio, cantidad: cantLocal });
+    fbTrack('AddToCart', { content_name: p.nombre, value: p.precio * cantLocal, currency: 'ARS' });
+  }
 
   const btn = (onClick, children, extraStyle = {}) => (
     <button onClick={onClick} style={{ width: 24, height: 24, borderRadius: '50%', border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, ...extraStyle }}>
@@ -378,6 +385,8 @@ function ProductCard({ producto: p }) {
 
   function agregarVariante(v) {
     agregar({ ...p, nombre: `${p.nombre} — ${v.nombre}`, precio: parseFloat(v.precio) }, 1);
+    track('add_to_cart', { nombre: p.nombre, variante: v.nombre, precio: parseFloat(v.precio) });
+    fbTrack('AddToCart', { content_name: `${p.nombre} — ${v.nombre}`, value: parseFloat(v.precio), currency: 'ARS' });
     setMostrandoVariantes(false);
   }
 
@@ -488,7 +497,10 @@ function ShotsLayout({ productos }) {
   const fotoUrl = conFoto?.imagen || conFoto?.imagenes?.[0]?.url || null;
 
   function handleAgregar(p) {
-    agregar(p, cantidades[p.id] || 10);
+    const cant = cantidades[p.id] || 10;
+    agregar(p, cant);
+    track('add_to_cart', { nombre: p.nombre, precio: p.precio, cantidad: cant });
+    fbTrack('AddToCart', { content_name: p.nombre, value: p.precio * cant, currency: 'ARS' });
     setAgregados(a => ({ ...a, [p.id]: true }));
     setTimeout(() => setAgregados(a => ({ ...a, [p.id]: false })), 1800);
   }
@@ -538,6 +550,8 @@ function EventosSection({ config }) {
   function enviarWsp(e) {
     e.preventDefault();
     const msg = `Hola Mery! 🎂 Consulta sobre un evento.\n\n*Nombre:* ${form.nombre}\n*Email:* ${form.email}\n*Teléfono:* ${form.telefono}\n\n*Consulta:*\n${form.mensaje}`;
+    track('whatsapp_send', { tipo: 'evento' });
+    fbTrack('InitiateCheckout');
     window.open(`https://wa.me/5491164936089?text=${encodeURIComponent(msg)}`, '_blank');
     setEnviado(true);
   }
