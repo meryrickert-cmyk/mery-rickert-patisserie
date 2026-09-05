@@ -8,7 +8,7 @@ export default function Insumos() {
   const [tab, setTab] = useState('insumos');
 
   return (
-    <div className="admin-page" style={{ maxWidth: 1100, margin: '0 auto', paddingBottom: 80, fontSize: 16 }}>
+    <div className="admin-page" style={{ maxWidth: 1100, margin: '0 auto', paddingBottom: 80, fontSize: 16, fontFamily: 'var(--serif)' }}>
       <h1 style={{ fontFamily: 'var(--serif)', fontSize: 30, fontWeight: 400, color: 'var(--texto)', marginBottom: 6 }}>
         Insumos & Costos
       </h1>
@@ -26,7 +26,7 @@ export default function Insumos() {
             padding: '12px 24px', border: 'none', background: 'transparent',
             borderBottom: tab === t.id ? '2px solid var(--bordeaux)' : '2px solid transparent',
             color: tab === t.id ? 'var(--bordeaux)' : 'var(--texto-suave)',
-            fontSize: 18, fontWeight: tab === t.id ? 600 : 400, cursor: 'pointer',
+            fontSize: 16, fontWeight: tab === t.id ? 600 : 400, cursor: 'pointer',
             fontFamily: 'var(--sans)', transition: 'all 0.2s',
           }}>
             {t.label}
@@ -160,7 +160,7 @@ function TabInsumos() {
           <thead>
             <tr style={{ borderBottom: '1px solid var(--crema-oscuro)', background: 'var(--crema)' }}>
               {['Insumo', 'Unidad', 'Costo actual', '', 'Actualizado'].map(h => (
-                <th key={h} style={{ padding: '11px 16px', textAlign: 'left', fontSize: 18, color: 'var(--texto-suave)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em' }}>{h}</th>
+                <th key={h} style={{ padding: '11px 16px', textAlign: 'left', fontSize: 12, color: 'var(--texto-suave)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', fontFamily: 'var(--sans)' }}>{h}</th>
               ))}
             </tr>
           </thead>
@@ -672,7 +672,7 @@ function Kpi({ label, value, color }) {
 /* Estilos compartidos */
 const btnPrimario = { padding: '9px 20px', borderRadius: 50, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 18, fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--sans)', whiteSpace: 'nowrap' };
 const btnSecundario = { padding: '9px 18px', borderRadius: 50, border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', fontSize: 18, cursor: 'pointer', fontFamily: 'var(--sans)', whiteSpace: 'nowrap' };
-const btnTabla = { padding: '5px 12px', borderRadius: 8, border: '1px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', fontSize: 18, cursor: 'pointer' };
+const btnTabla = { padding: '5px 12px', borderRadius: 8, border: '1px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', fontSize: 14, cursor: 'pointer', fontFamily: 'var(--sans)' };
 const inputStyle = { width: '100%', padding: '10px 14px', borderRadius: 10, border: '1.5px solid var(--crema-oscuro)', background: '#fff', fontSize: 18, color: 'var(--texto)', outline: 'none', fontFamily: 'var(--sans)', boxSizing: 'border-box' };
 const labelStyle = { display: 'block', fontSize: 18, color: 'var(--texto-suave)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 5 };
 const thStyle = { padding: '10px 14px', textAlign: 'left', fontSize: 18, color: 'var(--texto-suave)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' };
