@@ -8,7 +8,7 @@ export default function Insumos() {
   const [tab, setTab] = useState('insumos');
 
   return (
-    <div className="admin-page" style={{ maxWidth: 1100, margin: '0 auto', paddingBottom: 80, fontSize: 16, fontFamily: 'var(--serif)' }}>
+    <div className="admin-page" style={{ maxWidth: 1100, margin: '0 auto', paddingBottom: 80, fontSize: 16 }}>
       <h1 style={{ fontFamily: 'var(--serif)', fontSize: 30, fontWeight: 400, color: 'var(--texto)', marginBottom: 6 }}>
         Insumos & Costos
       </h1>
@@ -96,7 +96,7 @@ function TabInsumos() {
     <tr key={ins.id} style={{ borderBottom: isLast ? 'none' : '1px solid var(--crema-oscuro)' }}>
       <td style={{ padding: '9px 16px', fontSize: 18, fontWeight: 500, color: 'var(--texto)', fontFamily: 'var(--serif)' }}>{ins.nombre}</td>
       <td style={{ padding: '9px 16px', fontSize: 18, color: 'var(--texto-suave)' }}>{ins.unidad}</td>
-      <td style={{ padding: '9px 16px', fontSize: 18, fontWeight: 500, color: 'var(--bordeaux)' }}>
+      <td style={{ padding: '9px 16px', fontSize: 18, fontWeight: 500, color: 'var(--bordeaux)', fontFamily: 'var(--serif)' }}>
         ${parseFloat(ins.costo).toLocaleString('es-AR')} / {ins.unidad}
       </td>
       <td style={{ padding: '9px 16px' }}>
@@ -348,15 +348,15 @@ function TabRecetas() {
                         </span>
                       </div>
                       {/* Costo/u */}
-                      <span style={{ textAlign: 'right', fontSize: 18, color: 'var(--texto)', fontWeight: 500 }}>
+                      <span style={{ textAlign: 'right', fontSize: 18, color: 'var(--texto)', fontWeight: 500, fontFamily: 'var(--serif)' }}>
                         {costoPorU > 0 ? `$${Math.round(costoPorU).toLocaleString('es-AR')}` : '—'}
                       </span>
                       {/* Precio */}
-                      <span style={{ textAlign: 'right', fontSize: 18, color: rec.precio_venta ? 'var(--bordeaux)' : 'var(--texto-suave)', fontWeight: 500 }}>
+                      <span style={{ textAlign: 'right', fontSize: 18, color: rec.precio_venta ? 'var(--bordeaux)' : 'var(--texto-suave)', fontWeight: 500, fontFamily: 'var(--serif)' }}>
                         {rec.precio_venta ? `$${rec.precio_venta.toLocaleString('es-AR')}` : '—'}
                       </span>
                       {/* Margen */}
-                      <span style={{ textAlign: 'right', fontSize: 18, fontWeight: 600, color: margenPct !== null ? margenColor : 'var(--texto-suave)' }}>
+                      <span style={{ textAlign: 'right', fontSize: 18, fontWeight: 600, color: margenPct !== null ? margenColor : 'var(--texto-suave)', fontFamily: 'var(--serif)' }}>
                         {margenPct !== null ? `${margenPct.toFixed(0)}%` : '—'}
                       </span>
                       {/* Acciones */}
@@ -676,6 +676,6 @@ const btnTabla = { padding: '5px 12px', borderRadius: 8, border: '1px solid var(
 const inputStyle = { width: '100%', padding: '10px 14px', borderRadius: 10, border: '1.5px solid var(--crema-oscuro)', background: '#fff', fontSize: 18, color: 'var(--texto)', outline: 'none', fontFamily: 'var(--sans)', boxSizing: 'border-box' };
 const labelStyle = { display: 'block', fontSize: 18, color: 'var(--texto-suave)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 5 };
 const thStyle = { padding: '10px 14px', textAlign: 'left', fontSize: 18, color: 'var(--texto-suave)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' };
-const tdR = { padding: '11px 14px', textAlign: 'right', fontSize: 18, color: 'var(--texto)' };
+const tdR = { padding: '11px 14px', textAlign: 'right', fontSize: 18, color: 'var(--texto)', fontFamily: 'var(--serif)' };
 const kpiLabel = { fontSize: 10, color: 'var(--texto-suave)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 };
 const colHead = { fontSize: 10, color: 'var(--texto-suave)', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600 };
