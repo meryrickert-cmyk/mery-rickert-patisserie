@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
+import { ComposedChart, BarChart, Bar, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell, Legend } from 'recharts';
 import api from '../../api/index.js';
 
 const MESES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
@@ -155,17 +155,19 @@ export default function Dashboard() {
         {grafData.length === 0
           ? <Empty />
           : (
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={grafData} barSize={32}>
+            <ResponsiveContainer width="100%" height={240}>
+              <ComposedChart data={grafData} barSize={28}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--crema-oscuro)" vertical={false} />
                 <XAxis dataKey="mes" tick={{ fontSize: 12, fill: 'var(--texto-suave)', fontFamily: 'var(--sans)' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 12, fill: 'var(--texto-suave)' }} axisLine={false} tickLine={false} tickFormatter={v => `$${(v/1000).toFixed(0)}k`} />
+                <YAxis yAxisId="ventas" tick={{ fontSize: 12, fill: 'var(--texto-suave)' }} axisLine={false} tickLine={false} tickFormatter={v => `$${(v/1000).toFixed(0)}k`} />
+                <YAxis yAxisId="pedidos" orientation="right" tick={{ fontSize: 12, fill: '#A8374A' }} axisLine={false} tickLine={false} tickFormatter={v => `${v} ped`} />
                 <Tooltip
-                  formatter={v => [`$${v.toLocaleString('es-AR')}`, 'Ventas']}
+                  formatter={(v, name) => name === 'ventas' ? [`$${v.toLocaleString('es-AR')}`, 'Ventas'] : [v, 'Pedidos']}
                   contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', fontFamily: 'var(--sans)', fontSize: 13 }}
                 />
-                <Bar dataKey="ventas" fill="var(--bordeaux)" radius={[6, 6, 0, 0]} />
-              </BarChart>
+                <Bar yAxisId="ventas" dataKey="ventas" fill="var(--bordeaux)" radius={[6, 6, 0, 0]} />
+                <Line yAxisId="pedidos" dataKey="pedidos" stroke="#A8374A" strokeWidth={2} dot={{ fill: '#A8374A', r: 4 }} strokeDasharray="4 2" />
+              </ComposedChart>
             </ResponsiveContainer>
           )
         }

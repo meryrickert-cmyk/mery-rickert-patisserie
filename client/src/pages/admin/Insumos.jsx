@@ -9,10 +9,10 @@ export default function Insumos() {
 
   return (
     <div className="admin-page" style={{ maxWidth: 1100, margin: '0 auto', paddingBottom: 80, fontSize: 16 }}>
-      <h1 style={{ fontFamily: 'var(--serif)', fontSize: 28, fontWeight: 400, color: 'var(--texto)', marginBottom: 6 }}>
+      <h1 style={{ fontFamily: 'var(--serif)', fontSize: 30, fontWeight: 400, color: 'var(--texto)', marginBottom: 6 }}>
         Insumos & Costos
       </h1>
-      <p style={{ color: 'var(--texto-suave)', fontSize: 16, marginBottom: 32 }}>
+      <p style={{ color: 'var(--texto-suave)', fontSize: 18, marginBottom: 32 }}>
         Precios de materias primas · Recetas con costo automático · Análisis de márgenes por producto
       </p>
 
@@ -26,7 +26,7 @@ export default function Insumos() {
             padding: '12px 24px', border: 'none', background: 'transparent',
             borderBottom: tab === t.id ? '2px solid var(--bordeaux)' : '2px solid transparent',
             color: tab === t.id ? 'var(--bordeaux)' : 'var(--texto-suave)',
-            fontSize: 16, fontWeight: tab === t.id ? 600 : 400, cursor: 'pointer',
+            fontSize: 18, fontWeight: tab === t.id ? 600 : 400, cursor: 'pointer',
             fontFamily: 'var(--sans)', transition: 'all 0.2s',
           }}>
             {t.label}
@@ -94,9 +94,9 @@ function TabInsumos() {
 
   const rowInsumo = (ins, isLast) => (
     <tr key={ins.id} style={{ borderBottom: isLast ? 'none' : '1px solid var(--crema-oscuro)' }}>
-      <td style={{ padding: '9px 16px', fontSize: 16, fontWeight: 500, color: 'var(--texto)', fontFamily: 'var(--serif)' }}>{ins.nombre}</td>
-      <td style={{ padding: '9px 16px', fontSize: 16, color: 'var(--texto-suave)' }}>{ins.unidad}</td>
-      <td style={{ padding: '9px 16px', fontSize: 16, fontWeight: 500, color: 'var(--bordeaux)' }}>
+      <td style={{ padding: '9px 16px', fontSize: 18, fontWeight: 500, color: 'var(--texto)', fontFamily: 'var(--serif)' }}>{ins.nombre}</td>
+      <td style={{ padding: '9px 16px', fontSize: 18, color: 'var(--texto-suave)' }}>{ins.unidad}</td>
+      <td style={{ padding: '9px 16px', fontSize: 18, fontWeight: 500, color: 'var(--bordeaux)' }}>
         ${parseFloat(ins.costo).toLocaleString('es-AR')} / {ins.unidad}
       </td>
       <td style={{ padding: '9px 16px' }}>
@@ -105,7 +105,7 @@ function TabInsumos() {
           <button onClick={() => eliminar(ins.id)} style={{ ...btnTabla, color: '#c0392b' }}>✕</button>
         </div>
       </td>
-      <td style={{ padding: '9px 16px', fontSize: 16, color: 'var(--texto-suave)' }}>
+      <td style={{ padding: '9px 16px', fontSize: 18, color: 'var(--texto-suave)' }}>
         {ins.actualizado_en ? new Date(ins.actualizado_en).toLocaleDateString('es-AR') : '—'}
       </td>
     </tr>
@@ -117,7 +117,7 @@ function TabInsumos() {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 10 }}>
         <input value={buscar} onChange={e => setBuscar(e.target.value)} placeholder="Buscar insumo..." style={{ ...inputStyle, width: 240, padding: '8px 14px' }} />
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-          {snapMsg && <span style={{ fontSize: 16, color: '#2d7a3a', fontWeight: 500 }}>{snapMsg}</span>}
+          {snapMsg && <span style={{ fontSize: 18, color: '#2d7a3a', fontWeight: 500 }}>{snapMsg}</span>}
           <button onClick={tomarSnapshot} style={btnSecundario}>📸 Snapshot del mes</button>
           <button onClick={() => { setForm({ nombre: '', unidad: 'kg', costo: '' }); setModal('nuevo'); }} style={btnPrimario}>+ Nuevo insumo</button>
         </div>
@@ -127,15 +127,15 @@ function TabInsumos() {
       {pkgItems.length > 0 && (
         <div style={{ marginBottom: 24 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-            <span style={{ fontSize: 16, color: 'var(--texto-suave)', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600 }}>Packaging (transversal a todas las recetas)</span>
+            <span style={{ fontSize: 18, color: 'var(--texto-suave)', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600 }}>Packaging (transversal a todas las recetas)</span>
             <div style={{ flex: 1, height: 1, background: 'var(--crema-oscuro)' }} />
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 10 }}>
             {pkgItems.map(ins => (
               <div key={ins.id} style={{ background: '#fff', border: '1.5px solid var(--crema-oscuro)', borderRadius: 12, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
                 <div>
-                  <p style={{ fontSize: 16, color: 'var(--texto)', margin: 0, fontFamily: 'var(--serif)' }}>{ins.nombre}</p>
-                  <p style={{ fontSize: 16, color: 'var(--bordeaux)', fontWeight: 600, margin: '4px 0 0' }}>${parseFloat(ins.costo).toLocaleString('es-AR')} / u</p>
+                  <p style={{ fontSize: 18, color: 'var(--texto)', margin: 0, fontFamily: 'var(--serif)' }}>{ins.nombre}</p>
+                  <p style={{ fontSize: 18, color: 'var(--bordeaux)', fontWeight: 600, margin: '4px 0 0' }}>${parseFloat(ins.costo).toLocaleString('es-AR')} / u</p>
                 </div>
                 <button onClick={() => { setForm({ nombre: ins.nombre, unidad: ins.unidad, costo: ins.costo }); setModal(ins); }} style={btnTabla}>Editar</button>
               </div>
@@ -146,7 +146,7 @@ function TabInsumos() {
 
       {/* Sync Base Brownie */}
       <div style={{ background: '#fffbf0', border: '1px solid #f0e0a0', borderRadius: 10, padding: '12px 16px', marginBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-        <p style={{ margin: 0, fontSize: 16, color: '#7a5c00' }}>
+        <p style={{ margin: 0, fontSize: 18, color: '#7a5c00' }}>
           💡 <strong>Base Brownie (1 receta)</strong> es un insumo derivado. Al actualizar los costos de sus ingredientes, sincronizalo para que todas las recetas que lo usan reflejen el precio real.
         </p>
         <button onClick={sincronizarBase} style={{ ...btnSecundario, whiteSpace: 'nowrap', flexShrink: 0, borderColor: '#d4a800', color: '#7a5c00' }}>
@@ -160,7 +160,7 @@ function TabInsumos() {
           <thead>
             <tr style={{ borderBottom: '1px solid var(--crema-oscuro)', background: 'var(--crema)' }}>
               {['Insumo', 'Unidad', 'Costo actual', '', 'Actualizado'].map(h => (
-                <th key={h} style={{ padding: '11px 16px', textAlign: 'left', fontSize: 16, color: 'var(--texto-suave)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em' }}>{h}</th>
+                <th key={h} style={{ padding: '11px 16px', textAlign: 'left', fontSize: 18, color: 'var(--texto-suave)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em' }}>{h}</th>
               ))}
             </tr>
           </thead>
@@ -172,7 +172,7 @@ function TabInsumos() {
           </tbody>
         </table>
       </div>
-      <p style={{ fontSize: 16, color: 'var(--texto-suave)', marginTop: 10 }}>
+      <p style={{ fontSize: 18, color: 'var(--texto-suave)', marginTop: 10 }}>
         {filtrados.length} insumos · Cada edición guarda un snapshot automático del mes actual · Usá "Snapshot del mes" al inicio de cada mes para fijar todos los precios.
       </p>
 
@@ -194,7 +194,7 @@ function TabInsumos() {
                 <input type="number" value={form.costo} onChange={e => setForm(f => ({ ...f, costo: e.target.value }))} style={inputStyle} />
               </Campo>
             </div>
-            <p style={{ fontSize: 16, color: 'var(--texto-suave)', margin: 0 }}>Al guardar se registra el costo en el historial del mes actual.</p>
+            <p style={{ fontSize: 18, color: 'var(--texto-suave)', margin: 0 }}>Al guardar se registra el costo en el historial del mes actual.</p>
           </div>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 20 }}>
             <button onClick={() => setModal(null)} style={btnSecundario}>Cancelar</button>
@@ -307,10 +307,10 @@ function TabRecetas() {
           <div key={cat} style={{ marginBottom: 40 }}>
             {/* Header de sección */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 0 }}>
-              <span style={{ fontSize: 16, color: 'var(--texto-suave)', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600 }}>
+              <span style={{ fontSize: 18, color: 'var(--texto-suave)', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600 }}>
                 {CAT_LABEL[cat] || cat}
               </span>
-              <span style={{ fontSize: 16, color: 'var(--texto-suave)', background: 'var(--crema)', borderRadius: 20, padding: '1px 8px' }}>{recsDecat.length}</span>
+              <span style={{ fontSize: 18, color: 'var(--texto-suave)', background: 'var(--crema)', borderRadius: 20, padding: '1px 8px' }}>{recsDecat.length}</span>
               <div style={{ flex: 1, height: 1, background: 'var(--crema-oscuro)' }} />
             </div>
 
@@ -342,21 +342,21 @@ function TabRecetas() {
                     >
                       {/* Nombre */}
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
-                        <span style={{ fontSize: 16, color: 'var(--texto-suave)', flexShrink: 0 }}>{isOpen ? '▾' : '▸'}</span>
-                        <span style={{ fontFamily: 'var(--serif)', fontSize: 16, color: 'var(--texto)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <span style={{ fontSize: 18, color: 'var(--texto-suave)', flexShrink: 0 }}>{isOpen ? '▾' : '▸'}</span>
+                        <span style={{ fontFamily: 'var(--serif)', fontSize: 18, color: 'var(--texto)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {rec.nombre}
                         </span>
                       </div>
                       {/* Costo/u */}
-                      <span style={{ textAlign: 'right', fontSize: 16, color: 'var(--texto)', fontWeight: 500 }}>
+                      <span style={{ textAlign: 'right', fontSize: 18, color: 'var(--texto)', fontWeight: 500 }}>
                         {costoPorU > 0 ? `$${Math.round(costoPorU).toLocaleString('es-AR')}` : '—'}
                       </span>
                       {/* Precio */}
-                      <span style={{ textAlign: 'right', fontSize: 16, color: rec.precio_venta ? 'var(--bordeaux)' : 'var(--texto-suave)', fontWeight: 500 }}>
+                      <span style={{ textAlign: 'right', fontSize: 18, color: rec.precio_venta ? 'var(--bordeaux)' : 'var(--texto-suave)', fontWeight: 500 }}>
                         {rec.precio_venta ? `$${rec.precio_venta.toLocaleString('es-AR')}` : '—'}
                       </span>
                       {/* Margen */}
-                      <span style={{ textAlign: 'right', fontSize: 16, fontWeight: 600, color: margenPct !== null ? margenColor : 'var(--texto-suave)' }}>
+                      <span style={{ textAlign: 'right', fontSize: 18, fontWeight: 600, color: margenPct !== null ? margenColor : 'var(--texto-suave)' }}>
                         {margenPct !== null ? `${margenPct.toFixed(0)}%` : '—'}
                       </span>
                       {/* Acciones */}
@@ -372,7 +372,7 @@ function TabRecetas() {
                     {/* Detalle expandido — solo tabla de ingredientes */}
                     {isOpen && (
                       <div style={{ padding: '0 16px 14px', borderTop: '1px solid var(--crema-oscuro)', background: '#faf9f7' }}>
-                        <p style={{ fontSize: 16, color: 'var(--texto-suave)', margin: '10px 0 8px' }}>
+                        <p style={{ fontSize: 18, color: 'var(--texto-suave)', margin: '10px 0 8px' }}>
                           Rendimiento: <strong>{rec.rendimiento}u</strong> · Costo total receta: <strong>${Math.round(costo).toLocaleString('es-AR')}</strong>
                           {margen !== null && <> · Ganancia/u: <strong style={{ color: margen > 0 ? '#2d7a3a' : '#c0392b' }}>${Math.round(margen).toLocaleString('es-AR')}</strong></>}
                         </p>
@@ -400,12 +400,12 @@ function TabRecetas() {
                                           onBlur={() => guardarQty(ing.id)}
                                           onKeyDown={e => { if (e.key === 'Enter') e.target.blur(); if (e.key === 'Escape') setEditingQty(null); }}
                                           autoFocus
-                                          style={{ width: 70, padding: '4px 8px', borderRadius: 6, border: '1.5px solid var(--bordeaux)', fontSize: 16, textAlign: 'center' }} />
-                                        <span style={{ fontSize: 16, color: 'var(--texto-suave)' }}>{unidadLabel}</span>
+                                          style={{ width: 70, padding: '4px 8px', borderRadius: 6, border: '1.5px solid var(--bordeaux)', fontSize: 18, textAlign: 'center' }} />
+                                        <span style={{ fontSize: 18, color: 'var(--texto-suave)' }}>{unidadLabel}</span>
                                       </div>
                                     ) : (
                                       <span onClick={() => setEditingQty({ ingId: ing.id, valor: ing.cantidad })}
-                                        style={{ cursor: 'pointer', color: 'var(--texto-suave)', fontSize: 16, borderBottom: '1px dashed #ccc', paddingBottom: 1 }}
+                                        style={{ cursor: 'pointer', color: 'var(--texto-suave)', fontSize: 18, borderBottom: '1px dashed #ccc', paddingBottom: 1 }}
                                         title="Clic para editar">
                                         {ing.cantidad} {unidadLabel}
                                       </span>
@@ -471,13 +471,13 @@ function TabRecetas() {
                     </div>
                     <div style={{ flex: 1, position: 'relative' }}>
                       <input type="number" value={ing.cantidad} onChange={e => { const ings = [...form.ingredientes]; ings[i] = { ...ings[i], cantidad: e.target.value }; setForm(f => ({ ...f, ingredientes: ings })); }} style={{ ...inputStyle, paddingRight: 36 }} placeholder="0" />
-                      {sel && <span style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'var(--texto-suave)' }}>{sel.unidad === 'kg' || sel.unidad === 'L' ? 'g' : 'u'}</span>}
+                      {sel && <span style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 18, color: 'var(--texto-suave)' }}>{sel.unidad === 'kg' || sel.unidad === 'L' ? 'g' : 'u'}</span>}
                     </div>
                     <button onClick={() => setForm(f => ({ ...f, ingredientes: f.ingredientes.filter((_, j) => j !== i) }))} style={{ ...btnTabla, color: '#c0392b', width: 32, height: 40 }}>✕</button>
                   </div>
                 );
               })}
-              {form.ingredientes.length === 0 && <p style={{ fontSize: 16, color: 'var(--texto-suave)' }}>Hacé clic en "+ Ingrediente" para agregar.</p>}
+              {form.ingredientes.length === 0 && <p style={{ fontSize: 18, color: 'var(--texto-suave)' }}>Hacé clic en "+ Ingrediente" para agregar.</p>}
             </div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 20 }}>
@@ -544,7 +544,7 @@ function TabAnalisis() {
     <div>
       {/* Selector de mes */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24, flexWrap: 'wrap' }}>
-        <span style={{ fontSize: 16, color: 'var(--texto-suave)' }}>Período:</span>
+        <span style={{ fontSize: 18, color: 'var(--texto-suave)' }}>Período:</span>
         <select value={mes} onChange={e => setMes(parseInt(e.target.value))} style={{ ...inputStyle, width: 'auto', padding: '8px 12px' }}>
           {MESES.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
         </select>
@@ -571,7 +571,7 @@ function TabAnalisis() {
                 padding: '6px 14px', borderRadius: 50, border: '1.5px solid var(--crema-oscuro)',
                 background: catFiltro === c ? 'var(--bordeaux)' : '#fff',
                 color: catFiltro === c ? '#FAF7F2' : 'var(--texto-suave)',
-                fontSize: 16, cursor: 'pointer',
+                fontSize: 18, cursor: 'pointer',
               }}>
                 {c === 'todas' ? 'Todas' : c}
               </button>
@@ -598,9 +598,9 @@ function TabAnalisis() {
                   const c = d.margen_pct >= 60 ? '#2d7a3a' : d.margen_pct >= 35 ? '#d97706' : '#c0392b';
                   return (
                     <tr key={d.id} style={{ borderBottom: i === filtrados.length - 1 ? 'none' : '1px solid #f5f0eb' }}>
-                      <td style={{ padding: '11px 14px', fontSize: 16, fontFamily: 'var(--serif)', color: 'var(--texto)', minWidth: 160 }}>
+                      <td style={{ padding: '11px 14px', fontSize: 18, fontFamily: 'var(--serif)', color: 'var(--texto)', minWidth: 160 }}>
                         {d.nombre}
-                        {d.producto_nombre && <span style={{ fontSize: 16, color: 'var(--texto-suave)', display: 'block' }}>→ {d.producto_nombre}</span>}
+                        {d.producto_nombre && <span style={{ fontSize: 18, color: 'var(--texto-suave)', display: 'block' }}>→ {d.producto_nombre}</span>}
                       </td>
                       <td style={tdR}>{d.rendimiento}u</td>
                       <td style={tdR}>{d.costo_por_unidad > 0 ? `$${Math.round(d.costo_por_unidad).toLocaleString('es-AR')}` : '—'}</td>
@@ -610,7 +610,7 @@ function TabAnalisis() {
                       </td>
                       <td style={{ ...tdR }}>
                         {d.margen_pct !== null
-                          ? <span style={{ background: c + '18', color: c, padding: '3px 10px', borderRadius: 50, fontSize: 16, fontWeight: 700 }}>{d.margen_pct.toFixed(1)}%</span>
+                          ? <span style={{ background: c + '18', color: c, padding: '3px 10px', borderRadius: 50, fontSize: 18, fontWeight: 700 }}>{d.margen_pct.toFixed(1)}%</span>
                           : '—'}
                       </td>
                       <td style={{ ...tdR, color: d.unidades_vendidas > 0 ? 'var(--texto)' : 'var(--texto-suave)' }}>
@@ -626,7 +626,7 @@ function TabAnalisis() {
             </table>
           </div>
 
-          <p style={{ fontSize: 16, color: 'var(--texto-suave)', marginTop: 10 }}>
+          <p style={{ fontSize: 18, color: 'var(--texto-suave)', marginTop: 10 }}>
             Clic en los encabezados para ordenar · "Vendidas" y "Ganancia mes" requieren pedidos cargados en el período · Márgenes basados en {mesActual ? 'costos actuales' : `snapshot ${MESES[mes-1]} ${año}`}
           </p>
         </>
@@ -670,12 +670,12 @@ function Kpi({ label, value, color }) {
 }
 
 /* Estilos compartidos */
-const btnPrimario = { padding: '9px 20px', borderRadius: 50, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 16, fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--sans)', whiteSpace: 'nowrap' };
-const btnSecundario = { padding: '9px 18px', borderRadius: 50, border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', fontSize: 16, cursor: 'pointer', fontFamily: 'var(--sans)', whiteSpace: 'nowrap' };
-const btnTabla = { padding: '5px 12px', borderRadius: 8, border: '1px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', fontSize: 16, cursor: 'pointer' };
-const inputStyle = { width: '100%', padding: '10px 14px', borderRadius: 10, border: '1.5px solid var(--crema-oscuro)', background: '#fff', fontSize: 16, color: 'var(--texto)', outline: 'none', fontFamily: 'var(--sans)', boxSizing: 'border-box' };
-const labelStyle = { display: 'block', fontSize: 16, color: 'var(--texto-suave)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 5 };
-const thStyle = { padding: '10px 14px', textAlign: 'left', fontSize: 16, color: 'var(--texto-suave)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' };
-const tdR = { padding: '11px 14px', textAlign: 'right', fontSize: 16, color: 'var(--texto)' };
+const btnPrimario = { padding: '9px 20px', borderRadius: 50, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 18, fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--sans)', whiteSpace: 'nowrap' };
+const btnSecundario = { padding: '9px 18px', borderRadius: 50, border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', fontSize: 18, cursor: 'pointer', fontFamily: 'var(--sans)', whiteSpace: 'nowrap' };
+const btnTabla = { padding: '5px 12px', borderRadius: 8, border: '1px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', fontSize: 18, cursor: 'pointer' };
+const inputStyle = { width: '100%', padding: '10px 14px', borderRadius: 10, border: '1.5px solid var(--crema-oscuro)', background: '#fff', fontSize: 18, color: 'var(--texto)', outline: 'none', fontFamily: 'var(--sans)', boxSizing: 'border-box' };
+const labelStyle = { display: 'block', fontSize: 18, color: 'var(--texto-suave)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 5 };
+const thStyle = { padding: '10px 14px', textAlign: 'left', fontSize: 18, color: 'var(--texto-suave)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' };
+const tdR = { padding: '11px 14px', textAlign: 'right', fontSize: 18, color: 'var(--texto)' };
 const kpiLabel = { fontSize: 10, color: 'var(--texto-suave)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 };
 const colHead = { fontSize: 10, color: 'var(--texto-suave)', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600 };

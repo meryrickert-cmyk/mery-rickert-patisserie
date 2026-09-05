@@ -191,7 +191,7 @@ function PedidoRow({ pedido: p, onVer, onEditar, onEliminar }) {
       </span>
 
       {/* Cliente */}
-      <p style={{ flex: 1, fontWeight: 500, fontSize: 14, color: 'var(--texto)', margin: 0, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+      <p style={{ fontWeight: 500, fontSize: 14, color: 'var(--texto)', margin: 0, flexShrink: 0, whiteSpace: 'nowrap' }}>
         {p.nombre_cliente || '—'}
       </p>
 
