@@ -21,18 +21,19 @@ function labelMes(ym) {
 const ITEM_VACIO = { nombre_producto: '', cantidad: 1, precio_unitario: '' };
 
 /* ── Autocomplete genérico ── */
-function Autocomplete({ value, onChange, opciones, placeholder, extraOption }) {
+function Autocomplete({ value, onChange, onSelect, opciones, placeholder, extraOption }) {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState(value);
-  const ref = { current: null };
 
   const filtradas = q
     ? opciones.filter(o => o.toLowerCase().includes(q.toLowerCase()))
     : opciones;
 
   function seleccionar(op) {
-    setQ(op === '__manual__' ? q : op);
-    onChange(op === '__manual__' ? q : op);
+    const texto = op === '__manual__' ? q : op;
+    setQ(texto);
+    onChange(texto);
+    if (op !== '__manual__' && onSelect) onSelect(op);
     setOpen(false);
   }
 
@@ -215,12 +216,18 @@ function ModalNuevoPedido({ onClose, onGuardado }) {
   const [error, setError] = useState('');
   const [guardando, setGuardando] = useState(false);
   const [nombresClientes, setNombresClientes] = useState([]);
-  const [nombresProductos, setNombresProductos] = useState([]);
+  const [productosData, setProductosData] = useState([]);
 
   useEffect(() => {
     api.get('/clientes/nombres').then(r => setNombresClientes(r.data)).catch(() => {});
-    api.get('/productos').then(r => setNombresProductos(r.data.map(p => p.nombre))).catch(() => {});
+    api.get('/productos').then(r => setProductosData(r.data)).catch(() => {});
   }, []);
+
+  const nombresProductos = productosData.map(p => p.nombre);
+
+  function precioDeProducto(nombre) {
+    return productosData.find(p => p.nombre === nombre)?.precio ?? '';
+  }
 
   function addItem() { setItems(i => [...i, { ...ITEM_VACIO }]); }
   function removeItem(idx) { setItems(i => i.filter((_, j) => j !== idx)); }
@@ -273,9 +280,14 @@ function ModalNuevoPedido({ onClose, onGuardado }) {
                 <Autocomplete
                   value={item.nombre_producto}
                   onChange={val => setItem(idx, 'nombre_producto', val)}
+                  onSelect={nombre => {
+                    setItem(idx, 'nombre_producto', nombre);
+                    const precio = precioDeProducto(nombre);
+                    if (precio) setItem(idx, 'precio_unitario', precio);
+                  }}
                   opciones={nombresProductos}
                   placeholder="Producto"
-                  extraOption="+ Escribir manualmente"
+                  extraOption="+ Otro (escribir manualmente)"
                 />
                 <Input type="number" min="1" value={item.cantidad} onChange={e => setItem(idx, 'cantidad', e.target.value)} placeholder="Cant." style={{ textAlign: 'center' }} />
                 <Input type="number" min="0" step="100" value={item.precio_unitario} onChange={e => setItem(idx, 'precio_unitario', e.target.value)} placeholder="Precio" />
