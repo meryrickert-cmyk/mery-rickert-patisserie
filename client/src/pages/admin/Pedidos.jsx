@@ -27,8 +27,8 @@ function Autocomplete({ value, onChange, opciones, placeholder, extraOption }) {
   const ref = { current: null };
 
   const filtradas = q
-    ? opciones.filter(o => o.toLowerCase().includes(q.toLowerCase())).slice(0, 8)
-    : opciones.slice(0, 8);
+    ? opciones.filter(o => o.toLowerCase().includes(q.toLowerCase()))
+    : opciones;
 
   function seleccionar(op) {
     setQ(op === '__manual__' ? q : op);
@@ -51,7 +51,8 @@ function Autocomplete({ value, onChange, opciones, placeholder, extraOption }) {
         <div style={{
           position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 200,
           background: '#fff', border: '1.5px solid var(--crema-oscuro)', borderRadius: 10,
-          boxShadow: '0 8px 24px rgba(0,0,0,0.10)', marginTop: 4, overflow: 'hidden',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.10)', marginTop: 4,
+          maxHeight: 260, overflowY: 'auto',
         }}>
           {filtradas.map(op => (
             <div key={op} onMouseDown={() => seleccionar(op)} style={{
@@ -374,7 +375,7 @@ function Modal({ titulo, onClose, children }) {
   return (
     <>
       <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.25)', zIndex: 50, backdropFilter: 'blur(2px)' }} />
-      <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 51, width: '92%', maxWidth: 520, background: '#fff', borderRadius: 20, boxShadow: '0 20px 60px rgba(0,0,0,0.15)', maxHeight: '90vh', overflowY: 'auto' }}>
+      <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 51, width: '96%', maxWidth: 680, background: '#fff', borderRadius: 20, boxShadow: '0 20px 60px rgba(0,0,0,0.15)', maxHeight: '92vh', overflowY: 'auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', borderBottom: '1px solid var(--crema-oscuro)' }}>
           <h3 style={{ fontFamily: 'var(--serif)', fontWeight: 400, fontSize: 22, color: 'var(--texto)', margin: 0 }}>{titulo}</h3>
           <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: 'var(--texto-suave)', lineHeight: 1, padding: 4 }}>×</button>
