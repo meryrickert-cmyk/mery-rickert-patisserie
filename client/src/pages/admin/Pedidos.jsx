@@ -21,7 +21,7 @@ function labelMes(ym) {
 const ITEM_VACIO = { nombre_producto: '', cantidad: 1, precio_unitario: '' };
 
 /* ── Autocomplete genérico ── */
-function Autocomplete({ value, onChange, onSelect, opciones, placeholder, extraOption }) {
+function Autocomplete({ value, onChange, onSelect, opciones, precios, placeholder, extraOption }) {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState(value);
 
@@ -58,10 +58,14 @@ function Autocomplete({ value, onChange, onSelect, opciones, placeholder, extraO
           {filtradas.map(op => (
             <div key={op} onMouseDown={() => seleccionar(op)} style={{
               padding: '9px 14px', fontSize: 13, cursor: 'pointer', color: 'var(--texto)',
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12,
             }}
               onMouseEnter={e => e.currentTarget.style.background = 'var(--crema)'}
               onMouseLeave={e => e.currentTarget.style.background = '#fff'}
-            >{op}</div>
+            >
+              <span>{op}</span>
+              {precios?.[op] && <span style={{ fontSize: 12, color: 'var(--texto-suave)', flexShrink: 0 }}>${precios[op].toLocaleString('es-AR')}</span>}
+            </div>
           ))}
           {extraOption && (
             <div onMouseDown={() => seleccionar('__manual__')} style={{
@@ -228,10 +232,12 @@ function ModalNuevoPedido({ onClose, onGuardado }) {
   function precioDeProducto(nombre) {
     return productosData.find(p => p.nombre === nombre)?.precio ?? '';
   }
+  const preciosMap = Object.fromEntries(productosData.map(p => [p.nombre, p.precio]));
 
   function addItem() { setItems(i => [...i, { ...ITEM_VACIO }]); }
   function removeItem(idx) { setItems(i => i.filter((_, j) => j !== idx)); }
   function setItem(idx, key, val) { setItems(i => i.map((item, j) => j === idx ? { ...item, [key]: val } : item)); }
+  function setItemMulti(idx, campos) { setItems(i => i.map((item, j) => j === idx ? { ...item, ...campos } : item)); }
 
   const total = items.reduce((s, i) => s + (parseFloat(i.precio_unitario) || 0) * (parseInt(i.cantidad) || 0), 0);
 
@@ -281,11 +287,11 @@ function ModalNuevoPedido({ onClose, onGuardado }) {
                   value={item.nombre_producto}
                   onChange={val => setItem(idx, 'nombre_producto', val)}
                   onSelect={nombre => {
-                    setItem(idx, 'nombre_producto', nombre);
                     const precio = precioDeProducto(nombre);
-                    if (precio) setItem(idx, 'precio_unitario', precio);
+                    setItemMulti(idx, { nombre_producto: nombre, ...(precio ? { precio_unitario: precio } : {}) });
                   }}
                   opciones={nombresProductos}
+                  precios={preciosMap}
                   placeholder="Producto"
                   extraOption="+ Otro (escribir manualmente)"
                 />
@@ -387,7 +393,7 @@ function Modal({ titulo, onClose, children }) {
   return (
     <>
       <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.25)', zIndex: 50, backdropFilter: 'blur(2px)' }} />
-      <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 51, width: '96%', maxWidth: 680, background: '#fff', borderRadius: 20, boxShadow: '0 20px 60px rgba(0,0,0,0.15)', maxHeight: '92vh', overflowY: 'auto' }}>
+      <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 51, width: '96%', maxWidth: 820, background: '#fff', borderRadius: 20, boxShadow: '0 20px 60px rgba(0,0,0,0.15)', maxHeight: '92vh', overflowY: 'auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', borderBottom: '1px solid var(--crema-oscuro)' }}>
           <h3 style={{ fontFamily: 'var(--serif)', fontWeight: 400, fontSize: 22, color: 'var(--texto)', margin: 0 }}>{titulo}</h3>
           <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: 'var(--texto-suave)', lineHeight: 1, padding: 4 }}>×</button>
