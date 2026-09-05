@@ -91,6 +91,7 @@ export default function Pedidos() {
   const [mesFiltro, setMesFiltro] = useState(getMesActual());
   const [modalOpen, setModalOpen] = useState(false);
   const [detalle, setDetalle] = useState(null);
+  const [editando, setEditando] = useState(null);
 
   function cargar() {
     api.get(`/pedidos?mes=${mesFiltro}`).then(r => setPedidos(r.data));
@@ -146,7 +147,7 @@ export default function Pedidos() {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {pedidos.map(p => (
-            <PedidoRow key={p.id} pedido={p} onVer={() => setDetalle(p)} onEliminar={() => eliminar(p.id)} />
+            <PedidoRow key={p.id} pedido={p} onVer={() => setDetalle(p)} onEditar={() => setEditando(p)} onEliminar={() => eliminar(p.id)} />
           ))}
         </div>
       )}
@@ -156,12 +157,15 @@ export default function Pedidos() {
 
       {/* Modal detalle */}
       {detalle && <ModalDetalle pedido={detalle} onClose={() => setDetalle(null)} />}
+
+      {/* Modal editar */}
+      {editando && <ModalEditarPedido pedido={editando} onClose={() => setEditando(null)} onGuardado={() => { setEditando(null); cargar(); }} />}
     </div>
   );
 }
 
 /* ── Fila de pedido ── */
-function PedidoRow({ pedido: p, onVer, onEliminar }) {
+function PedidoRow({ pedido: p, onVer, onEditar, onEliminar }) {
   return (
     <div style={{ background: '#fff', borderRadius: 14, border: '1px solid var(--crema-oscuro)', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
       {/* Número */}
@@ -200,6 +204,9 @@ function PedidoRow({ pedido: p, onVer, onEliminar }) {
       <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
         <button onClick={onVer} style={{ padding: '6px 14px', borderRadius: 8, border: '1px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', fontSize: 12, cursor: 'pointer' }}>
           Ver
+        </button>
+        <button onClick={onEditar} style={{ padding: '6px 14px', borderRadius: 8, border: '1px solid var(--bordeaux)', background: '#fff', color: 'var(--bordeaux)', fontSize: 12, cursor: 'pointer' }}>
+          Editar
         </button>
         <button onClick={onEliminar} style={{ padding: '6px 10px', borderRadius: 8, border: 'none', background: '#fff', color: '#ddd', fontSize: 16, cursor: 'pointer', lineHeight: 1 }}
           onMouseEnter={e => e.target.style.color = '#c0392b'}
@@ -333,6 +340,114 @@ function ModalNuevoPedido({ onClose, onGuardado }) {
   );
 }
 
+/* ── Modal: Editar pedido ── */
+function ModalEditarPedido({ pedido, onClose, onGuardado }) {
+  const [cliente, setCliente] = useState(pedido.nombre_cliente || '');
+  const [items, setItems] = useState(
+    pedido.items?.map(i => ({ nombre_producto: i.nombre_producto, cantidad: i.cantidad, precio_unitario: i.precio_unitario })) || [{ ...ITEM_VACIO }]
+  );
+  const [nota, setNota] = useState(pedido.nota || '');
+  const [fecha, setFecha] = useState(pedido.creado_en?.slice(0, 10) || new Date().toISOString().slice(0, 10));
+  const [error, setError] = useState('');
+  const [guardando, setGuardando] = useState(false);
+  const [nombresClientes, setNombresClientes] = useState([]);
+  const [productosData, setProductosData] = useState([]);
+
+  useEffect(() => {
+    api.get('/clientes/nombres').then(r => setNombresClientes(r.data)).catch(() => {});
+    api.get('/productos').then(r => setProductosData(r.data)).catch(() => {});
+  }, []);
+
+  const nombresProductos = productosData.map(p => p.nombre);
+  const preciosMap = Object.fromEntries(productosData.map(p => [p.nombre, p.precio]));
+  function precioDeProducto(nombre) { return productosData.find(p => p.nombre === nombre)?.precio ?? ''; }
+
+  function addItem() { setItems(i => [...i, { ...ITEM_VACIO }]); }
+  function removeItem(idx) { setItems(i => i.filter((_, j) => j !== idx)); }
+  function setItem(idx, key, val) { setItems(i => i.map((item, j) => j === idx ? { ...item, [key]: val } : item)); }
+  function setItemMulti(idx, campos) { setItems(i => i.map((item, j) => j === idx ? { ...item, ...campos } : item)); }
+
+  const total = items.reduce((s, i) => s + (parseFloat(i.precio_unitario) || 0) * (parseInt(i.cantidad) || 0), 0);
+
+  async function guardar(e) {
+    e.preventDefault();
+    if (!cliente.trim()) return setError('Ingresá el nombre del cliente');
+    if (items.some(i => !i.nombre_producto.trim() || !i.precio_unitario)) return setError('Completá todos los ítems');
+    setError(''); setGuardando(true);
+    try {
+      await api.put(`/pedidos/${pedido.id}`, { nombre_cliente: cliente, items, nota, fecha });
+      onGuardado();
+    } catch (err) {
+      setError(err.response?.data?.error || 'Error al guardar');
+    } finally { setGuardando(false); }
+  }
+
+  return (
+    <Modal onClose={onClose} titulo={`Editar pedido #${pedido.id}`}>
+      <form onSubmit={guardar} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <Field label="Cliente">
+            <Autocomplete value={cliente} onChange={setCliente} opciones={nombresClientes} placeholder="Nombre del cliente" extraOption="+ Nueva cliente" />
+          </Field>
+          <Field label="Fecha">
+            <Input type="date" value={fecha} onChange={e => setFecha(e.target.value)} />
+          </Field>
+        </div>
+
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <label style={labelStyle}>Productos</label>
+            <button type="button" onClick={addItem} style={{ fontSize: 12, color: 'var(--bordeaux)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>+ Agregar ítem</button>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {items.map((item, idx) => (
+              <div key={idx} style={{ display: 'grid', gridTemplateColumns: '1fr 60px 100px 28px', gap: 8, alignItems: 'center' }}>
+                <Autocomplete
+                  value={item.nombre_producto}
+                  onChange={val => setItem(idx, 'nombre_producto', val)}
+                  onSelect={nombre => {
+                    const precio = precioDeProducto(nombre);
+                    setItemMulti(idx, { nombre_producto: nombre, ...(precio ? { precio_unitario: precio } : {}) });
+                  }}
+                  opciones={nombresProductos}
+                  precios={preciosMap}
+                  placeholder="Producto"
+                  extraOption="+ Otro (escribir manualmente)"
+                />
+                <Input type="number" min="1" value={item.cantidad} onChange={e => setItem(idx, 'cantidad', e.target.value)} placeholder="Cant." style={{ textAlign: 'center' }} />
+                <Input type="number" min="0" step="100" value={item.precio_unitario} onChange={e => setItem(idx, 'precio_unitario', e.target.value)} placeholder="Precio" />
+                {items.length > 1 && (
+                  <button type="button" onClick={() => removeItem(idx)} style={{ background: 'none', border: 'none', color: '#ccc', fontSize: 20, cursor: 'pointer', lineHeight: 1, padding: 0 }}
+                    onMouseEnter={e => e.target.style.color = '#c0392b'} onMouseLeave={e => e.target.style.color = '#ccc'}>×</button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <Field label="Nota (opcional)">
+          <textarea value={nota} onChange={e => setNota(e.target.value)} rows={2} placeholder="Aclaraciones..."
+            style={{ ...inputStyle, resize: 'none', width: '100%', boxSizing: 'border-box' }} />
+        </Field>
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'var(--crema)', borderRadius: 10 }}>
+          <span style={{ fontSize: 13, color: 'var(--texto-suave)' }}>Total calculado</span>
+          <span style={{ fontFamily: 'var(--serif)', fontSize: 22, color: 'var(--bordeaux)' }}>${total.toLocaleString('es-AR')}</span>
+        </div>
+
+        {error && <p style={{ color: '#c0392b', fontSize: 13 }}>{error}</p>}
+
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button type="button" onClick={onClose} style={{ flex: 1, padding: '12px', borderRadius: 10, border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', cursor: 'pointer', fontSize: 13 }}>Cancelar</button>
+          <button type="submit" disabled={guardando} style={{ flex: 1, padding: '12px', borderRadius: 10, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', cursor: 'pointer', fontSize: 13, fontWeight: 500 }}>
+            {guardando ? 'Guardando...' : 'Guardar cambios'}
+          </button>
+        </div>
+      </form>
+    </Modal>
+  );
+}
+
 /* ── Modal: Detalle pedido ── */
 function ModalDetalle({ pedido: p, onClose }) {
   return (
@@ -366,8 +481,8 @@ function ModalDetalle({ pedido: p, onClose }) {
 }
 
 /* ── Helpers UI ── */
-const inputStyle = { padding: '12px 16px', borderRadius: 10, border: '1.5px solid var(--crema-oscuro)', fontSize: 15, color: 'var(--texto)', outline: 'none', fontFamily: 'var(--sans)' };
-const labelStyle = { fontSize: 13, color: 'var(--texto-suave)', display: 'block', marginBottom: 6 };
+const inputStyle = { padding: '13px 16px', borderRadius: 10, border: '1.5px solid var(--crema-oscuro)', fontSize: 16, color: 'var(--texto)', outline: 'none', fontFamily: 'var(--sans)' };
+const labelStyle = { fontSize: 14, color: 'var(--texto-suave)', display: 'block', marginBottom: 6 };
 
 function Input({ style, ...props }) {
   return <input style={{ ...inputStyle, width: '100%', boxSizing: 'border-box', ...style }} {...props} />;

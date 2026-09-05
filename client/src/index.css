@@ -147,7 +147,7 @@ body {
 .admin-page {
   padding: 40px 40px;
   max-width: 1000px;
-  font-size: 15px;
+  font-size: 16px;
 }
 
 @media (max-width: 640px) {

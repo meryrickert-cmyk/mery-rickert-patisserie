@@ -104,6 +104,50 @@ router.get('/', authAdmin, (req, res) => {
   res.json(pedidos);
 });
 
+// PUT admin — editar pedido manual
+router.put('/:id', authAdmin, (req, res) => {
+  const { nombre_cliente, items, nota, fecha } = req.body;
+  if (!nombre_cliente?.trim()) return res.status(400).json({ error: 'Nombre requerido' });
+  if (!items?.length) return res.status(400).json({ error: 'Agregá al menos un ítem' });
+
+  const total = items.reduce((s, i) => s + (parseFloat(i.precio_unitario) * parseInt(i.cantidad)), 0);
+
+  db.exec('BEGIN');
+  try {
+    // Upsert cliente
+    const nombreCliente = nombre_cliente.trim();
+    const clienteExistente = db.prepare('SELECT id FROM clientes WHERE nombre = ? COLLATE NOCASE').get(nombreCliente);
+    let clienteId = clienteExistente?.id;
+    if (!clienteId) {
+      clienteId = db.prepare('INSERT INTO clientes (nombre) VALUES (?)').run(nombreCliente).lastInsertRowid;
+    }
+
+    db.prepare(
+      `UPDATE pedidos SET nombre_cliente = ?, total = ?, nota = ?, cliente_id = ?,
+       creado_en = COALESCE(?, creado_en) WHERE id = ?`
+    ).run(
+      nombreCliente, total, nota || null, clienteId,
+      fecha ? `${fecha} 12:00:00` : null,
+      req.params.id
+    );
+
+    db.prepare('DELETE FROM pedido_items WHERE pedido_id = ?').run(req.params.id);
+    for (const item of items) {
+      db.prepare(
+        'INSERT INTO pedido_items (pedido_id, nombre_producto, precio_unitario, cantidad) VALUES (?, ?, ?, ?)'
+      ).run(req.params.id, item.nombre_producto, parseFloat(item.precio_unitario), parseInt(item.cantidad));
+    }
+
+    db.exec('COMMIT');
+    const resultado = db.prepare('SELECT * FROM pedidos WHERE id = ?').get(req.params.id);
+    resultado.items = db.prepare('SELECT * FROM pedido_items WHERE pedido_id = ?').all(req.params.id);
+    res.json(resultado);
+  } catch (err) {
+    db.exec('ROLLBACK');
+    res.status(400).json({ error: err.message });
+  }
+});
+
 // DELETE admin — eliminar pedido
 router.delete('/:id', authAdmin, (req, res) => {
   db.prepare('DELETE FROM pedido_items WHERE pedido_id = ?').run(req.params.id);
