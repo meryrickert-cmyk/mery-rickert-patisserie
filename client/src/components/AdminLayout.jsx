@@ -43,7 +43,7 @@ export default function AdminLayout() {
             <NavLink key={l.to} to={l.to} style={({ isActive }) => ({
               display: 'flex', alignItems: 'center', gap: 10,
               padding: '10px 14px', borderRadius: 10, textDecoration: 'none',
-              fontSize: 14, transition: 'all 0.15s',
+              fontSize: 15, transition: 'all 0.15s',
               background: isActive ? 'var(--crema)' : 'transparent',
               color: isActive ? 'var(--bordeaux)' : 'var(--texto-suave)',
               fontWeight: isActive ? 500 : 400,

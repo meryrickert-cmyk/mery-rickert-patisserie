@@ -366,8 +366,8 @@ function ModalDetalle({ pedido: p, onClose }) {
 }
 
 /* ── Helpers UI ── */
-const inputStyle = { padding: '10px 14px', borderRadius: 10, border: '1.5px solid var(--crema-oscuro)', fontSize: 13, color: 'var(--texto)', outline: 'none', fontFamily: 'var(--sans)' };
-const labelStyle = { fontSize: 12, color: 'var(--texto-suave)', display: 'block', marginBottom: 4 };
+const inputStyle = { padding: '12px 16px', borderRadius: 10, border: '1.5px solid var(--crema-oscuro)', fontSize: 15, color: 'var(--texto)', outline: 'none', fontFamily: 'var(--sans)' };
+const labelStyle = { fontSize: 13, color: 'var(--texto-suave)', display: 'block', marginBottom: 6 };
 
 function Input({ style, ...props }) {
   return <input style={{ ...inputStyle, width: '100%', boxSizing: 'border-box', ...style }} {...props} />;
@@ -376,14 +376,14 @@ function Field({ label, children }) {
   return <div><label style={labelStyle}>{label}</label>{children}</div>;
 }
 function InfoField({ label, valor }) {
-  return <div><p style={{ ...labelStyle, marginBottom: 2 }}>{label}</p><p style={{ fontSize: 14, color: 'var(--texto)', margin: 0, fontWeight: 500 }}>{valor}</p></div>;
+  return <div><p style={{ ...labelStyle, marginBottom: 2 }}>{label}</p><p style={{ fontSize: 15, color: 'var(--texto)', margin: 0, fontWeight: 500 }}>{valor}</p></div>;
 }
 function Btn({ children, onClick, variant = 'primary' }) {
   const styles = variant === 'primary'
     ? { background: 'var(--bordeaux)', color: '#FAF7F2', border: 'none' }
     : { background: '#fff', color: 'var(--texto-suave)', border: '1.5px solid var(--crema-oscuro)' };
   return (
-    <button onClick={onClick} style={{ ...styles, padding: '10px 20px', borderRadius: 10, fontSize: 13, cursor: 'pointer', fontFamily: 'var(--sans)', transition: 'opacity 0.2s' }}>
+    <button onClick={onClick} style={{ ...styles, padding: '11px 22px', borderRadius: 10, fontSize: 15, cursor: 'pointer', fontFamily: 'var(--sans)', transition: 'opacity 0.2s' }}>
       {children}
     </button>
   );
@@ -395,8 +395,8 @@ function Modal({ titulo, onClose, children }) {
       <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.25)', zIndex: 50, backdropFilter: 'blur(2px)' }} />
       <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 51, width: '96%', maxWidth: 820, background: '#fff', borderRadius: 20, boxShadow: '0 20px 60px rgba(0,0,0,0.15)', maxHeight: '92vh', overflowY: 'auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', borderBottom: '1px solid var(--crema-oscuro)' }}>
-          <h3 style={{ fontFamily: 'var(--serif)', fontWeight: 400, fontSize: 22, color: 'var(--texto)', margin: 0 }}>{titulo}</h3>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: 'var(--texto-suave)', lineHeight: 1, padding: 4 }}>×</button>
+          <h3 style={{ fontFamily: 'var(--serif)', fontWeight: 400, fontSize: 26, color: 'var(--texto)', margin: 0 }}>{titulo}</h3>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 26, cursor: 'pointer', color: 'var(--texto-suave)', lineHeight: 1, padding: 4 }}>×</button>
         </div>
         <div style={{ padding: '20px 24px 24px' }}>{children}</div>
       </div>
