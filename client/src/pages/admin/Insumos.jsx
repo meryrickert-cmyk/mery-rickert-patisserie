@@ -95,7 +95,7 @@ function TabInsumos() {
   const rowInsumo = (ins, isLast) => (
     <tr key={ins.id} style={{ borderBottom: isLast ? 'none' : '1px solid var(--crema-oscuro)' }}>
       <td style={{ padding: '9px 16px', fontSize: 18, fontWeight: 500, color: 'var(--texto)', fontFamily: 'var(--serif)' }}>{ins.nombre}</td>
-      <td style={{ padding: '9px 16px', fontSize: 18, color: 'var(--texto-suave)' }}>{ins.unidad}</td>
+      <td style={{ padding: '9px 16px', fontSize: 18, color: 'var(--texto-suave)', fontFamily: 'var(--serif)' }}>{ins.unidad}</td>
       <td style={{ padding: '9px 16px', fontSize: 18, fontWeight: 500, color: 'var(--bordeaux)', fontFamily: 'var(--serif)' }}>
         ${parseFloat(ins.costo).toLocaleString('es-AR')} / {ins.unidad}
       </td>
@@ -105,7 +105,7 @@ function TabInsumos() {
           <button onClick={() => eliminar(ins.id)} style={{ ...btnTabla, color: '#c0392b' }}>✕</button>
         </div>
       </td>
-      <td style={{ padding: '9px 16px', fontSize: 18, color: 'var(--texto-suave)' }}>
+      <td style={{ padding: '9px 16px', fontSize: 18, color: 'var(--texto-suave)', fontFamily: 'var(--serif)' }}>
         {ins.actualizado_en ? new Date(ins.actualizado_en).toLocaleDateString('es-AR') : '—'}
       </td>
     </tr>
@@ -600,7 +600,7 @@ function TabAnalisis() {
                     <tr key={d.id} style={{ borderBottom: i === filtrados.length - 1 ? 'none' : '1px solid #f5f0eb' }}>
                       <td style={{ padding: '11px 14px', fontSize: 18, fontFamily: 'var(--serif)', color: 'var(--texto)', minWidth: 160 }}>
                         {d.nombre}
-                        {d.producto_nombre && <span style={{ fontSize: 18, color: 'var(--texto-suave)', display: 'block' }}>→ {d.producto_nombre}</span>}
+                        {d.producto_nombre && <span style={{ fontSize: 16, color: 'var(--texto-suave)', display: 'block', fontFamily: 'var(--serif)' }}>→ {d.producto_nombre}</span>}
                       </td>
                       <td style={tdR}>{d.rendimiento}u</td>
                       <td style={tdR}>{d.costo_por_unidad > 0 ? `$${Math.round(d.costo_por_unidad).toLocaleString('es-AR')}` : '—'}</td>
