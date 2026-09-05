@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 const links = [
   { to: '/admin/dashboard', icon: '📊', label: 'Dashboard' },
   { to: '/admin/pedidos',   icon: '📦', label: 'Pedidos' },
+  { to: '/admin/clientes',  icon: '👤', label: 'Clientes' },
   { to: '/admin/productos', icon: '🧁', label: 'Productos' },
   { to: '/admin/contenido', icon: '✏️', label: 'Contenido' },
   { to: '/admin/insumos',  icon: '🧾', label: 'Insumos' },

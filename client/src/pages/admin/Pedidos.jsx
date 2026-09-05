@@ -20,6 +20,65 @@ function labelMes(ym) {
 
 const ITEM_VACIO = { nombre_producto: '', cantidad: 1, precio_unitario: '' };
 
+/* ── Autocomplete genérico ── */
+function Autocomplete({ value, onChange, opciones, placeholder, extraOption }) {
+  const [open, setOpen] = useState(false);
+  const [q, setQ] = useState(value);
+  const ref = { current: null };
+
+  const filtradas = q
+    ? opciones.filter(o => o.toLowerCase().includes(q.toLowerCase())).slice(0, 8)
+    : opciones.slice(0, 8);
+
+  function seleccionar(op) {
+    setQ(op === '__manual__' ? q : op);
+    onChange(op === '__manual__' ? q : op);
+    setOpen(false);
+  }
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <input
+        style={{ ...inputStyle, width: '100%', boxSizing: 'border-box' }}
+        value={q}
+        placeholder={placeholder}
+        onChange={e => { setQ(e.target.value); onChange(e.target.value); setOpen(true); }}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setTimeout(() => setOpen(false), 150)}
+        autoComplete="off"
+      />
+      {open && (filtradas.length > 0 || extraOption) && (
+        <div style={{
+          position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 200,
+          background: '#fff', border: '1.5px solid var(--crema-oscuro)', borderRadius: 10,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.10)', marginTop: 4, overflow: 'hidden',
+        }}>
+          {filtradas.map(op => (
+            <div key={op} onMouseDown={() => seleccionar(op)} style={{
+              padding: '9px 14px', fontSize: 13, cursor: 'pointer', color: 'var(--texto)',
+            }}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--crema)'}
+              onMouseLeave={e => e.currentTarget.style.background = '#fff'}
+            >{op}</div>
+          ))}
+          {extraOption && (
+            <div onMouseDown={() => seleccionar('__manual__')} style={{
+              padding: '9px 14px', fontSize: 12, cursor: 'pointer',
+              color: 'var(--bordeaux)', borderTop: filtradas.length ? '1px solid var(--crema-oscuro)' : 'none',
+              fontStyle: 'italic',
+            }}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--crema)'}
+              onMouseLeave={e => e.currentTarget.style.background = '#fff'}
+            >
+              {extraOption}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ══════════════════════════════════════════════════════════ */
 export default function Pedidos() {
   const [pedidos, setPedidos] = useState([]);
@@ -154,6 +213,13 @@ function ModalNuevoPedido({ onClose, onGuardado }) {
   const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0]);
   const [error, setError] = useState('');
   const [guardando, setGuardando] = useState(false);
+  const [nombresClientes, setNombresClientes] = useState([]);
+  const [nombresProductos, setNombresProductos] = useState([]);
+
+  useEffect(() => {
+    api.get('/clientes/nombres').then(r => setNombresClientes(r.data)).catch(() => {});
+    api.get('/productos').then(r => setNombresProductos(r.data.map(p => p.nombre))).catch(() => {});
+  }, []);
 
   function addItem() { setItems(i => [...i, { ...ITEM_VACIO }]); }
   function removeItem(idx) { setItems(i => i.filter((_, j) => j !== idx)); }
@@ -179,7 +245,13 @@ function ModalNuevoPedido({ onClose, onGuardado }) {
       <form onSubmit={guardar} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           <Field label="Cliente">
-            <Input value={cliente} onChange={e => setCliente(e.target.value)} placeholder="Nombre del cliente" required />
+            <Autocomplete
+              value={cliente}
+              onChange={setCliente}
+              opciones={nombresClientes}
+              placeholder="Nombre del cliente"
+              extraOption="+ Nueva cliente"
+            />
           </Field>
           <Field label="Fecha">
             <Input type="date" value={fecha} onChange={e => setFecha(e.target.value)} />
@@ -197,7 +269,13 @@ function ModalNuevoPedido({ onClose, onGuardado }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {items.map((item, idx) => (
               <div key={idx} style={{ display: 'grid', gridTemplateColumns: '1fr 60px 100px 28px', gap: 8, alignItems: 'center' }}>
-                <Input value={item.nombre_producto} onChange={e => setItem(idx, 'nombre_producto', e.target.value)} placeholder="Producto" />
+                <Autocomplete
+                  value={item.nombre_producto}
+                  onChange={val => setItem(idx, 'nombre_producto', val)}
+                  opciones={nombresProductos}
+                  placeholder="Producto"
+                  extraOption="+ Escribir manualmente"
+                />
                 <Input type="number" min="1" value={item.cantidad} onChange={e => setItem(idx, 'cantidad', e.target.value)} placeholder="Cant." style={{ textAlign: 'center' }} />
                 <Input type="number" min="0" step="100" value={item.precio_unitario} onChange={e => setItem(idx, 'precio_unitario', e.target.value)} placeholder="Precio" />
                 {items.length > 1 && (

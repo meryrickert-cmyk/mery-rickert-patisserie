@@ -84,6 +84,18 @@ try { db.exec(`ALTER TABLE producto_imagenes ADD COLUMN posicion TEXT DEFAULT '5
 try { db.exec(`ALTER TABLE productos ADD COLUMN posicion TEXT DEFAULT '50% 50%'`); } catch {}
 try { db.exec(`ALTER TABLE productos ADD COLUMN variantes TEXT DEFAULT '[]'`); } catch {}
 try { db.exec(`ALTER TABLE pedidos ADD COLUMN origen TEXT DEFAULT 'web'`); } catch {}
+try { db.exec(`ALTER TABLE pedidos ADD COLUMN cliente_id INTEGER REFERENCES clientes(id)`); } catch {}
+
+// Tabla de clientes
+db.exec(`
+  CREATE TABLE IF NOT EXISTS clientes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre TEXT NOT NULL UNIQUE,
+    recomendado_por TEXT DEFAULT '',
+    notas TEXT DEFAULT '',
+    creado_en TEXT NOT NULL DEFAULT (datetime('now'))
+  )
+`);
 
 // Imágenes del hero
 db.exec(`

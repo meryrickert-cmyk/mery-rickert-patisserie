@@ -49,14 +49,26 @@ router.post('/manual', authAdmin, (req, res) => {
 
   db.exec('BEGIN');
   try {
+    // Upsert cliente por nombre
+    let clienteId = null;
+    const nombreCliente = nombre_cliente.trim();
+    const clienteExistente = db.prepare('SELECT id FROM clientes WHERE nombre = ? COLLATE NOCASE').get(nombreCliente);
+    if (clienteExistente) {
+      clienteId = clienteExistente.id;
+    } else {
+      const r = db.prepare('INSERT INTO clientes (nombre) VALUES (?)').run(nombreCliente);
+      clienteId = r.lastInsertRowid;
+    }
+
     const pedido = db.prepare(
-      `INSERT INTO pedidos (nombre_cliente, total, nota, origen, creado_en)
-       VALUES (?, ?, ?, 'manual', ?)`
+      `INSERT INTO pedidos (nombre_cliente, total, nota, origen, creado_en, cliente_id)
+       VALUES (?, ?, ?, 'manual', ?, ?)`
     ).run(
-      nombre_cliente.trim(),
+      nombreCliente,
       total,
       nota || null,
-      fecha ? `${fecha} 12:00:00` : new Date().toISOString().replace('T', ' ').slice(0, 19)
+      fecha ? `${fecha} 12:00:00` : new Date().toISOString().replace('T', ' ').slice(0, 19),
+      clienteId
     );
 
     for (const item of items) {
