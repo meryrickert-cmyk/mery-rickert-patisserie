@@ -27,7 +27,7 @@ function periodos() {
 }
 
 const pillStyle = (activo) => ({
-  padding: '6px 16px', borderRadius: 20, fontSize: 13, cursor: 'pointer',
+  padding: '6px 16px', borderRadius: 20, fontSize: 17, cursor: 'pointer',
   border: activo ? '1.5px solid var(--bordeaux)' : '1.5px solid var(--crema-oscuro)',
   background: activo ? 'var(--bordeaux)' : '#fff',
   color: activo ? '#FAF7F2' : 'var(--texto-suave)',
@@ -73,8 +73,8 @@ export default function Analytics() {
     <div className="admin-page" style={{ maxWidth: 900 }}>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 300, fontSize: 32, color: 'var(--texto)', margin: 0 }}>Analytics</h2>
-        <p style={{ color: 'var(--texto-suave)', fontSize: 13, marginTop: 4 }}>Tráfico y comportamiento del sitio público</p>
+        <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 300, fontSize: 42, color: 'var(--texto)', margin: 0 }}>Analytics</h2>
+        <p style={{ color: 'var(--texto-suave)', fontSize: 17, marginTop: 4 }}>Tráfico y comportamiento del sitio público</p>
 
         {/* Period selector */}
         <div style={{ marginTop: 14, display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
@@ -88,12 +88,12 @@ export default function Analytics() {
           {showCustom && (
             <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
               <input type="date" value={customDesde} onChange={e => setCustomDesde(e.target.value)}
-                style={{ padding: '5px 10px', borderRadius: 8, border: '1.5px solid var(--crema-oscuro)', fontSize: 13, color: 'var(--texto)', outline: 'none' }} />
-              <span style={{ fontSize: 12, color: 'var(--texto-suave)' }}>→</span>
+                style={{ padding: '5px 10px', borderRadius: 8, border: '1.5px solid var(--crema-oscuro)', fontSize: 17, color: 'var(--texto)', outline: 'none' }} />
+              <span style={{ fontSize: 16, color: 'var(--texto-suave)' }}>→</span>
               <input type="date" value={customHasta} onChange={e => setCustomHasta(e.target.value)}
-                style={{ padding: '5px 10px', borderRadius: 8, border: '1.5px solid var(--crema-oscuro)', fontSize: 13, color: 'var(--texto)', outline: 'none' }} />
+                style={{ padding: '5px 10px', borderRadius: 8, border: '1.5px solid var(--crema-oscuro)', fontSize: 17, color: 'var(--texto)', outline: 'none' }} />
               {customDesde && customHasta && (
-                <button onClick={cargar} style={{ padding: '5px 14px', borderRadius: 8, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 13, cursor: 'pointer' }}>Aplicar</button>
+                <button onClick={cargar} style={{ padding: '5px 14px', borderRadius: 8, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 17, cursor: 'pointer' }}>Aplicar</button>
               )}
             </div>
           )}
@@ -112,7 +112,7 @@ export default function Analytics() {
 
       {/* Funnel */}
       <div style={{ background: '#fff', borderRadius: 16, border: '1px solid var(--crema-oscuro)', padding: '24px', marginBottom: 20 }}>
-        <p style={{ fontWeight: 600, fontSize: 14, color: 'var(--texto)', marginBottom: 20 }}>Funnel de conversión</p>
+        <p style={{ fontWeight: 600, fontSize: 18, color: 'var(--texto)', marginBottom: 20 }}>Funnel de conversión</p>
         {[
           { label: 'Visitantes únicos', val: funnel.page_view, color: 'var(--crema-oscuro)' },
           { label: 'Agregaron al carrito', val: funnel.add_to_cart, color: '#d4a9b0' },
@@ -122,8 +122,8 @@ export default function Analytics() {
           return (
             <div key={i} style={{ marginBottom: 16 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                <span style={{ fontSize: 13, color: 'var(--texto)' }}>{step.label}</span>
-                <span style={{ fontSize: 13, color: 'var(--texto-suave)' }}>{fmt(step.val)} <span style={{ color: 'var(--bordeaux)', fontWeight: 600 }}>({pct}%)</span></span>
+                <span style={{ fontSize: 17, color: 'var(--texto)' }}>{step.label}</span>
+                <span style={{ fontSize: 17, color: 'var(--texto-suave)' }}>{fmt(step.val)} <span style={{ color: 'var(--bordeaux)', fontWeight: 600 }}>({pct}%)</span></span>
               </div>
               <div style={{ height: 8, background: 'var(--crema)', borderRadius: 8, overflow: 'hidden' }}>
                 <div style={{ height: '100%', width: `${pct}%`, background: step.color, borderRadius: 8, transition: 'width 0.6s ease' }} />
@@ -136,7 +136,7 @@ export default function Analytics() {
       {/* Tabla de eventos */}
       <div style={{ background: '#fff', borderRadius: 16, border: '1px solid var(--crema-oscuro)', overflow: 'hidden' }}>
         <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--crema-oscuro)' }}>
-          <p style={{ fontWeight: 600, fontSize: 14, color: 'var(--texto)', margin: 0 }}>Todos los eventos</p>
+          <p style={{ fontWeight: 600, fontSize: 18, color: 'var(--texto)', margin: 0 }}>Todos los eventos</p>
         </div>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
           <thead>
@@ -167,9 +167,9 @@ export default function Analytics() {
 function KPI({ label, valor, sub }) {
   return (
     <div style={{ background: '#fff', borderRadius: 14, border: '1px solid var(--crema-oscuro)', padding: '18px 20px' }}>
-      <p style={{ fontSize: 11, color: 'var(--texto-suave)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 6px' }}>{label}</p>
-      <p style={{ fontFamily: 'var(--serif)', fontSize: 28, color: 'var(--bordeaux)', margin: 0, lineHeight: 1 }}>{valor}</p>
-      {sub && <p style={{ fontSize: 11, color: 'var(--texto-suave)', margin: '6px 0 0' }}>{sub}</p>}
+      <p style={{ fontSize: 14, color: 'var(--texto-suave)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 6px' }}>{label}</p>
+      <p style={{ fontFamily: 'var(--serif)', fontSize: 36, color: 'var(--bordeaux)', margin: 0, lineHeight: 1 }}>{valor}</p>
+      {sub && <p style={{ fontSize: 14, color: 'var(--texto-suave)', margin: '6px 0 0' }}>{sub}</p>}
     </div>
   );
 }

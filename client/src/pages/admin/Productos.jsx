@@ -62,8 +62,8 @@ function FocalPicker({ file, foco, onChange }) {
 
 const CATS = ['tortas', 'para el te', 'budines', 'shots'];
 const FORM_VACIO = { nombre: '', descripcion: '', precio: '', stock: '99', categoria: 'tortas', orden: '0' };
-const inputStyle = { padding: '10px 14px', borderRadius: 10, border: '1.5px solid var(--crema-oscuro)', fontSize: 13, color: 'var(--texto)', outline: 'none', fontFamily: 'var(--sans)', width: '100%', boxSizing: 'border-box', background: '#fff' };
-const labelStyle = { fontSize: 12, color: 'var(--texto-suave)', display: 'block', marginBottom: 5 };
+const inputStyle = { padding: '10px 14px', borderRadius: 10, border: '1.5px solid var(--crema-oscuro)', fontSize: 17, color: 'var(--texto)', outline: 'none', fontFamily: 'var(--sans)', width: '100%', boxSizing: 'border-box', background: '#fff' };
+const labelStyle = { fontSize: 16, color: 'var(--texto-suave)', display: 'block', marginBottom: 5 };
 
 export default function Productos() {
   const [productos, setProductos] = useState([]);
@@ -167,8 +167,8 @@ export default function Productos() {
   return (
     <div className="admin-page">
       <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 28, gap: 12, flexWrap: 'wrap' }}>
-        <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 300, fontSize: 32, color: 'var(--texto)', margin: 0 }}>Productos</h2>
-        <button onClick={abrirNuevo} style={{ padding: '10px 20px', borderRadius: 10, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 13, cursor: 'pointer', fontFamily: 'var(--sans)' }}>
+        <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 300, fontSize: 42, color: 'var(--texto)', margin: 0 }}>Productos</h2>
+        <button onClick={abrirNuevo} style={{ padding: '10px 20px', borderRadius: 10, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 17, cursor: 'pointer', fontFamily: 'var(--sans)' }}>
           + Nuevo producto
         </button>
       </div>
@@ -176,7 +176,7 @@ export default function Productos() {
       <div className="admin-cat-filters" style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
         {CATS.map(c => (
           <button key={c} onClick={() => setCatFiltro(c)} style={{
-            padding: '8px 18px', borderRadius: 50, fontSize: 13, cursor: 'pointer',
+            padding: '8px 18px', borderRadius: 50, fontSize: 17, cursor: 'pointer',
             background: catFiltro === c ? 'var(--bordeaux)' : '#fff',
             color: catFiltro === c ? '#FAF7F2' : 'var(--texto-suave)',
             border: `1.5px solid ${catFiltro === c ? 'var(--bordeaux)' : 'var(--crema-oscuro)'}`,
@@ -185,7 +185,7 @@ export default function Productos() {
         ))}
       </div>
 
-      <p style={{ fontSize: 12, color: 'var(--texto-suave)', marginBottom: 12 }}>
+      <p style={{ fontSize: 16, color: 'var(--texto-suave)', marginBottom: 12 }}>
         Arrastrá las cards para cambiar el orden en el que aparecen en el sitio.
       </p>
 
@@ -207,7 +207,7 @@ export default function Productos() {
               cursor: 'grab',
             }}>
             {/* Handle de arrastre */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '6px 0 2px', color: 'var(--crema-oscuro)', fontSize: 16, letterSpacing: 3, userSelect: 'none' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '6px 0 2px', color: 'var(--crema-oscuro)', fontSize: 21, letterSpacing: 3, userSelect: 'none' }}>
               ⠿
             </div>
             <div style={{ aspectRatio: '3/4', background: 'var(--crema-oscuro)', overflow: 'hidden', position: 'relative' }}>
@@ -220,12 +220,12 @@ export default function Productos() {
               )}
             </div>
             <div style={{ padding: '10px 14px 14px' }}>
-              <p style={{ fontFamily: 'var(--serif)', color: 'var(--bordeaux)', fontSize: 15, marginBottom: 2, lineHeight: 1.3 }} className="line-clamp-2">{p.nombre}</p>
-              {p.descripcion && <p style={{ fontSize: 11, color: 'var(--texto-suave)', marginBottom: 6 }} className="line-clamp-2">{p.descripcion}</p>}
-              <p style={{ fontSize: 16, fontWeight: 600, color: 'var(--texto)', marginBottom: 10 }}>${parseFloat(p.precio).toLocaleString('es-AR')}</p>
+              <p style={{ fontFamily: 'var(--serif)', color: 'var(--bordeaux)', fontSize: 20, marginBottom: 2, lineHeight: 1.3 }} className="line-clamp-2">{p.nombre}</p>
+              {p.descripcion && <p style={{ fontSize: 14, color: 'var(--texto-suave)', marginBottom: 6 }} className="line-clamp-2">{p.descripcion}</p>}
+              <p style={{ fontSize: 21, fontWeight: 600, color: 'var(--texto)', marginBottom: 10 }}>${parseFloat(p.precio).toLocaleString('es-AR')}</p>
               <div style={{ display: 'flex', gap: 6 }}>
-                <button onClick={e => { e.stopPropagation(); abrirEditar(p); }} style={{ flex: 1, padding: '7px 0', borderRadius: 8, border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', fontSize: 12, cursor: 'pointer' }}>Editar</button>
-                <button onClick={e => { e.stopPropagation(); toggleActivo(p); }} style={{ flex: 1, padding: '7px 0', borderRadius: 8, border: 'none', background: p.activo ? 'var(--crema-oscuro)' : 'var(--bordeaux)', color: p.activo ? 'var(--texto-suave)' : '#FAF7F2', fontSize: 12, cursor: 'pointer' }}>
+                <button onClick={e => { e.stopPropagation(); abrirEditar(p); }} style={{ flex: 1, padding: '7px 0', borderRadius: 8, border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', fontSize: 16, cursor: 'pointer' }}>Editar</button>
+                <button onClick={e => { e.stopPropagation(); toggleActivo(p); }} style={{ flex: 1, padding: '7px 0', borderRadius: 8, border: 'none', background: p.activo ? 'var(--crema-oscuro)' : 'var(--bordeaux)', color: p.activo ? 'var(--texto-suave)' : '#FAF7F2', fontSize: 16, cursor: 'pointer' }}>
                   {p.activo ? 'Ocultar' : 'Mostrar'}
                 </button>
               </div>
@@ -248,10 +248,10 @@ export default function Productos() {
             onClick={e => e.stopPropagation()}>
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', borderBottom: '1px solid var(--crema-oscuro)', position: 'sticky', top: 0, background: '#fff', zIndex: 1 }}>
-              <h3 style={{ fontFamily: 'var(--serif)', fontWeight: 400, fontSize: 22, color: 'var(--texto)', margin: 0 }}>
+              <h3 style={{ fontFamily: 'var(--serif)', fontWeight: 400, fontSize: 29, color: 'var(--texto)', margin: 0 }}>
                 {editando ? 'Editar producto' : 'Nuevo producto'}
               </h3>
-              <button onClick={() => setModal(false)} style={{ background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: 'var(--texto-suave)', padding: 4 }}>×</button>
+              <button onClick={() => setModal(false)} style={{ background: 'none', border: 'none', fontSize: 29, cursor: 'pointer', color: 'var(--texto-suave)', padding: 4 }}>×</button>
             </div>
 
             <form onSubmit={handleSubmit} style={{ padding: '20px 24px 24px', display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -294,17 +294,17 @@ export default function Productos() {
                         <input type="number" value={v.precio} onChange={e => setVariantes(arr => arr.map((x, j) => j === i ? { ...x, precio: e.target.value } : x))}
                           placeholder="55000" style={{ ...inputStyle, flex: 1, minWidth: 0 }} />
                         <button type="button" onClick={() => setVariantes(arr => arr.filter((_, j) => j !== i))}
-                          style={{ width: 26, height: 26, borderRadius: '50%', border: 'none', background: '#fee', color: '#c0392b', fontSize: 15, cursor: 'pointer', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>×</button>
+                          style={{ width: 26, height: 26, borderRadius: '50%', border: 'none', background: '#fee', color: '#c0392b', fontSize: 20, cursor: 'pointer', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>×</button>
                       </div>
                     ))}
                   </div>
                 )}
                 <button type="button" onClick={() => setVariantes(arr => [...arr, { nombre: '', precio: '' }])}
-                  style={{ fontSize: 12, color: 'var(--bordeaux)', background: 'none', border: '1.5px dashed var(--crema-oscuro)', borderRadius: 8, padding: '7px 14px', cursor: 'pointer', width: '100%' }}>
+                  style={{ fontSize: 16, color: 'var(--bordeaux)', background: 'none', border: '1.5px dashed var(--crema-oscuro)', borderRadius: 8, padding: '7px 14px', cursor: 'pointer', width: '100%' }}>
                   + Agregar variante de precio
                 </button>
                 {variantes.length > 0 && (
-                  <p style={{ fontSize: 11, color: 'var(--texto-suave)', marginTop: 6 }}>
+                  <p style={{ fontSize: 14, color: 'var(--texto-suave)', marginTop: 6 }}>
                     Con variantes se muestra "desde $X" en el frente. El precio base queda como mínimo de referencia.
                   </p>
                 )}
@@ -315,7 +315,7 @@ export default function Productos() {
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                     <label style={labelStyle}>Fotos actuales</label>
-                    <span style={{ fontSize: 11, color: 'var(--texto-suave)' }}>Flechas para ordenar</span>
+                    <span style={{ fontSize: 14, color: 'var(--texto-suave)' }}>Flechas para ordenar</span>
                   </div>
                   <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                     {editando.imagenes.map((img, idx) => (
@@ -326,13 +326,13 @@ export default function Productos() {
                             <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'var(--bordeaux)', color: '#fff', fontSize: 9, textAlign: 'center', padding: '2px 0', letterSpacing: '0.05em' }}>PRINCIPAL</div>
                           )}
                           <button type="button" onClick={() => eliminarImagen(editando.id, img.id)}
-                            style={{ position: 'absolute', top: 2, right: 2, width: 18, height: 18, borderRadius: '50%', background: 'rgba(192,57,43,0.9)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: 11, display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}>×</button>
+                            style={{ position: 'absolute', top: 2, right: 2, width: 18, height: 18, borderRadius: '50%', background: 'rgba(192,57,43,0.9)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}>×</button>
                         </div>
                         <div style={{ display: 'flex', gap: 4 }}>
                           <button type="button" onClick={() => moverImagen(editando.id, editando.imagenes, idx, -1)} disabled={idx === 0}
-                            style={{ width: 24, height: 24, borderRadius: 6, border: '1px solid var(--crema-oscuro)', background: '#fff', cursor: idx === 0 ? 'default' : 'pointer', opacity: idx === 0 ? 0.3 : 1, fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bordeaux)' }}>‹</button>
+                            style={{ width: 24, height: 24, borderRadius: 6, border: '1px solid var(--crema-oscuro)', background: '#fff', cursor: idx === 0 ? 'default' : 'pointer', opacity: idx === 0 ? 0.3 : 1, fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bordeaux)' }}>‹</button>
                           <button type="button" onClick={() => moverImagen(editando.id, editando.imagenes, idx, 1)} disabled={idx === editando.imagenes.length - 1}
-                            style={{ width: 24, height: 24, borderRadius: 6, border: '1px solid var(--crema-oscuro)', background: '#fff', cursor: idx === editando.imagenes.length - 1 ? 'default' : 'pointer', opacity: idx === editando.imagenes.length - 1 ? 0.3 : 1, fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bordeaux)' }}>›</button>
+                            style={{ width: 24, height: 24, borderRadius: 6, border: '1px solid var(--crema-oscuro)', background: '#fff', cursor: idx === editando.imagenes.length - 1 ? 'default' : 'pointer', opacity: idx === editando.imagenes.length - 1 ? 0.3 : 1, fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bordeaux)' }}>›</button>
                         </div>
                       </div>
                     ))}
@@ -347,8 +347,8 @@ export default function Productos() {
                   <input type="file" accept="image/*" multiple onChange={e => onSeleccionarImagenes(e.target.files)}
                     style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer', width: '100%' }} />
                   {imagenes.length > 0
-                    ? <p style={{ fontSize: 13, color: 'var(--bordeaux)', margin: 0 }}>✓ {imagenes.length} foto{imagenes.length !== 1 ? 's' : ''} seleccionada{imagenes.length !== 1 ? 's' : ''}</p>
-                    : <p style={{ fontSize: 13, color: 'var(--texto-suave)', margin: 0 }}>Tocá para elegir fotos</p>
+                    ? <p style={{ fontSize: 17, color: 'var(--bordeaux)', margin: 0 }}>✓ {imagenes.length} foto{imagenes.length !== 1 ? 's' : ''} seleccionada{imagenes.length !== 1 ? 's' : ''}</p>
+                    : <p style={{ fontSize: 17, color: 'var(--texto-suave)', margin: 0 }}>Tocá para elegir fotos</p>
                   }
                 </div>
 
@@ -368,11 +368,11 @@ export default function Productos() {
                 )}
               </div>
 
-              {error && <p style={{ color: '#c0392b', fontSize: 13, margin: 0 }}>{error}</p>}
+              {error && <p style={{ color: '#c0392b', fontSize: 17, margin: 0 }}>{error}</p>}
 
               <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
                 <button type="button" onClick={() => setModal(false)} style={{ flex: 1, padding: '12px', borderRadius: 10, border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', cursor: 'pointer', fontSize: 13 }}>Cancelar</button>
-                <button type="submit" disabled={guardando} style={{ flex: 1, padding: '12px', borderRadius: 10, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', cursor: 'pointer', fontSize: 13, fontWeight: 500 }}>
+                <button type="submit" disabled={guardando} style={{ flex: 1, padding: '12px', borderRadius: 10, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', cursor: 'pointer', fontSize: 17, fontWeight: 500 }}>
                   {guardando ? 'Guardando...' : 'Guardar'}
                 </button>
               </div>

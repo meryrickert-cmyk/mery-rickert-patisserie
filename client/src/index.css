@@ -147,7 +147,7 @@ body {
 .admin-page {
   padding: 40px 40px;
   max-width: 1000px;
-  font-size: 16px;
+  font-size: 21px;
 }
 
 @media (max-width: 640px) {
@@ -175,6 +175,7 @@ body {
 
   .admin-page {
     padding: 20px 16px;
+    font-size: 18px;
   }
 
   /* Grilla admin de productos: 2 columnas en mobile */

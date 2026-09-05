@@ -6,8 +6,8 @@ function formatFecha(iso) {
   return new Date(iso).toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
-const inputStyle = { padding: '10px 14px', borderRadius: 10, border: '1.5px solid var(--crema-oscuro)', fontSize: 13, color: 'var(--texto)', outline: 'none', fontFamily: 'var(--sans)', width: '100%', boxSizing: 'border-box' };
-const labelStyle = { fontSize: 12, color: 'var(--texto-suave)', display: 'block', marginBottom: 4 };
+const inputStyle = { padding: '10px 14px', borderRadius: 10, border: '1.5px solid var(--crema-oscuro)', fontSize: 17, color: 'var(--texto)', outline: 'none', fontFamily: 'var(--sans)', width: '100%', boxSizing: 'border-box' };
+const labelStyle = { fontSize: 16, color: 'var(--texto-suave)', display: 'block', marginBottom: 4 };
 
 export default function Clientes() {
   const [clientes, setClientes] = useState([]);
@@ -46,8 +46,8 @@ export default function Clientes() {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 28, flexWrap: 'wrap', gap: 12 }}>
         <div>
-          <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 300, fontSize: 32, color: 'var(--texto)', margin: 0 }}>Clientes</h2>
-          <p style={{ color: 'var(--texto-suave)', fontSize: 13, marginTop: 4 }}>
+          <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 300, fontSize: 42, color: 'var(--texto)', margin: 0 }}>Clientes</h2>
+          <p style={{ color: 'var(--texto-suave)', fontSize: 17, marginTop: 4 }}>
             {clientes.length} cliente{clientes.length !== 1 ? 's' : ''} registrada{clientes.length !== 1 ? 's' : ''}
           </p>
         </div>
@@ -66,7 +66,7 @@ export default function Clientes() {
           <p style={{ fontFamily: 'var(--serif)', fontStyle: 'italic', color: 'var(--texto-suave)', fontSize: 18 }}>
             {busqueda ? 'Sin resultados' : 'Aún no hay clientes registradas'}
           </p>
-          <p style={{ fontSize: 13, color: 'var(--texto-suave)', marginTop: 8 }}>
+          <p style={{ fontSize: 17, color: 'var(--texto-suave)', marginTop: 8 }}>
             Se guardan automáticamente al cargar un pedido manual
           </p>
         </div>
@@ -111,16 +111,16 @@ function ClienteRow({ cliente: c, activa, onClick }) {
       <div style={{
         width: 38, height: 38, borderRadius: '50%', flexShrink: 0,
         background: 'var(--crema)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontFamily: 'var(--serif)', fontSize: 16, color: 'var(--bordeaux)', fontWeight: 400,
+        fontFamily: 'var(--serif)', fontSize: 21, color: 'var(--bordeaux)', fontWeight: 400,
       }}>
         {c.nombre?.[0]?.toUpperCase() ?? '?'}
       </div>
 
       {/* Nombre + referido */}
       <div style={{ flex: 1, minWidth: 140 }}>
-        <p style={{ margin: 0, fontWeight: 500, fontSize: 14, color: 'var(--texto)' }}>{c.nombre}</p>
+        <p style={{ margin: 0, fontWeight: 500, fontSize: 18, color: 'var(--texto)' }}>{c.nombre}</p>
         {c.recomendado_por && (
-          <p style={{ margin: 0, fontSize: 12, color: 'var(--texto-suave)', marginTop: 2 }}>
+          <p style={{ margin: 0, fontSize: 16, color: 'var(--texto-suave)', marginTop: 2 }}>
             Referida por {c.recomendado_por}
           </p>
         )}
@@ -128,22 +128,22 @@ function ClienteRow({ cliente: c, activa, onClick }) {
 
       {/* Pedidos */}
       <div style={{ textAlign: 'center', minWidth: 60 }}>
-        <p style={{ margin: 0, fontSize: 18, fontFamily: 'var(--serif)', color: 'var(--texto)', lineHeight: 1 }}>{c.total_pedidos}</p>
-        <p style={{ margin: 0, fontSize: 11, color: 'var(--texto-suave)', marginTop: 2 }}>pedidos</p>
+        <p style={{ margin: 0, fontSize: 23, fontFamily: 'var(--serif)', color: 'var(--texto)', lineHeight: 1 }}>{c.total_pedidos}</p>
+        <p style={{ margin: 0, fontSize: 14, color: 'var(--texto-suave)', marginTop: 2 }}>pedidos</p>
       </div>
 
       {/* Último pedido */}
       <div style={{ textAlign: 'right', minWidth: 110 }}>
-        <p style={{ margin: 0, fontSize: 12, color: 'var(--texto-suave)' }}>último pedido</p>
-        <p style={{ margin: 0, fontSize: 13, color: 'var(--texto)', fontWeight: 500, marginTop: 2 }}>
+        <p style={{ margin: 0, fontSize: 16, color: 'var(--texto-suave)' }}>último pedido</p>
+        <p style={{ margin: 0, fontSize: 17, color: 'var(--texto)', fontWeight: 500, marginTop: 2 }}>
           {formatFecha(c.ultimo_pedido_fecha)}
         </p>
       </div>
 
       {/* Total histórico */}
       <div style={{ textAlign: 'right', minWidth: 100 }}>
-        <p style={{ margin: 0, fontSize: 12, color: 'var(--texto-suave)' }}>total histórico</p>
-        <p style={{ margin: 0, fontFamily: 'var(--serif)', fontSize: 18, color: 'var(--bordeaux)', lineHeight: 1, marginTop: 2 }}>
+        <p style={{ margin: 0, fontSize: 16, color: 'var(--texto-suave)' }}>total histórico</p>
+        <p style={{ margin: 0, fontFamily: 'var(--serif)', fontSize: 23, color: 'var(--bordeaux)', lineHeight: 1, marginTop: 2 }}>
           ${parseFloat(c.total_gastado).toLocaleString('es-AR')}
         </p>
       </div>
@@ -172,15 +172,15 @@ function ModalDetalle({ detalle: c, cargando, onClose, onGuardar }) {
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', borderBottom: '1px solid var(--crema-oscuro)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'var(--crema)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--serif)', fontSize: 20, color: 'var(--bordeaux)' }}>
+            <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'var(--crema)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--serif)', fontSize: 26, color: 'var(--bordeaux)' }}>
               {c.nombre?.[0]?.toUpperCase()}
             </div>
             <div>
-              <h3 style={{ fontFamily: 'var(--serif)', fontWeight: 400, fontSize: 22, color: 'var(--texto)', margin: 0 }}>{c.nombre}</h3>
-              <p style={{ margin: 0, fontSize: 12, color: 'var(--texto-suave)' }}>cliente desde {formatFecha(c.creado_en)}</p>
+              <h3 style={{ fontFamily: 'var(--serif)', fontWeight: 400, fontSize: 29, color: 'var(--texto)', margin: 0 }}>{c.nombre}</h3>
+              <p style={{ margin: 0, fontSize: 16, color: 'var(--texto-suave)' }}>cliente desde {formatFecha(c.creado_en)}</p>
             </div>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: 'var(--texto-suave)', lineHeight: 1, padding: 4 }}>×</button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 29, cursor: 'pointer', color: 'var(--texto-suave)', lineHeight: 1, padding: 4 }}>×</button>
         </div>
 
         <div style={{ padding: '20px 24px 24px', display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -204,7 +204,7 @@ function ModalDetalle({ detalle: c, cargando, onClose, onGuardar }) {
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
                 <button onClick={() => setEditando(false)} style={{ flex: 1, padding: '10px', borderRadius: 10, border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', cursor: 'pointer', fontSize: 13 }}>Cancelar</button>
-                <button onClick={guardar} style={{ flex: 1, padding: '10px', borderRadius: 10, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', cursor: 'pointer', fontSize: 13, fontWeight: 500 }}>Guardar</button>
+                <button onClick={guardar} style={{ flex: 1, padding: '10px', borderRadius: 10, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', cursor: 'pointer', fontSize: 17, fontWeight: 500 }}>Guardar</button>
               </div>
             </div>
           ) : (
@@ -215,7 +215,7 @@ function ModalDetalle({ detalle: c, cargando, onClose, onGuardar }) {
                   {c.notas && <InfoPill label="Notas" valor={c.notas} />}
                 </>
               ) : (
-                <p style={{ fontSize: 13, color: 'var(--texto-suave)', fontStyle: 'italic' }}>Sin notas aún</p>
+                <p style={{ fontSize: 17, color: 'var(--texto-suave)', fontStyle: 'italic' }}>Sin notas aún</p>
               )}
               <button onClick={() => setEditando(true)} style={{ alignSelf: 'flex-start', padding: '7px 16px', borderRadius: 8, border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', cursor: 'pointer', fontSize: 12 }}>
                 ✏️ Editar datos
@@ -231,8 +231,8 @@ function ModalDetalle({ detalle: c, cargando, onClose, onGuardar }) {
                 {c.pedidos.map(p => (
                   <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: 'var(--crema)', borderRadius: 10, gap: 12 }}>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ margin: 0, fontSize: 13, color: 'var(--texto)', fontWeight: 500 }}>{formatFecha(p.creado_en)}</p>
-                      {p.items_resumen && <p style={{ margin: 0, fontSize: 11, color: 'var(--texto-suave)', marginTop: 2 }} className="line-clamp-2">{p.items_resumen}</p>}
+                      <p style={{ margin: 0, fontSize: 17, color: 'var(--texto)', fontWeight: 500 }}>{formatFecha(p.creado_en)}</p>
+                      {p.items_resumen && <p style={{ margin: 0, fontSize: 14, color: 'var(--texto-suave)', marginTop: 2 }} className="line-clamp-2">{p.items_resumen}</p>}
                     </div>
                     <span style={{ fontFamily: 'var(--serif)', fontSize: 17, color: 'var(--bordeaux)', flexShrink: 0 }}>
                       ${p.total.toLocaleString('es-AR')}
@@ -252,7 +252,7 @@ function StatCard({ label, valor, grande }) {
   return (
     <div style={{ background: 'var(--crema)', borderRadius: 12, padding: '12px 14px', textAlign: 'center' }}>
       <p style={{ margin: 0, fontFamily: 'var(--serif)', fontSize: grande ? 20 : 18, color: 'var(--bordeaux)', lineHeight: 1 }}>{valor}</p>
-      <p style={{ margin: '4px 0 0', fontSize: 11, color: 'var(--texto-suave)' }}>{label}</p>
+      <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--texto-suave)' }}>{label}</p>
     </div>
   );
 }
@@ -260,8 +260,8 @@ function StatCard({ label, valor, grande }) {
 function InfoPill({ label, valor }) {
   return (
     <div style={{ background: 'var(--crema)', borderRadius: 10, padding: '10px 14px' }}>
-      <p style={{ margin: 0, fontSize: 11, color: 'var(--texto-suave)', marginBottom: 2 }}>{label}</p>
-      <p style={{ margin: 0, fontSize: 13, color: 'var(--texto)' }}>{valor}</p>
+      <p style={{ margin: 0, fontSize: 14, color: 'var(--texto-suave)', marginBottom: 2 }}>{label}</p>
+      <p style={{ margin: 0, fontSize: 17, color: 'var(--texto)' }}>{valor}</p>
     </div>
   );
 }

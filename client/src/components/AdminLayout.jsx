@@ -31,10 +31,10 @@ export default function AdminLayout() {
       {/* ── Sidebar desktop ── */}
       <aside className="admin-sidebar">
         <div style={{ padding: '24px 20px 20px', borderBottom: '1px solid var(--crema-oscuro)' }}>
-          <p style={{ fontFamily: 'var(--serif)', color: 'var(--bordeaux)', fontSize: 18, fontWeight: 400, margin: 0 }}>
+          <p style={{ fontFamily: 'var(--serif)', color: 'var(--bordeaux)', fontSize: 23, fontWeight: 400, margin: 0 }}>
             Mery Rickert
           </p>
-          <p style={{ fontSize: 11, color: 'var(--texto-suave)', letterSpacing: '0.08em', textTransform: 'uppercase', margin: '4px 0 0' }}>
+          <p style={{ fontSize: 14, color: 'var(--texto-suave)', letterSpacing: '0.08em', textTransform: 'uppercase', margin: '4px 0 0' }}>
             Panel admin
           </p>
         </div>
@@ -44,7 +44,7 @@ export default function AdminLayout() {
             <NavLink key={l.to} to={l.to} style={({ isActive }) => ({
               display: 'flex', alignItems: 'center', gap: 10,
               padding: '10px 14px', borderRadius: 10, textDecoration: 'none',
-              fontSize: 15, transition: 'all 0.15s',
+              fontSize: 20, transition: 'all 0.15s',
               background: isActive ? 'var(--crema)' : 'transparent',
               color: isActive ? 'var(--bordeaux)' : 'var(--texto-suave)',
               fontWeight: isActive ? 500 : 400,
@@ -56,10 +56,10 @@ export default function AdminLayout() {
         </nav>
 
         <div style={{ padding: '16px 12px 20px', borderTop: '1px solid var(--crema-oscuro)' }}>
-          <button onClick={() => window.open('/', '_blank')} style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '9px 14px', borderRadius: 10, border: 'none', background: 'transparent', color: 'var(--texto-suave)', fontSize: 13, cursor: 'pointer', marginBottom: 4 }}>
+          <button onClick={() => window.open('/', '_blank')} style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '9px 14px', borderRadius: 10, border: 'none', background: 'transparent', color: 'var(--texto-suave)', fontSize: 17, cursor: 'pointer', marginBottom: 4 }}>
             🌐 Ver sitio
           </button>
-          <button onClick={() => { localStorage.removeItem('mr_token'); navigate('/'); }} style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '9px 14px', borderRadius: 10, border: 'none', background: 'transparent', color: 'var(--texto-suave)', fontSize: 13, cursor: 'pointer' }}>
+          <button onClick={() => { localStorage.removeItem('mr_token'); navigate('/'); }} style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '9px 14px', borderRadius: 10, border: 'none', background: 'transparent', color: 'var(--texto-suave)', fontSize: 17, cursor: 'pointer' }}>
             → Salir
           </button>
         </div>
@@ -75,7 +75,7 @@ export default function AdminLayout() {
           <a href="/" target="_blank" rel="noreferrer" style={{
             display: 'flex', alignItems: 'center', gap: 6, padding: '7px 14px',
             borderRadius: 20, border: '1.5px solid var(--crema-oscuro)',
-            color: 'var(--texto-suave)', fontSize: 12, textDecoration: 'none',
+            color: 'var(--texto-suave)', fontSize: 16, textDecoration: 'none',
           }}>
             🌐 Ver sitio
           </a>

@@ -73,7 +73,7 @@ export default function Dashboard() {
 
   if (!data) return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh' }}>
-      <p style={{ color: 'var(--texto-suave)', fontFamily: 'var(--serif)', fontSize: 20, fontStyle: 'italic' }}>Cargando...</p>
+      <p style={{ color: 'var(--texto-suave)', fontFamily: 'var(--serif)', fontSize: 26, fontStyle: 'italic' }}>Cargando...</p>
     </div>
   );
 
@@ -86,13 +86,13 @@ export default function Dashboard() {
     <div className="admin-page">
       {/* Encabezado + selector de periodo */}
       <div style={{ marginBottom: 28 }}>
-        <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 300, fontSize: 32, color: 'var(--texto)', margin: 0 }}>Dashboard</h2>
+        <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 300, fontSize: 42, color: 'var(--texto)', margin: 0 }}>Dashboard</h2>
 
         {/* Period selector */}
         <div style={{ marginTop: 14, display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
           {Object.entries(ps).map(([key, val]) => (
             <button key={key} onClick={() => setPeriodoPreset(key)} style={{
-              padding: '6px 16px', borderRadius: 20, fontSize: 13, cursor: 'pointer',
+              padding: '6px 16px', borderRadius: 20, fontSize: 17, cursor: 'pointer',
               border: periodo === key ? '1.5px solid var(--bordeaux)' : '1.5px solid var(--crema-oscuro)',
               background: periodo === key ? 'var(--bordeaux)' : '#fff',
               color: periodo === key ? '#FAF7F2' : 'var(--texto-suave)',
@@ -100,7 +100,7 @@ export default function Dashboard() {
             }}>{val.label}</button>
           ))}
           <button onClick={toggleCustom} style={{
-            padding: '6px 16px', borderRadius: 20, fontSize: 13, cursor: 'pointer',
+            padding: '6px 16px', borderRadius: 20, fontSize: 17, cursor: 'pointer',
             border: periodo === 'custom' ? '1.5px solid var(--bordeaux)' : '1.5px solid var(--crema-oscuro)',
             background: periodo === 'custom' ? 'var(--bordeaux)' : '#fff',
             color: periodo === 'custom' ? '#FAF7F2' : 'var(--texto-suave)',
@@ -110,12 +110,12 @@ export default function Dashboard() {
           {showCustom && (
             <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
               <input type="date" value={customDesde} onChange={e => setCustomDesde(e.target.value)}
-                style={{ padding: '5px 10px', borderRadius: 8, border: '1.5px solid var(--crema-oscuro)', fontSize: 13, color: 'var(--texto)', outline: 'none' }} />
-              <span style={{ fontSize: 12, color: 'var(--texto-suave)' }}>→</span>
+                style={{ padding: '5px 10px', borderRadius: 8, border: '1.5px solid var(--crema-oscuro)', fontSize: 17, color: 'var(--texto)', outline: 'none' }} />
+              <span style={{ fontSize: 16, color: 'var(--texto-suave)' }}>→</span>
               <input type="date" value={customHasta} onChange={e => setCustomHasta(e.target.value)}
-                style={{ padding: '5px 10px', borderRadius: 8, border: '1.5px solid var(--crema-oscuro)', fontSize: 13, color: 'var(--texto)', outline: 'none' }} />
+                style={{ padding: '5px 10px', borderRadius: 8, border: '1.5px solid var(--crema-oscuro)', fontSize: 17, color: 'var(--texto)', outline: 'none' }} />
               {customDesde && customHasta && (
-                <button onClick={cargar} style={{ padding: '5px 14px', borderRadius: 8, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 13, cursor: 'pointer' }}>Aplicar</button>
+                <button onClick={cargar} style={{ padding: '5px 14px', borderRadius: 8, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 17, cursor: 'pointer' }}>Aplicar</button>
               )}
             </div>
           )}
@@ -158,9 +158,9 @@ export default function Dashboard() {
             <ResponsiveContainer width="100%" height={240}>
               <ComposedChart data={grafData} barSize={28}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--crema-oscuro)" vertical={false} />
-                <XAxis dataKey="mes" tick={{ fontSize: 12, fill: 'var(--texto-suave)', fontFamily: 'var(--sans)' }} axisLine={false} tickLine={false} />
-                <YAxis yAxisId="ventas" tick={{ fontSize: 12, fill: 'var(--texto-suave)' }} axisLine={false} tickLine={false} tickFormatter={v => `$${(v/1000).toFixed(0)}k`} />
-                <YAxis yAxisId="pedidos" orientation="right" tick={{ fontSize: 12, fill: '#A8374A' }} axisLine={false} tickLine={false} tickFormatter={v => `${v} ped`} />
+                <XAxis dataKey="mes" tick={{ fontSize: 16, fill: 'var(--texto-suave)', fontFamily: 'var(--sans)' }} axisLine={false} tickLine={false} />
+                <YAxis yAxisId="ventas" tick={{ fontSize: 16, fill: 'var(--texto-suave)' }} axisLine={false} tickLine={false} tickFormatter={v => `$${(v/1000).toFixed(0)}k`} />
+                <YAxis yAxisId="pedidos" orientation="right" tick={{ fontSize: 16, fill: '#A8374A' }} axisLine={false} tickLine={false} tickFormatter={v => `${v} ped`} />
                 <Tooltip
                   formatter={(v, name) => name === 'ventas' ? [`$${v.toLocaleString('es-AR')}`, 'Ventas'] : [v, 'Pedidos']}
                   contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', fontFamily: 'var(--sans)', fontSize: 13 }}
@@ -185,12 +185,12 @@ export default function Dashboard() {
                 onMouseEnter={e => e.currentTarget.style.background = 'var(--crema)'}
                 onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1, minWidth: 0 }}>
-                  <span style={{ fontSize: 11, color: 'var(--bordeaux)', fontWeight: 600, width: 16, textAlign: 'right', flexShrink: 0 }}>{i + 1}</span>
-                  <span style={{ fontSize: 13, color: 'var(--texto)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.nombre}</span>
+                  <span style={{ fontSize: 14, color: 'var(--bordeaux)', fontWeight: 600, width: 16, textAlign: 'right', flexShrink: 0 }}>{i + 1}</span>
+                  <span style={{ fontSize: 17, color: 'var(--texto)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.nombre}</span>
                 </div>
                 <div style={{ textAlign: 'right', flexShrink: 0, marginLeft: 8 }}>
-                  <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--texto)', margin: 0 }}>{p.unidades} u.</p>
-                  <p style={{ fontSize: 11, color: 'var(--texto-suave)', margin: 0 }}>${p.ingresos.toLocaleString('es-AR')}</p>
+                  <p style={{ fontSize: 17, fontWeight: 600, color: 'var(--texto)', margin: 0 }}>{p.unidades} u.</p>
+                  <p style={{ fontSize: 14, color: 'var(--texto-suave)', margin: 0 }}>${p.ingresos.toLocaleString('es-AR')}</p>
                 </div>
               </div>
             ))
@@ -232,9 +232,9 @@ export default function Dashboard() {
                     return (
                       <div key={cat.categoria} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         <span style={{ width: 10, height: 10, borderRadius: '50%', background: COLORES_CAT[cat.categoria] || '#C4697A', flexShrink: 0 }} />
-                        <span style={{ fontSize: 12, color: 'var(--texto)', flex: 1 }}>{cat.categoria}</span>
-                        <span style={{ fontSize: 12, color: 'var(--texto-suave)' }}>{share}%</span>
-                        <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--texto)', width: 70, textAlign: 'right' }}>${cat.ingresos.toLocaleString('es-AR')}</span>
+                        <span style={{ fontSize: 16, color: 'var(--texto)', flex: 1 }}>{cat.categoria}</span>
+                        <span style={{ fontSize: 16, color: 'var(--texto-suave)' }}>{share}%</span>
+                        <span style={{ fontSize: 16, fontWeight: 600, color: 'var(--texto)', width: 70, textAlign: 'right' }}>${cat.ingresos.toLocaleString('es-AR')}</span>
                       </div>
                     );
                   })}
@@ -255,13 +255,13 @@ export default function Dashboard() {
                 {data.topCompradores.map((c, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid var(--crema-oscuro)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1, minWidth: 0 }}>
-                      <span style={{ fontSize: 11, color: 'var(--bordeaux)', fontWeight: 600, width: 16, textAlign: 'right', flexShrink: 0 }}>{i + 1}</span>
+                      <span style={{ fontSize: 14, color: 'var(--bordeaux)', fontWeight: 600, width: 16, textAlign: 'right', flexShrink: 0 }}>{i + 1}</span>
                       <div style={{ minWidth: 0 }}>
-                        <p style={{ fontSize: 13, color: 'var(--texto)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.nombre}</p>
-                        <p style={{ fontSize: 11, color: 'var(--texto-suave)', margin: 0 }}>{c.pedidos} pedido{c.pedidos !== 1 ? 's' : ''}</p>
+                        <p style={{ fontSize: 17, color: 'var(--texto)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.nombre}</p>
+                        <p style={{ fontSize: 14, color: 'var(--texto-suave)', margin: 0 }}>{c.pedidos} pedido{c.pedidos !== 1 ? 's' : ''}</p>
                       </div>
                     </div>
-                    <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--texto)', margin: 0, flexShrink: 0, marginLeft: 8 }}>
+                    <p style={{ fontSize: 17, fontWeight: 600, color: 'var(--texto)', margin: 0, flexShrink: 0, marginLeft: 8 }}>
                       ${Math.round(c.total_gastado).toLocaleString('es-AR')}
                     </p>
                   </div>
@@ -292,7 +292,7 @@ export default function Dashboard() {
                     <td style={{ padding: '12px 8px', color: 'var(--texto)', fontWeight: 500 }}>{p.nombre_cliente || '—'}</td>
                     <td style={{ padding: '12px 8px', color: 'var(--bordeaux)', fontWeight: 600 }}>${p.total.toLocaleString('es-AR')}</td>
                     <td style={{ padding: '12px 8px' }}>
-                      <span style={{ padding: '3px 10px', borderRadius: 50, fontSize: 11, background: p.origen === 'manual' ? '#f0ebe1' : '#e8f0fe', color: p.origen === 'manual' ? 'var(--bordeaux-oscuro)' : '#1a56db' }}>
+                      <span style={{ padding: '3px 10px', borderRadius: 50, fontSize: 14, background: p.origen === 'manual' ? '#f0ebe1' : '#e8f0fe', color: p.origen === 'manual' ? 'var(--bordeaux-oscuro)' : '#1a56db' }}>
                         {p.origen === 'manual' ? 'Manual' : 'Web'}
                       </span>
                     </td>
@@ -344,10 +344,10 @@ function ProductoModal({ nombre, desde, hasta, onClose }) {
       <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 51, width: '96%', maxWidth: 700, background: '#fff', borderRadius: 20, boxShadow: '0 20px 60px rgba(0,0,0,0.15)', maxHeight: '88vh', overflowY: 'auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', borderBottom: '1px solid var(--crema-oscuro)' }}>
           <div>
-            <h3 style={{ fontFamily: 'var(--serif)', fontWeight: 400, fontSize: 26, color: 'var(--texto)', margin: 0 }}>{nombre}</h3>
-            {pedidos && <p style={{ fontSize: 13, color: 'var(--texto-suave)', margin: '4px 0 0' }}>{unidades} unidades · ${total.toLocaleString('es-AR')} en ventas</p>}
+            <h3 style={{ fontFamily: 'var(--serif)', fontWeight: 400, fontSize: 34, color: 'var(--texto)', margin: 0 }}>{nombre}</h3>
+            {pedidos && <p style={{ fontSize: 17, color: 'var(--texto-suave)', margin: '4px 0 0' }}>{unidades} unidades · ${total.toLocaleString('es-AR')} en ventas</p>}
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 26, cursor: 'pointer', color: 'var(--texto-suave)', lineHeight: 1, padding: 4 }}>×</button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 34, cursor: 'pointer', color: 'var(--texto-suave)', lineHeight: 1, padding: 4 }}>×</button>
         </div>
         <div style={{ padding: '20px 24px 24px' }}>
           {!pedidos
@@ -362,13 +362,13 @@ function ProductoModal({ nombre, desde, hasta, onClose }) {
                     <div key={p.id} style={{ background: 'var(--crema)', borderRadius: 12, padding: '14px 16px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <div>
-                          <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--texto)', margin: 0 }}>{p.nombre_cliente || '—'}</p>
-                          <p style={{ fontSize: 12, color: 'var(--texto-suave)', margin: '3px 0 0' }}>#{p.id} · {formatFecha(p.creado_en)}</p>
+                          <p style={{ fontSize: 18, fontWeight: 600, color: 'var(--texto)', margin: 0 }}>{p.nombre_cliente || '—'}</p>
+                          <p style={{ fontSize: 16, color: 'var(--texto-suave)', margin: '3px 0 0' }}>#{p.id} · {formatFecha(p.creado_en)}</p>
                         </div>
                         {item && (
                           <div style={{ textAlign: 'right' }}>
-                            <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--bordeaux)', margin: 0 }}>${(item.precio_unitario * item.cantidad).toLocaleString('es-AR')}</p>
-                            <p style={{ fontSize: 12, color: 'var(--texto-suave)', margin: '2px 0 0' }}>{item.cantidad} u. · ${item.precio_unitario.toLocaleString('es-AR')} c/u</p>
+                            <p style={{ fontSize: 18, fontWeight: 600, color: 'var(--bordeaux)', margin: 0 }}>${(item.precio_unitario * item.cantidad).toLocaleString('es-AR')}</p>
+                            <p style={{ fontSize: 16, color: 'var(--texto-suave)', margin: '2px 0 0' }}>{item.cantidad} u. · ${item.precio_unitario.toLocaleString('es-AR')} c/u</p>
                           </div>
                         )}
                       </div>
@@ -387,9 +387,9 @@ function ProductoModal({ nombre, desde, hasta, onClose }) {
 function KpiCard({ label, valor, sub, color }) {
   return (
     <div style={{ background: '#fff', borderRadius: 16, padding: '20px 22px', border: '1px solid var(--crema-oscuro)' }}>
-      <p style={{ fontSize: 12, color: 'var(--texto-suave)', marginBottom: 8, letterSpacing: '0.05em' }}>{label}</p>
-      <p style={{ fontFamily: 'var(--serif)', fontSize: 28, fontWeight: 400, color: 'var(--texto)', margin: '0 0 6px' }}>{valor}</p>
-      {sub && <p style={{ fontSize: 12, color: color || 'var(--texto-suave)', margin: 0 }}>{sub}</p>}
+      <p style={{ fontSize: 16, color: 'var(--texto-suave)', marginBottom: 8, letterSpacing: '0.05em' }}>{label}</p>
+      <p style={{ fontFamily: 'var(--serif)', fontSize: 36, fontWeight: 400, color: 'var(--texto)', margin: '0 0 6px' }}>{valor}</p>
+      {sub && <p style={{ fontSize: 16, color: color || 'var(--texto-suave)', margin: 0 }}>{sub}</p>}
     </div>
   );
 }
@@ -398,8 +398,8 @@ function Section({ titulo, sub, children, style }) {
   return (
     <div style={{ background: '#fff', borderRadius: 16, padding: '22px 24px', border: '1px solid var(--crema-oscuro)', ...style }}>
       <div style={{ marginBottom: 16 }}>
-        <p style={{ fontWeight: 600, fontSize: 14, color: 'var(--texto)', margin: 0 }}>{titulo}</p>
-        {sub && <p style={{ fontSize: 12, color: 'var(--texto-suave)', margin: '2px 0 0' }}>{sub}</p>}
+        <p style={{ fontWeight: 600, fontSize: 18, color: 'var(--texto)', margin: 0 }}>{titulo}</p>
+        {sub && <p style={{ fontSize: 16, color: 'var(--texto-suave)', margin: '2px 0 0' }}>{sub}</p>}
       </div>
       {children}
     </div>
@@ -407,5 +407,5 @@ function Section({ titulo, sub, children, style }) {
 }
 
 function Empty() {
-  return <p style={{ color: 'var(--texto-suave)', fontSize: 13, fontStyle: 'italic', textAlign: 'center', padding: '16px 0' }}>Sin datos aún</p>;
+  return <p style={{ color: 'var(--texto-suave)', fontSize: 17, fontStyle: 'italic', textAlign: 'center', padding: '16px 0' }}>Sin datos aún</p>;
 }

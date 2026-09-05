@@ -57,19 +57,19 @@ function Autocomplete({ value, onChange, onSelect, opciones, precios, placeholde
         }}>
           {filtradas.map(op => (
             <div key={op} onMouseDown={() => seleccionar(op)} style={{
-              padding: '9px 14px', fontSize: 13, cursor: 'pointer', color: 'var(--texto)',
+              padding: '9px 14px', fontSize: 17, cursor: 'pointer', color: 'var(--texto)',
               display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12,
             }}
               onMouseEnter={e => e.currentTarget.style.background = 'var(--crema)'}
               onMouseLeave={e => e.currentTarget.style.background = '#fff'}
             >
               <span>{op}</span>
-              {precios?.[op] && <span style={{ fontSize: 12, color: 'var(--texto-suave)', flexShrink: 0 }}>${precios[op].toLocaleString('es-AR')}</span>}
+              {precios?.[op] && <span style={{ fontSize: 16, color: 'var(--texto-suave)', flexShrink: 0 }}>${precios[op].toLocaleString('es-AR')}</span>}
             </div>
           ))}
           {extraOption && (
             <div onMouseDown={() => seleccionar('__manual__')} style={{
-              padding: '9px 14px', fontSize: 12, cursor: 'pointer',
+              padding: '9px 14px', fontSize: 16, cursor: 'pointer',
               color: 'var(--bordeaux)', borderTop: filtradas.length ? '1px solid var(--crema-oscuro)' : 'none',
               fontStyle: 'italic',
             }}
@@ -119,8 +119,8 @@ export default function Pedidos() {
       {/* Encabezado */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
         <div>
-          <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 300, fontSize: 32, color: 'var(--texto)', margin: 0 }}>Pedidos</h2>
-          <p style={{ color: 'var(--texto-suave)', fontSize: 13, marginTop: 4 }}>
+          <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 300, fontSize: 42, color: 'var(--texto)', margin: 0 }}>Pedidos</h2>
+          <p style={{ color: 'var(--texto-suave)', fontSize: 17, marginTop: 4 }}>
             {pedidos.length} pedido{pedidos.length !== 1 ? 's' : ''} · Total: <strong style={{ color: 'var(--bordeaux)' }}>${totalMes.toLocaleString('es-AR')}</strong>
           </p>
         </div>
@@ -130,7 +130,7 @@ export default function Pedidos() {
       {/* Filtro de mes — pills */}
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 20 }}>
         <button onClick={() => setMesFiltro('')} style={{
-          padding: '5px 14px', borderRadius: 20, fontSize: 12, cursor: 'pointer',
+          padding: '5px 14px', borderRadius: 20, fontSize: 16, cursor: 'pointer',
           border: mesFiltro === '' ? '1.5px solid var(--bordeaux)' : '1.5px solid var(--crema-oscuro)',
           background: mesFiltro === '' ? 'var(--bordeaux)' : '#fff',
           color: mesFiltro === '' ? '#FAF7F2' : 'var(--texto-suave)',
@@ -138,7 +138,7 @@ export default function Pedidos() {
         }}>Todos</button>
         {mesesOpciones.map(m => (
           <button key={m} onClick={() => setMesFiltro(m)} style={{
-            padding: '5px 14px', borderRadius: 20, fontSize: 12, cursor: 'pointer',
+            padding: '5px 14px', borderRadius: 20, fontSize: 16, cursor: 'pointer',
             border: mesFiltro === m ? '1.5px solid var(--bordeaux)' : '1.5px solid var(--crema-oscuro)',
             background: mesFiltro === m ? 'var(--bordeaux)' : '#fff',
             color: mesFiltro === m ? '#FAF7F2' : 'var(--texto-suave)',
@@ -179,11 +179,11 @@ function PedidoRow({ pedido: p, onVer, onEditar, onEliminar }) {
   return (
     <div style={{ background: '#fff', borderRadius: 14, border: '1px solid var(--crema-oscuro)', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'nowrap', overflow: 'hidden' }}>
       {/* Número */}
-      <span style={{ fontSize: 12, color: 'var(--texto-suave)', width: 32, flexShrink: 0 }}>#{p.id}</span>
+      <span style={{ fontSize: 16, color: 'var(--texto-suave)', width: 32, flexShrink: 0 }}>#{p.id}</span>
 
       {/* Origen */}
       <span style={{
-        fontSize: 11, padding: '3px 10px', borderRadius: 50, flexShrink: 0,
+        fontSize: 14, padding: '3px 10px', borderRadius: 50, flexShrink: 0,
         background: p.origen === 'manual' ? '#f0ebe1' : '#e8f0fe',
         color: p.origen === 'manual' ? 'var(--bordeaux-oscuro)' : '#1a56db',
       }}>
@@ -191,34 +191,34 @@ function PedidoRow({ pedido: p, onVer, onEditar, onEliminar }) {
       </span>
 
       {/* Cliente */}
-      <p style={{ fontWeight: 500, fontSize: 14, color: 'var(--texto)', margin: 0, flexShrink: 0, whiteSpace: 'nowrap' }}>
+      <p style={{ fontWeight: 500, fontSize: 18, color: 'var(--texto)', margin: 0, flexShrink: 0, whiteSpace: 'nowrap' }}>
         {p.nombre_cliente || '—'}
       </p>
 
       {/* Items resumen */}
-      <p style={{ fontSize: 12, color: 'var(--texto-suave)', margin: 0, flex: 2, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+      <p style={{ fontSize: 16, color: 'var(--texto-suave)', margin: 0, flex: 2, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {p.items?.map(i => `${i.nombre_producto} x${i.cantidad}`).join(' · ')}
       </p>
 
       {/* Total */}
-      <p style={{ fontFamily: 'var(--serif)', fontSize: 18, color: 'var(--bordeaux)', margin: 0, flexShrink: 0 }}>
+      <p style={{ fontFamily: 'var(--serif)', fontSize: 23, color: 'var(--bordeaux)', margin: 0, flexShrink: 0 }}>
         ${p.total.toLocaleString('es-AR')}
       </p>
 
       {/* Fecha */}
-      <p style={{ fontSize: 12, color: 'var(--texto-suave)', margin: 0, flexShrink: 0 }}>
+      <p style={{ fontSize: 16, color: 'var(--texto-suave)', margin: 0, flexShrink: 0 }}>
         {formatFecha(p.creado_en)}
       </p>
 
       {/* Acciones */}
       <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-        <button onClick={onVer} style={{ padding: '6px 14px', borderRadius: 8, border: '1px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', fontSize: 12, cursor: 'pointer' }}>
+        <button onClick={onVer} style={{ padding: '6px 14px', borderRadius: 8, border: '1px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', fontSize: 16, cursor: 'pointer' }}>
           Ver
         </button>
-        <button onClick={onEditar} style={{ padding: '6px 14px', borderRadius: 8, border: '1px solid var(--bordeaux)', background: '#fff', color: 'var(--bordeaux)', fontSize: 12, cursor: 'pointer' }}>
+        <button onClick={onEditar} style={{ padding: '6px 14px', borderRadius: 8, border: '1px solid var(--bordeaux)', background: '#fff', color: 'var(--bordeaux)', fontSize: 16, cursor: 'pointer' }}>
           Editar
         </button>
-        <button onClick={onEliminar} style={{ padding: '6px 10px', borderRadius: 8, border: 'none', background: '#fff', color: '#ddd', fontSize: 16, cursor: 'pointer', lineHeight: 1 }}
+        <button onClick={onEliminar} style={{ padding: '6px 10px', borderRadius: 8, border: 'none', background: '#fff', color: '#ddd', fontSize: 21, cursor: 'pointer', lineHeight: 1 }}
           onMouseEnter={e => e.target.style.color = '#c0392b'}
           onMouseLeave={e => e.target.style.color = '#ddd'}>
           ×
@@ -293,7 +293,7 @@ function ModalNuevoPedido({ onClose, onGuardado }) {
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
             <label style={labelStyle}>Productos</label>
-            <button type="button" onClick={addItem} style={{ fontSize: 12, color: 'var(--bordeaux)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+            <button type="button" onClick={addItem} style={{ fontSize: 16, color: 'var(--bordeaux)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
               + Agregar ítem
             </button>
           </div>
@@ -319,7 +319,7 @@ function ModalNuevoPedido({ onClose, onGuardado }) {
                 <Input type="number" min="1" value={item.cantidad} onChange={e => setItem(idx, 'cantidad', e.target.value)} placeholder="Cant." style={{ textAlign: 'center' }} />
                 <Input type="number" min="0" step="100" value={item.precio_unitario} onChange={e => setItem(idx, 'precio_unitario', e.target.value)} placeholder="Precio" />
                 {items.length > 1 && (
-                  <button type="button" onClick={() => removeItem(idx)} style={{ background: 'none', border: 'none', color: '#ccc', fontSize: 20, cursor: 'pointer', lineHeight: 1, padding: 0 }}
+                  <button type="button" onClick={() => removeItem(idx)} style={{ background: 'none', border: 'none', color: '#ccc', fontSize: 26, cursor: 'pointer', lineHeight: 1, padding: 0 }}
                     onMouseEnter={e => e.target.style.color = '#c0392b'}
                     onMouseLeave={e => e.target.style.color = '#ccc'}>×</button>
                 )}
@@ -335,8 +335,8 @@ function ModalNuevoPedido({ onClose, onGuardado }) {
 
         {/* Total calculado */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'var(--crema)', borderRadius: 10 }}>
-          <span style={{ fontSize: 13, color: 'var(--texto-suave)' }}>Total calculado</span>
-          <span style={{ fontFamily: 'var(--serif)', fontSize: 22, color: 'var(--bordeaux)' }}>${total.toLocaleString('es-AR')}</span>
+          <span style={{ fontSize: 17, color: 'var(--texto-suave)' }}>Total calculado</span>
+          <span style={{ fontFamily: 'var(--serif)', fontSize: 29, color: 'var(--bordeaux)' }}>${total.toLocaleString('es-AR')}</span>
         </div>
 
         {error && <p style={{ color: '#c0392b', fontSize: 13 }}>{error}</p>}
@@ -345,7 +345,7 @@ function ModalNuevoPedido({ onClose, onGuardado }) {
           <button type="button" onClick={onClose} style={{ flex: 1, padding: '12px', borderRadius: 10, border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', cursor: 'pointer', fontSize: 13 }}>
             Cancelar
           </button>
-          <button type="submit" disabled={guardando} style={{ flex: 1, padding: '12px', borderRadius: 10, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', cursor: 'pointer', fontSize: 13, fontWeight: 500 }}>
+          <button type="submit" disabled={guardando} style={{ flex: 1, padding: '12px', borderRadius: 10, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', cursor: 'pointer', fontSize: 17, fontWeight: 500 }}>
             {guardando ? 'Guardando...' : 'Guardar pedido'}
           </button>
         </div>
@@ -411,7 +411,7 @@ function ModalEditarPedido({ pedido, onClose, onGuardado }) {
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
             <label style={labelStyle}>Productos</label>
-            <button type="button" onClick={addItem} style={{ fontSize: 12, color: 'var(--bordeaux)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>+ Agregar ítem</button>
+            <button type="button" onClick={addItem} style={{ fontSize: 16, color: 'var(--bordeaux)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>+ Agregar ítem</button>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {items.map((item, idx) => (
@@ -435,7 +435,7 @@ function ModalEditarPedido({ pedido, onClose, onGuardado }) {
                 <Input type="number" min="1" value={item.cantidad} onChange={e => setItem(idx, 'cantidad', e.target.value)} placeholder="Cant." style={{ textAlign: 'center' }} />
                 <Input type="number" min="0" step="100" value={item.precio_unitario} onChange={e => setItem(idx, 'precio_unitario', e.target.value)} placeholder="Precio" />
                 {items.length > 1 && (
-                  <button type="button" onClick={() => removeItem(idx)} style={{ background: 'none', border: 'none', color: '#ccc', fontSize: 20, cursor: 'pointer', lineHeight: 1, padding: 0 }}
+                  <button type="button" onClick={() => removeItem(idx)} style={{ background: 'none', border: 'none', color: '#ccc', fontSize: 26, cursor: 'pointer', lineHeight: 1, padding: 0 }}
                     onMouseEnter={e => e.target.style.color = '#c0392b'} onMouseLeave={e => e.target.style.color = '#ccc'}>×</button>
                 )}
               </div>
@@ -449,15 +449,15 @@ function ModalEditarPedido({ pedido, onClose, onGuardado }) {
         </Field>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'var(--crema)', borderRadius: 10 }}>
-          <span style={{ fontSize: 13, color: 'var(--texto-suave)' }}>Total calculado</span>
-          <span style={{ fontFamily: 'var(--serif)', fontSize: 22, color: 'var(--bordeaux)' }}>${total.toLocaleString('es-AR')}</span>
+          <span style={{ fontSize: 17, color: 'var(--texto-suave)' }}>Total calculado</span>
+          <span style={{ fontFamily: 'var(--serif)', fontSize: 29, color: 'var(--bordeaux)' }}>${total.toLocaleString('es-AR')}</span>
         </div>
 
         {error && <p style={{ color: '#c0392b', fontSize: 13 }}>{error}</p>}
 
         <div style={{ display: 'flex', gap: 10 }}>
           <button type="button" onClick={onClose} style={{ flex: 1, padding: '12px', borderRadius: 10, border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', cursor: 'pointer', fontSize: 13 }}>Cancelar</button>
-          <button type="submit" disabled={guardando} style={{ flex: 1, padding: '12px', borderRadius: 10, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', cursor: 'pointer', fontSize: 13, fontWeight: 500 }}>
+          <button type="submit" disabled={guardando} style={{ flex: 1, padding: '12px', borderRadius: 10, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', cursor: 'pointer', fontSize: 17, fontWeight: 500 }}>
             {guardando ? 'Guardando...' : 'Guardar cambios'}
           </button>
         </div>
@@ -489,7 +489,7 @@ function ModalDetalle({ pedido: p, onClose }) {
             ))}
             <div style={{ borderTop: '1px solid var(--crema-oscuro)', paddingTop: 10, display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ fontWeight: 600, color: 'var(--texto)' }}>Total</span>
-              <span style={{ fontFamily: 'var(--serif)', fontSize: 20, color: 'var(--bordeaux)' }}>${p.total.toLocaleString('es-AR')}</span>
+              <span style={{ fontFamily: 'var(--serif)', fontSize: 26, color: 'var(--bordeaux)' }}>${p.total.toLocaleString('es-AR')}</span>
             </div>
           </div>
         </div>
@@ -499,8 +499,8 @@ function ModalDetalle({ pedido: p, onClose }) {
 }
 
 /* ── Helpers UI ── */
-const inputStyle = { padding: '13px 16px', borderRadius: 10, border: '1.5px solid var(--crema-oscuro)', fontSize: 16, color: 'var(--texto)', outline: 'none', fontFamily: 'var(--sans)' };
-const labelStyle = { fontSize: 14, color: 'var(--texto-suave)', display: 'block', marginBottom: 6 };
+const inputStyle = { padding: '13px 16px', borderRadius: 10, border: '1.5px solid var(--crema-oscuro)', fontSize: 21, color: 'var(--texto)', outline: 'none', fontFamily: 'var(--sans)' };
+const labelStyle = { fontSize: 18, color: 'var(--texto-suave)', display: 'block', marginBottom: 6 };
 
 function Input({ style, ...props }) {
   return <input style={{ ...inputStyle, width: '100%', boxSizing: 'border-box', ...style }} {...props} />;
@@ -509,14 +509,14 @@ function Field({ label, children }) {
   return <div><label style={labelStyle}>{label}</label>{children}</div>;
 }
 function InfoField({ label, valor }) {
-  return <div><p style={{ ...labelStyle, marginBottom: 2 }}>{label}</p><p style={{ fontSize: 15, color: 'var(--texto)', margin: 0, fontWeight: 500 }}>{valor}</p></div>;
+  return <div><p style={{ ...labelStyle, marginBottom: 2 }}>{label}</p><p style={{ fontSize: 20, color: 'var(--texto)', margin: 0, fontWeight: 500 }}>{valor}</p></div>;
 }
 function Btn({ children, onClick, variant = 'primary' }) {
   const styles = variant === 'primary'
     ? { background: 'var(--bordeaux)', color: '#FAF7F2', border: 'none' }
     : { background: '#fff', color: 'var(--texto-suave)', border: '1.5px solid var(--crema-oscuro)' };
   return (
-    <button onClick={onClick} style={{ ...styles, padding: '11px 22px', borderRadius: 10, fontSize: 15, cursor: 'pointer', fontFamily: 'var(--sans)', transition: 'opacity 0.2s' }}>
+    <button onClick={onClick} style={{ ...styles, padding: '11px 22px', borderRadius: 10, fontSize: 20, cursor: 'pointer', fontFamily: 'var(--sans)', transition: 'opacity 0.2s' }}>
       {children}
     </button>
   );
@@ -528,8 +528,8 @@ function Modal({ titulo, onClose, children }) {
       <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.25)', zIndex: 50, backdropFilter: 'blur(2px)' }} />
       <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 51, width: '96%', maxWidth: 820, background: '#fff', borderRadius: 20, boxShadow: '0 20px 60px rgba(0,0,0,0.15)', maxHeight: '92vh', overflowY: 'auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', borderBottom: '1px solid var(--crema-oscuro)' }}>
-          <h3 style={{ fontFamily: 'var(--serif)', fontWeight: 400, fontSize: 26, color: 'var(--texto)', margin: 0 }}>{titulo}</h3>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 26, cursor: 'pointer', color: 'var(--texto-suave)', lineHeight: 1, padding: 4 }}>×</button>
+          <h3 style={{ fontFamily: 'var(--serif)', fontWeight: 400, fontSize: 34, color: 'var(--texto)', margin: 0 }}>{titulo}</h3>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 34, cursor: 'pointer', color: 'var(--texto-suave)', lineHeight: 1, padding: 4 }}>×</button>
         </div>
         <div style={{ padding: '20px 24px 24px' }}>{children}</div>
       </div>
