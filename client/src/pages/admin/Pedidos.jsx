@@ -115,7 +115,7 @@ export default function Pedidos() {
   });
 
   return (
-    <div className="admin-page" style={{ maxWidth: 900 }}>
+    <div className="admin-page" style={{ maxWidth: 1400 }}>
       {/* Encabezado */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
         <div>
@@ -177,7 +177,7 @@ export default function Pedidos() {
 /* ── Fila de pedido ── */
 function PedidoRow({ pedido: p, onVer, onEditar, onEliminar }) {
   return (
-    <div style={{ background: '#fff', borderRadius: 14, border: '1px solid var(--crema-oscuro)', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'nowrap', overflow: 'hidden' }}>
+    <div style={{ background: '#fff', borderRadius: 14, border: '1px solid var(--crema-oscuro)', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
       {/* Número */}
       <span style={{ fontSize: 16, color: 'var(--texto-suave)', width: 32, flexShrink: 0 }}>#{p.id}</span>
 
@@ -196,7 +196,7 @@ function PedidoRow({ pedido: p, onVer, onEditar, onEliminar }) {
       </p>
 
       {/* Items resumen */}
-      <p style={{ fontSize: 16, color: 'var(--texto-suave)', margin: 0, flex: 2, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+      <p style={{ fontSize: 16, color: 'var(--texto-suave)', margin: 0, flex: 2, minWidth: 0 }}>
         {p.items?.map(i => `${i.nombre_producto} x${i.cantidad}`).join(' · ')}
       </p>
 
