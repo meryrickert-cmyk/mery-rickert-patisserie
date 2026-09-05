@@ -167,7 +167,7 @@ export default function Pedidos() {
 /* ── Fila de pedido ── */
 function PedidoRow({ pedido: p, onVer, onEditar, onEliminar }) {
   return (
-    <div style={{ background: '#fff', borderRadius: 14, border: '1px solid var(--crema-oscuro)', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+    <div style={{ background: '#fff', borderRadius: 14, border: '1px solid var(--crema-oscuro)', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'nowrap', overflow: 'hidden' }}>
       {/* Número */}
       <span style={{ fontSize: 12, color: 'var(--texto-suave)', width: 32, flexShrink: 0 }}>#{p.id}</span>
 
@@ -181,12 +181,12 @@ function PedidoRow({ pedido: p, onVer, onEditar, onEliminar }) {
       </span>
 
       {/* Cliente */}
-      <p style={{ flex: 1, fontWeight: 500, fontSize: 14, color: 'var(--texto)', margin: 0, minWidth: 120 }}>
+      <p style={{ flex: 1, fontWeight: 500, fontSize: 14, color: 'var(--texto)', margin: 0, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {p.nombre_cliente || '—'}
       </p>
 
       {/* Items resumen */}
-      <p style={{ fontSize: 12, color: 'var(--texto-suave)', margin: 0, flex: 2, minWidth: 160 }} className="line-clamp-2">
+      <p style={{ fontSize: 12, color: 'var(--texto-suave)', margin: 0, flex: 2, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {p.items?.map(i => `${i.nombre_producto} x${i.cantidad}`).join(' · ')}
       </p>
 

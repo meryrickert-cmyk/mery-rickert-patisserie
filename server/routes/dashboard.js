@@ -4,26 +4,64 @@ import { authAdmin } from '../middleware/auth.js';
 
 const router = Router();
 
-router.get('/', authAdmin, (req, res) => {
+function periodoDefault() {
   const hoy = new Date();
-  const mesActual = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}`;
-  const mesPasado = (() => {
-    const d = new Date(hoy.getFullYear(), hoy.getMonth() - 1, 1);
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-  })();
+  const desde = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-01`;
+  const hasta = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-31`;
+  return { desde, hasta };
+}
 
-  // KPIs mes actual
+function categoriaSQL(col) {
+  return `CASE
+    WHEN lower(${col}) LIKE '%torta%' THEN 'Tortas'
+    WHEN lower(${col}) LIKE '%mix%' THEN 'Mixes'
+    WHEN lower(${col}) LIKE '%alfajor%' THEN 'Alfajores'
+    WHEN lower(${col}) LIKE '%budin%' OR lower(${col}) LIKE '%budín%' THEN 'Budines'
+    WHEN lower(${col}) LIKE '%pavlov%' OR lower(${col}) LIKE '%mini pav%' THEN 'Mini Pavlovitas'
+    ELSE 'Otros'
+  END`;
+}
+
+router.get('/', authAdmin, (req, res) => {
+  const { desde: qDesde, hasta: qHasta } = req.query;
+  const { desde, hasta } = qDesde && qHasta ? { desde: qDesde, hasta: qHasta } : periodoDefault();
+
+  // Calcular periodo anterior de igual duración
+  const msDesde = new Date(desde).getTime();
+  const msHasta = new Date(hasta).getTime();
+  const duracion = msHasta - msDesde;
+  const desdeAnt = new Date(msDesde - duracion - 86400000).toISOString().slice(0, 10);
+  const hastaAnt = new Date(msDesde - 86400000).toISOString().slice(0, 10);
+
   const kpiActual = db.prepare(`
     SELECT COUNT(*) as pedidos, COALESCE(SUM(total), 0) as ventas
-    FROM pedidos WHERE strftime('%Y-%m', creado_en) = ? AND estado != 'cancelado'
-  `).get(mesActual);
+    FROM pedidos WHERE date(creado_en) BETWEEN ? AND ? AND estado != 'cancelado'
+  `).get(desde, hasta);
 
   const kpiPasado = db.prepare(`
     SELECT COUNT(*) as pedidos, COALESCE(SUM(total), 0) as ventas
-    FROM pedidos WHERE strftime('%Y-%m', creado_en) = ? AND estado != 'cancelado'
-  `).get(mesPasado);
+    FROM pedidos WHERE date(creado_en) BETWEEN ? AND ? AND estado != 'cancelado'
+  `).get(desdeAnt, hastaAnt);
 
-  // Últimos 6 meses — ventas mes a mes
+  const itemsVendidos = db.prepare(`
+    SELECT COALESCE(SUM(pi.cantidad), 0) as total
+    FROM pedido_items pi
+    JOIN pedidos p ON p.id = pi.pedido_id
+    WHERE date(p.creado_en) BETWEEN ? AND ? AND p.estado != 'cancelado'
+  `).get(desde, hasta);
+
+  const porCategoria = db.prepare(`
+    SELECT ${categoriaSQL('pi.nombre_producto')} as categoria,
+           SUM(pi.cantidad * pi.precio_unitario) as ingresos,
+           SUM(pi.cantidad) as unidades
+    FROM pedido_items pi
+    JOIN pedidos p ON p.id = pi.pedido_id
+    WHERE date(p.creado_en) BETWEEN ? AND ? AND p.estado != 'cancelado'
+    GROUP BY categoria
+    ORDER BY ingresos DESC
+  `).all(desde, hasta);
+
+  // Últimos 6 meses siempre (para el gráfico de barras)
   const mesMes = db.prepare(`
     SELECT strftime('%Y-%m', creado_en) as mes,
            COUNT(*) as pedidos,
@@ -33,7 +71,6 @@ router.get('/', authAdmin, (req, res) => {
     GROUP BY mes ORDER BY mes ASC
   `).all();
 
-  // Top 5 productos (últimos 30 días)
   const topProductos = db.prepare(`
     SELECT pi.nombre_producto as nombre,
            SUM(pi.cantidad) as unidades,
@@ -41,22 +78,21 @@ router.get('/', authAdmin, (req, res) => {
     FROM pedido_items pi
     JOIN pedidos p ON p.id = pi.pedido_id
     WHERE p.estado != 'cancelado'
-      AND p.creado_en >= datetime('now', '-30 days')
+      AND date(p.creado_en) BETWEEN ? AND ?
     GROUP BY pi.nombre_producto
     ORDER BY unidades DESC LIMIT 5
-  `).all();
+  `).all(desde, hasta);
 
-  // Top 5 compradores (histórico)
   const topCompradores = db.prepare(`
     SELECT nombre_cliente as nombre,
            COUNT(*) as pedidos,
            COALESCE(SUM(total), 0) as total_gastado
     FROM pedidos WHERE estado != 'cancelado' AND nombre_cliente IS NOT NULL
+      AND date(creado_en) BETWEEN ? AND ?
     GROUP BY nombre_cliente
     ORDER BY total_gastado DESC LIMIT 5
-  `).all();
+  `).all(desde, hasta);
 
-  // Últimos 10 pedidos
   const ultimosPedidos = db.prepare(`
     SELECT * FROM pedidos ORDER BY creado_en DESC LIMIT 10
   `).all();
@@ -65,10 +101,33 @@ router.get('/', authAdmin, (req, res) => {
   }
 
   res.json({
-    mesActual, mesPasado,
+    desde, hasta,
     kpiActual, kpiPasado,
+    itemsVendidos: itemsVendidos.total,
+    porCategoria,
     mesMes, topProductos, topCompradores, ultimosPedidos,
   });
+});
+
+// Detalle de un producto: todos los pedidos que lo contienen en el periodo
+router.get('/producto/:nombre', authAdmin, (req, res) => {
+  const { desde, hasta } = req.query;
+  const nombre = decodeURIComponent(req.params.nombre);
+
+  const pedidos = db.prepare(`
+    SELECT DISTINCT p.*, pi.cantidad, pi.precio_unitario
+    FROM pedidos p
+    JOIN pedido_items pi ON pi.pedido_id = p.id
+    WHERE lower(pi.nombre_producto) = lower(?)
+      ${desde && hasta ? 'AND date(p.creado_en) BETWEEN ? AND ?' : ''}
+    ORDER BY p.creado_en DESC
+  `).all(desde && hasta ? [nombre, desde, hasta] : [nombre]);
+
+  for (const p of pedidos) {
+    p.items = db.prepare('SELECT * FROM pedido_items WHERE pedido_id = ?').all(p.id);
+  }
+
+  res.json(pedidos);
 });
 
 export default router;
