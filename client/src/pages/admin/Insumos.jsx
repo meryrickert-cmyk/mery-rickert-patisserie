@@ -8,7 +8,7 @@ export default function Insumos() {
   const [tab, setTab] = useState('insumos');
 
   return (
-    <div className="admin-page" style={{ maxWidth: 1100, margin: '0 auto', paddingBottom: 80, fontSize: 16 }}>
+    <div className="admin-page" style={{ maxWidth: 1400, margin: '0 auto', paddingBottom: 80, fontSize: 16 }}>
       <h1 style={{ fontFamily: 'var(--serif)', fontSize: 39, fontWeight: 400, color: 'var(--texto)', marginBottom: 6 }}>
         Insumos & Costos
       </h1>
@@ -580,7 +580,7 @@ function TabAnalisis() {
 
           {/* Tabla */}
           <div style={{ background: '#fff', borderRadius: 14, border: '1px solid var(--crema-oscuro)', overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 700 }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 950 }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid var(--crema-oscuro)', background: 'var(--crema)' }}>
                   <th style={{ ...thStyle, textAlign: 'left' }}>Receta</th>
