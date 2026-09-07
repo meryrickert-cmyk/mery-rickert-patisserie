@@ -23,7 +23,7 @@ router.post('/', authAdmin, (req, res) => {
 router.put('/:id', authAdmin, (req, res) => {
   const { nombre, unidad, costo } = req.body;
   try {
-    db.prepare('UPDATE insumos SET nombre = ?, unidad = ?, costo = ?, actualizado_en = datetime("now") WHERE id = ?')
+    db.prepare("UPDATE insumos SET nombre = ?, unidad = ?, costo = ?, actualizado_en = datetime('now') WHERE id = ?")
       .run(nombre, unidad, costo, req.params.id);
     const now = new Date();
     db.prepare('INSERT OR REPLACE INTO insumo_costos_hist (insumo_id, año, mes, costo) VALUES (?, ?, ?, ?)')
