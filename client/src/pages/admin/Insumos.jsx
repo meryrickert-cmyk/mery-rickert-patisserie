@@ -132,13 +132,7 @@ function TabInsumos() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 10 }}>
             {pkgItems.map(ins => (
-              <div key={ins.id} style={{ background: '#fff', border: '1.5px solid var(--crema-oscuro)', borderRadius: 12, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
-                <div>
-                  <p style={{ fontSize: 23, color: 'var(--texto)', margin: 0, fontFamily: 'var(--serif)' }}>{ins.nombre}</p>
-                  <p style={{ fontSize: 23, color: 'var(--bordeaux)', fontWeight: 600, margin: '4px 0 0' }}>${parseFloat(ins.costo).toLocaleString('es-AR')} / u</p>
-                </div>
-                <button onClick={() => { setForm({ nombre: ins.nombre, unidad: ins.unidad, costo: ins.costo }); setModal(ins); }} style={btnTabla}>Editar</button>
-              </div>
+              <PkgCard key={ins.id} ins={ins} onSaved={cargar} btnTabla={btnTabla} />
             ))}
           </div>
         </div>
@@ -637,6 +631,59 @@ function TabAnalisis() {
           <p>Cargá recetas en la pestaña "Recetas" para ver el análisis de márgenes.</p>
         </div>
       )}
+    </div>
+  );
+}
+
+/* ══ PKG CARD ═════════════════════════════════════════════ */
+function PkgCard({ ins, onSaved, btnTabla }) {
+  const [editing, setEditing] = useState(false);
+  const [val, setVal] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  function startEdit() { setVal(String(ins.costo)); setEditing(true); }
+
+  async function save() {
+    const costo = parseFloat(val);
+    if (!costo || isNaN(costo)) return;
+    setSaving(true);
+    try {
+      await api.put(`/insumos/${ins.id}`, { nombre: ins.nombre, unidad: ins.unidad, costo });
+      onSaved();
+      setEditing(false);
+    } finally { setSaving(false); }
+  }
+
+  return (
+    <div style={{ background: '#fff', border: '1.5px solid var(--crema-oscuro)', borderRadius: 12, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+      <div style={{ minWidth: 0 }}>
+        <p style={{ fontSize: 23, color: 'var(--texto)', margin: 0, fontFamily: 'var(--serif)' }}>{ins.nombre}</p>
+        {editing ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
+            <span style={{ fontSize: 23, color: 'var(--bordeaux)', fontWeight: 600 }}>$</span>
+            <input
+              type="number" value={val} onChange={e => setVal(e.target.value)}
+              autoFocus
+              onKeyDown={e => { if (e.key === 'Enter') save(); if (e.key === 'Escape') setEditing(false); }}
+              style={{ width: 100, fontSize: 21, fontFamily: 'var(--serif)', border: '1.5px solid var(--bordeaux)', borderRadius: 8, padding: '3px 8px', color: 'var(--bordeaux)', outline: 'none' }}
+            />
+            <span style={{ fontSize: 21, color: 'var(--texto-suave)' }}>/ u</span>
+            <button onClick={save} disabled={saving} style={{ ...btnTabla, background: 'var(--bordeaux)', color: '#fff', border: 'none' }}>
+              {saving ? '…' : '✓'}
+            </button>
+            <button onClick={() => setEditing(false)} style={{ ...btnTabla }}>✕</button>
+          </div>
+        ) : (
+          <p
+            onClick={startEdit}
+            style={{ fontSize: 23, color: 'var(--bordeaux)', fontWeight: 600, margin: '4px 0 0', cursor: 'pointer', textDecoration: 'underline dotted', textUnderlineOffset: 3 }}
+            title="Click para editar"
+          >
+            ${parseFloat(ins.costo).toLocaleString('es-AR')} / u
+          </p>
+        )}
+      </div>
+      {!editing && <button onClick={startEdit} style={btnTabla}>Editar</button>}
     </div>
   );
 }
