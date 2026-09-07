@@ -22,12 +22,16 @@ router.post('/', authAdmin, (req, res) => {
 
 router.put('/:id', authAdmin, (req, res) => {
   const { nombre, unidad, costo } = req.body;
-  db.prepare('UPDATE insumos SET nombre = ?, unidad = ?, costo = ?, actualizado_en = datetime("now") WHERE id = ?')
-    .run(nombre, unidad, costo, req.params.id);
-  const now = new Date();
-  db.prepare('INSERT OR REPLACE INTO insumo_costos_hist (insumo_id, año, mes, costo) VALUES (?, ?, ?, ?)')
-    .run(req.params.id, now.getFullYear(), now.getMonth() + 1, costo);
-  res.json({ ok: true });
+  try {
+    db.prepare('UPDATE insumos SET nombre = ?, unidad = ?, costo = ?, actualizado_en = datetime("now") WHERE id = ?')
+      .run(nombre, unidad, costo, req.params.id);
+    const now = new Date();
+    db.prepare('INSERT OR REPLACE INTO insumo_costos_hist (insumo_id, año, mes, costo) VALUES (?, ?, ?, ?)')
+      .run(req.params.id, now.getFullYear(), now.getMonth() + 1, costo);
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 router.delete('/:id', authAdmin, (req, res) => {

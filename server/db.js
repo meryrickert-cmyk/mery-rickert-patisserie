@@ -86,6 +86,7 @@ try { db.exec(`ALTER TABLE productos ADD COLUMN variantes TEXT DEFAULT '[]'`); }
 try { db.exec(`ALTER TABLE pedidos ADD COLUMN origen TEXT DEFAULT 'web'`); } catch {}
 try { db.exec(`ALTER TABLE pedidos ADD COLUMN cliente_id INTEGER REFERENCES clientes(id)`); } catch {}
 try { db.exec(`ALTER TABLE pedidos ADD COLUMN estado_pago TEXT NOT NULL DEFAULT 'pendiente'`); } catch {}
+try { db.exec(`ALTER TABLE insumos ADD COLUMN actualizado_en TEXT DEFAULT (datetime('now'))`); } catch {}
 
 // Tabla de clientes
 db.exec(`
