@@ -209,7 +209,7 @@ router.post('/sync-insumo/:nombre', authAdmin, (req, res) => {
   const costo = calcularCostos(receta.id, null, null);
   const costoPorU = receta.rendimiento > 0 ? costo / receta.rendimiento : costo;
 
-  db.prepare('UPDATE insumos SET costo = ?, actualizado_en = datetime("now") WHERE id = ?').run(costoPorU, insumo.id);
+  db.prepare("UPDATE insumos SET costo = ?, actualizado_en = datetime('now') WHERE id = ?").run(costoPorU, insumo.id);
   const now = new Date();
   db.prepare('INSERT OR REPLACE INTO insumo_costos_hist (insumo_id, año, mes, costo) VALUES (?, ?, ?, ?)')
     .run(insumo.id, now.getFullYear(), now.getMonth() + 1, costoPorU);
