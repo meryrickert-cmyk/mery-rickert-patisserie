@@ -654,7 +654,8 @@ function PkgCard({ ins, onSaved }) {
       setEditing(false);
       onSaved();
     } catch(e) {
-      setErr(e?.response?.data?.error || 'Error al guardar');
+      console.error('PUT insumo error', e?.response?.status, e?.response?.data);
+      setErr(e?.response?.data?.error || `Error ${e?.response?.status || ''} al guardar`);
     } finally { setSaving(false); }
   }
 
