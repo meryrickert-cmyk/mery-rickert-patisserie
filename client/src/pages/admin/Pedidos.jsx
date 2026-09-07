@@ -197,7 +197,7 @@ export default function Pedidos() {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {pedidos.map(p => (
-            <PedidoRow key={p.id} pedido={p} onVer={() => setDetalle(p)} onEditar={() => setEditando(p)} onEliminar={() => eliminar(p.id)} />
+            <PedidoRow key={p.id} pedido={p} onVer={() => setDetalle(p)} onEditar={() => setEditando(p)} onEliminar={() => eliminar(p.id)} onPagoChange={cargar} />
           ))}
         </div>
       )}
@@ -215,7 +215,23 @@ export default function Pedidos() {
 }
 
 /* ── Fila de pedido ── */
-function PedidoRow({ pedido: p, onVer, onEditar, onEliminar }) {
+const PAGO_CONFIG = {
+  pendiente: { label: 'Sin pago',  bg: '#f5f0eb', color: '#9b7b6b' },
+  seña:      { label: 'Seña',      bg: '#fef9e7', color: '#d4a017' },
+  pagado:    { label: 'Pagado',    bg: '#eafaf1', color: '#27ae60' },
+};
+
+function PedidoRow({ pedido: p, onVer, onEditar, onEliminar, onPagoChange }) {
+  const [cambiandoPago, setCambiandoPago] = useState(false);
+  const cfg = PAGO_CONFIG[p.estado_pago] || PAGO_CONFIG.pendiente;
+
+  async function setPago(estado) {
+    setCambiandoPago(true);
+    await api.patch(`/pedidos/${p.id}/pago`, { estado_pago: estado });
+    onPagoChange();
+    setCambiandoPago(false);
+  }
+
   return (
     <div style={{ background: '#fff', borderRadius: 14, border: '1px solid var(--crema-oscuro)', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
       {/* Número */}
@@ -229,6 +245,26 @@ function PedidoRow({ pedido: p, onVer, onEditar, onEliminar }) {
       }}>
         {p.origen === 'manual' ? 'Manual' : 'Web'}
       </span>
+
+      {/* Estado de pago — selector inline */}
+      <div style={{ position: 'relative', flexShrink: 0 }}>
+        <select
+          value={p.estado_pago || 'pendiente'}
+          disabled={cambiandoPago}
+          onChange={e => setPago(e.target.value)}
+          style={{
+            padding: '3px 10px', borderRadius: 50, fontSize: 14, cursor: 'pointer',
+            border: 'none', outline: 'none', appearance: 'none', WebkitAppearance: 'none',
+            background: cfg.bg, color: cfg.color, fontFamily: 'var(--sans)', fontWeight: 600,
+            paddingRight: 24,
+          }}
+        >
+          <option value="pendiente">Sin pago</option>
+          <option value="seña">Seña</option>
+          <option value="pagado">Pagado ✓</option>
+        </select>
+        <span style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', fontSize: 11, color: cfg.color, pointerEvents: 'none' }}>▾</span>
+      </div>
 
       {/* Cliente */}
       <p style={{ fontWeight: 500, fontSize: 18, color: 'var(--texto)', margin: 0, flexShrink: 0, whiteSpace: 'nowrap' }}>

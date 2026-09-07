@@ -83,7 +83,7 @@ export default function Dashboard() {
   const periodoLabel = periodo === 'custom' ? `${customDesde} — ${customHasta}` : ps[periodo]?.label ?? '';
 
   return (
-    <div className="admin-page">
+    <div className="admin-page" style={{ maxWidth: 1400 }}>
       {/* Encabezado + selector de periodo */}
       <div style={{ marginBottom: 28 }}>
         <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 300, fontSize: 42, color: 'var(--texto)', margin: 0 }}>Dashboard</h2>
@@ -123,7 +123,7 @@ export default function Dashboard() {
       </div>
 
       {/* KPIs */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: 16, marginBottom: 32 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 14, marginBottom: 32 }}>
         <KpiCard
           label="Ventas del período"
           valor={`$${data.kpiActual.ventas.toLocaleString('es-AR')}`}

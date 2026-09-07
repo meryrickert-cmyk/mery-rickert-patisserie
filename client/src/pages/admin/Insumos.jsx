@@ -654,7 +654,7 @@ function PkgCard({ ins, onSaved }) {
       setEditing(false);
       onSaved();
     } catch(e) {
-      setErr('Error al guardar');
+      setErr(e?.response?.data?.error || 'Error al guardar');
     } finally { setSaving(false); }
   }
 

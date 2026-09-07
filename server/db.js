@@ -85,6 +85,7 @@ try { db.exec(`ALTER TABLE productos ADD COLUMN posicion TEXT DEFAULT '50% 50%'`
 try { db.exec(`ALTER TABLE productos ADD COLUMN variantes TEXT DEFAULT '[]'`); } catch {}
 try { db.exec(`ALTER TABLE pedidos ADD COLUMN origen TEXT DEFAULT 'web'`); } catch {}
 try { db.exec(`ALTER TABLE pedidos ADD COLUMN cliente_id INTEGER REFERENCES clientes(id)`); } catch {}
+try { db.exec(`ALTER TABLE pedidos ADD COLUMN estado_pago TEXT NOT NULL DEFAULT 'pendiente'`); } catch {}
 
 // Tabla de clientes
 db.exec(`

@@ -173,6 +173,14 @@ router.put('/:id', authAdmin, (req, res) => {
   }
 });
 
+// PATCH — actualizar solo estado de pago
+router.patch('/:id/pago', authAdmin, (req, res) => {
+  const { estado_pago } = req.body;
+  if (!['pendiente', 'seña', 'pagado'].includes(estado_pago)) return res.status(400).json({ error: 'Estado inválido' });
+  db.prepare('UPDATE pedidos SET estado_pago = ? WHERE id = ?').run(estado_pago, req.params.id);
+  res.json({ ok: true });
+});
+
 // DELETE admin — eliminar pedido
 router.delete('/:id', authAdmin, (req, res) => {
   db.prepare('DELETE FROM pedido_items WHERE pedido_id = ?').run(req.params.id);
