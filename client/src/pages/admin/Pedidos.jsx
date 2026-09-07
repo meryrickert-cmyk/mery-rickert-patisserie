@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import api from '../../api/index.js';
 
 const MESES_LABEL = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
@@ -88,16 +88,20 @@ function Autocomplete({ value, onChange, onSelect, opciones, precios, placeholde
 /* ══════════════════════════════════════════════════════════ */
 export default function Pedidos() {
   const [pedidos, setPedidos] = useState([]);
+  const [allPedidos, setAllPedidos] = useState([]);
   const [mesFiltro, setMesFiltro] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [detalle, setDetalle] = useState(null);
   const [editando, setEditando] = useState(null);
 
+  function cargarTodos() { api.get('/pedidos').then(r => setAllPedidos(r.data)); }
   function cargar() {
     const url = mesFiltro ? `/pedidos?mes=${mesFiltro}` : '/pedidos';
     api.get(url).then(r => setPedidos(r.data));
+    cargarTodos();
   }
   useEffect(cargar, [mesFiltro]);
+  useEffect(cargarTodos, []);
 
   async function eliminar(id) {
     if (!confirm('¿Eliminar este pedido del registro?')) return;
@@ -107,12 +111,35 @@ export default function Pedidos() {
 
   const totalMes = pedidos.reduce((s, p) => s + p.total, 0);
 
-  // Generar opciones de meses (últimos 12)
-  const mesesOpciones = Array.from({ length: 12 }, (_, i) => {
-    const d = new Date();
-    d.setMonth(d.getMonth() - i);
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-  });
+  // Derivar meses de pedidos reales + estado expandido por año
+  const [añosExpandidos, setAñosExpandidos] = useState({});
+  const añoActual = new Date().getFullYear();
+
+  const todosMeses = useMemo(() => {
+    const set = new Set();
+    // incluir mes actual siempre
+    const hoy = new Date();
+    set.add(`${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}`);
+    // agregar meses de todos los pedidos
+    allPedidos.forEach(p => {
+      if (p.creado_en) {
+        const d = new Date(p.creado_en);
+        set.add(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`);
+      }
+    });
+    return [...set].sort((a, b) => b.localeCompare(a));
+  }, [allPedidos]);
+
+  // agrupar por año
+  const mesesPorAño = useMemo(() => {
+    const map = {};
+    todosMeses.forEach(m => {
+      const y = m.slice(0, 4);
+      if (!map[y]) map[y] = [];
+      map[y].push(m);
+    });
+    return map;
+  }, [todosMeses]);
 
   return (
     <div className="admin-page" style={{ maxWidth: 1400 }}>
@@ -128,23 +155,36 @@ export default function Pedidos() {
       </div>
 
       {/* Filtro de mes — pills */}
-      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 20 }}>
-        <button onClick={() => setMesFiltro('')} style={{
-          padding: '5px 14px', borderRadius: 20, fontSize: 16, cursor: 'pointer',
-          border: mesFiltro === '' ? '1.5px solid var(--bordeaux)' : '1.5px solid var(--crema-oscuro)',
-          background: mesFiltro === '' ? 'var(--bordeaux)' : '#fff',
-          color: mesFiltro === '' ? '#FAF7F2' : 'var(--texto-suave)',
-          fontFamily: 'var(--sans)', transition: 'all 0.15s',
-        }}>Todos</button>
-        {mesesOpciones.map(m => (
-          <button key={m} onClick={() => setMesFiltro(m)} style={{
-            padding: '5px 14px', borderRadius: 20, fontSize: 16, cursor: 'pointer',
-            border: mesFiltro === m ? '1.5px solid var(--bordeaux)' : '1.5px solid var(--crema-oscuro)',
-            background: mesFiltro === m ? 'var(--bordeaux)' : '#fff',
-            color: mesFiltro === m ? '#FAF7F2' : 'var(--texto-suave)',
-            fontFamily: 'var(--sans)', transition: 'all 0.15s',
-          }}>{labelMes(m)}</button>
-        ))}
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 20, alignItems: 'center' }}>
+        <MesPill activo={mesFiltro === ''} onClick={() => setMesFiltro('')}>Todos</MesPill>
+        {Object.entries(mesesPorAño)
+          .sort(([a], [b]) => b.localeCompare(a))
+          .map(([año, meses]) => {
+            if (parseInt(año) >= añoActual) {
+              return meses.map(m => (
+                <MesPill key={m} activo={mesFiltro === m} onClick={() => setMesFiltro(m)}>{labelMes(m)}</MesPill>
+              ));
+            }
+            // años anteriores → colapsable
+            const expandido = añosExpandidos[año];
+            return (
+              <div key={año} style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+                <button
+                  onClick={() => setAñosExpandidos(v => ({ ...v, [año]: !v[año] }))}
+                  style={{
+                    padding: '5px 14px', borderRadius: 20, fontSize: 16, cursor: 'pointer',
+                    border: '1.5px solid var(--crema-oscuro)', background: expandido ? 'var(--crema-oscuro)' : '#fff',
+                    color: 'var(--texto-suave)', fontFamily: 'var(--sans)', transition: 'all 0.15s',
+                  }}
+                >
+                  {año} {expandido ? '▴' : '▾'}
+                </button>
+                {expandido && meses.map(m => (
+                  <MesPill key={m} activo={mesFiltro === m} onClick={() => setMesFiltro(m)}>{labelMes(m)}</MesPill>
+                ))}
+              </div>
+            );
+          })}
       </div>
 
       {/* Lista */}
@@ -511,6 +551,18 @@ function Field({ label, children }) {
 function InfoField({ label, valor }) {
   return <div><p style={{ ...labelStyle, marginBottom: 2 }}>{label}</p><p style={{ fontSize: 20, color: 'var(--texto)', margin: 0, fontWeight: 500 }}>{valor}</p></div>;
 }
+function MesPill({ activo, onClick, children }) {
+  return (
+    <button onClick={onClick} style={{
+      padding: '5px 14px', borderRadius: 20, fontSize: 16, cursor: 'pointer',
+      border: activo ? '1.5px solid var(--bordeaux)' : '1.5px solid var(--crema-oscuro)',
+      background: activo ? 'var(--bordeaux)' : '#fff',
+      color: activo ? '#FAF7F2' : 'var(--texto-suave)',
+      fontFamily: 'var(--sans)', transition: 'all 0.15s',
+    }}>{children}</button>
+  );
+}
+
 function Btn({ children, onClick, variant = 'primary' }) {
   const styles = variant === 'primary'
     ? { background: 'var(--bordeaux)', color: '#FAF7F2', border: 'none' }

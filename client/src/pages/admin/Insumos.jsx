@@ -132,7 +132,7 @@ function TabInsumos() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 10 }}>
             {pkgItems.map(ins => (
-              <PkgCard key={ins.id} ins={ins} onSaved={cargar} btnTabla={btnTabla} />
+              <PkgCard key={ins.id} ins={ins} onSaved={cargar} />
             ))}
           </div>
         </div>
@@ -636,21 +636,25 @@ function TabAnalisis() {
 }
 
 /* ══ PKG CARD ═════════════════════════════════════════════ */
-function PkgCard({ ins, onSaved, btnTabla }) {
+function PkgCard({ ins, onSaved }) {
   const [editing, setEditing] = useState(false);
   const [val, setVal] = useState('');
   const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState('');
 
-  function startEdit() { setVal(String(ins.costo)); setEditing(true); }
+  function startEdit() { setVal(String(ins.costo)); setEditing(true); setErr(''); }
 
   async function save() {
-    const costo = parseFloat(val);
-    if (!costo || isNaN(costo)) return;
+    const costo = parseFloat(String(val).replace(',', '.'));
+    if (!costo || isNaN(costo)) { setErr('Valor inválido'); return; }
     setSaving(true);
+    setErr('');
     try {
       await api.put(`/insumos/${ins.id}`, { nombre: ins.nombre, unidad: ins.unidad, costo });
-      onSaved();
       setEditing(false);
+      onSaved();
+    } catch(e) {
+      setErr('Error al guardar');
     } finally { setSaving(false); }
   }
 
@@ -671,7 +675,8 @@ function PkgCard({ ins, onSaved, btnTabla }) {
             <button onClick={save} disabled={saving} style={{ ...btnTabla, background: 'var(--bordeaux)', color: '#fff', border: 'none' }}>
               {saving ? '…' : '✓'}
             </button>
-            <button onClick={() => setEditing(false)} style={{ ...btnTabla }}>✕</button>
+            <button onClick={() => setEditing(false)} style={btnTabla}>✕</button>
+            {err && <span style={{ fontSize: 16, color: '#c0392b' }}>{err}</span>}
           </div>
         ) : (
           <p
@@ -683,7 +688,7 @@ function PkgCard({ ins, onSaved, btnTabla }) {
           </p>
         )}
       </div>
-      {!editing && <button onClick={startEdit} style={btnTabla}>Editar</button>}
+      {!editing && <button onClick={startEdit} style={{ ...btnTabla }}>Editar</button>}
     </div>
   );
 }
