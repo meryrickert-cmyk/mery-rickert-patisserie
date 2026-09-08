@@ -175,7 +175,7 @@ function TabInsumos() {
         <Modal title={modal === 'nuevo' ? 'Nuevo insumo' : `Editar: ${modal.nombre}`} onClose={() => setModal(null)}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <Campo label="Nombre"><input value={form.nombre} onChange={e => setForm(f => ({ ...f, nombre: e.target.value }))} style={inputStyle} /></Campo>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div className="admin-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               <Campo label="Unidad de compra">
                 <select value={form.unidad} onChange={e => setForm(f => ({ ...f, unidad: e.target.value }))} style={inputStyle}>
                   <option value="kg">kg (por kilo)</option>
@@ -431,7 +431,7 @@ function TabRecetas() {
       {modal && (
         <Modal title={modal === 'nuevo' ? 'Nueva receta' : `Editar: ${modal.nombre}`} onClose={() => setModal(null)} wide>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 12 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,2fr) minmax(0,1fr) minmax(0,1fr)', gap: 12 }}>
               <Campo label="Nombre"><input value={form.nombre} onChange={e => setForm(f => ({ ...f, nombre: e.target.value }))} style={inputStyle} /></Campo>
               <Campo label="Categoría">
                 <select value={form.categoria} onChange={e => setForm(f => ({ ...f, categoria: e.target.value }))} style={inputStyle}>
@@ -573,7 +573,7 @@ function TabAnalisis() {
           </div>
 
           {/* Tabla */}
-          <div style={{ background: '#fff', borderRadius: 14, border: '1px solid var(--crema-oscuro)', overflowX: 'auto' }}>
+          <div className="admin-table-wrap" style={{ background: '#fff', borderRadius: 14, border: '1px solid var(--crema-oscuro)', overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 950 }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid var(--crema-oscuro)', background: 'var(--crema)' }}>

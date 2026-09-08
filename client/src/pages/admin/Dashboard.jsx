@@ -123,7 +123,7 @@ export default function Dashboard() {
       </div>
 
       {/* KPIs */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 14, marginBottom: 32 }}>
+      <div className="admin-kpi-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 14, marginBottom: 32 }}>
         <KpiCard
           label="Ventas del período"
           valor={`$${data.kpiActual.ventas.toLocaleString('es-AR')}`}
@@ -174,7 +174,7 @@ export default function Dashboard() {
       </Section>
 
       {/* Productos + Pie */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 16 }}>
+      <div className="admin-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 16 }}>
         {/* Top productos */}
         <Section titulo="Productos más vendidos" sub={periodoLabel}>
           {data.topProductos.length === 0

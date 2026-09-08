@@ -154,19 +154,15 @@ body {
   .admin-sidebar { display: none; }
 
   .admin-main {
-    padding-bottom: 68px; /* espacio para bottom nav */
+    padding-bottom: 68px;
   }
 
-  .admin-topbar {
-    display: flex;
-  }
+  .admin-topbar { display: flex; }
 
   .admin-bottomnav {
     display: flex;
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: 0; left: 0; right: 0;
     background: #fff;
     border-top: 1px solid var(--crema-oscuro);
     z-index: 100;
@@ -174,23 +170,42 @@ body {
   }
 
   .admin-page {
-    padding: 20px 16px;
-    font-size: 18px;
+    padding: 16px 14px;
+    font-size: 15px;
   }
 
-  /* Grilla admin de productos: 2 columnas en mobile */
+  /* KPIs: 2 columnas en mobile */
+  .admin-kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  /* Grids de 2 columnas → 1 columna */
+  .admin-2col {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Grilla de productos: 2 columnas */
   .admin-page .admin-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 10px !important;
   }
 
-  /* Filtros de categoría: scroll horizontal sin wrap */
-  .admin-cat-filters {
+  /* Pills de filtro: scroll horizontal */
+  .admin-cat-filters, .admin-pills {
     flex-wrap: nowrap !important;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
   }
-  .admin-cat-filters button { flex-shrink: 0; }
+  .admin-cat-filters button,
+  .admin-pills button { flex-shrink: 0; }
+
+  /* Tablas: scroll horizontal */
+  .admin-table-wrap { overflow-x: auto; }
+
+  /* Ocultar columnas secundarias en tablas móvil */
+  .hide-mobile { display: none !important; }
 }
 
 /* Line clamp */

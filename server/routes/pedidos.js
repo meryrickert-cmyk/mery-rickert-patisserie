@@ -110,7 +110,7 @@ router.post('/manual', authAdmin, (req, res) => {
 
 // GET admin — lista de pedidos
 router.get('/', authAdmin, (req, res) => {
-  const { mes } = req.query; // formato: 2026-05
+  const { mes } = req.query;
   let sql = 'SELECT * FROM pedidos';
   const params = [];
   if (mes) {
@@ -118,11 +118,16 @@ router.get('/', authAdmin, (req, res) => {
     params.push(mes);
   }
   sql += ' ORDER BY creado_en DESC';
-  const pedidos = db.prepare(sql).all(...params);
-  for (const p of pedidos) {
-    p.items = db.prepare('SELECT * FROM pedido_items WHERE pedido_id = ?').all(p.id);
+  try {
+    const pedidos = db.prepare(sql).all(...params);
+    for (const p of pedidos) {
+      p.items = db.prepare('SELECT * FROM pedido_items WHERE pedido_id = ?').all(p.id);
+    }
+    res.json(pedidos);
+  } catch (err) {
+    console.error('GET /pedidos error:', err.message);
+    res.status(500).json({ error: err.message });
   }
-  res.json(pedidos);
 });
 
 // PUT admin — editar pedido manual

@@ -155,7 +155,7 @@ export default function Pedidos() {
       </div>
 
       {/* Filtro de mes — pills */}
-      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 20, alignItems: 'center' }}>
+      <div className="admin-pills" style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 20, alignItems: 'center' }}>
         <MesPill activo={mesFiltro === ''} onClick={() => setMesFiltro('')}>Todos</MesPill>
         {Object.entries(mesesPorAño)
           .sort(([a], [b]) => b.localeCompare(a))
