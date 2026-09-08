@@ -8,6 +8,16 @@ function fmtMin(secs) {
   return `${Math.floor(secs / 60)}m ${secs % 60}s`;
 }
 
+const LABEL_EVENTO = {
+  page_view:        'Visitó el sitio',
+  add_to_cart:      'Agregó al carrito',
+  whatsapp_send:    'Envió pedido por WhatsApp',
+  whatsapp_bubble:  'Tocó el globo de WhatsApp',
+  remove_from_cart: 'Quitó un producto del carrito',
+  product_view:     'Vio un producto',
+  checkout_start:   'Inició el checkout',
+};
+
 function periodos() {
   const ahora = new Date();
   const y = ahora.getFullYear();
@@ -104,7 +114,7 @@ export default function Analytics() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 14, marginBottom: 28 }}>
         <KPI label="Sesiones únicas" valor={fmt(data.sesiones_totales)} />
         <KPI label="Páginas vistas" valor={fmt(data.page_views)} />
-        <KPI label="Tiempo promedio" valor={fmtMin(data.tiempo_promedio_segundos)} />
+        <KPI label="Tiempo promedio por sesión" valor={fmtMin(data.tiempo_promedio_segundos)} sub="desde que entran hasta que salen" />
         <KPI label="Abrieron carrito" valor={fmt(funnel.add_to_cart)} sub={`${convCart}% de sesiones`} />
         <KPI label="Enviaron por WA" valor={fmt(funnel.whatsapp_send)} sub={`${convWsp}% de carrito`} />
         <KPI label="Tocaron globo WA" valor={fmt(funnel.whatsapp_bubble)} />
@@ -136,25 +146,26 @@ export default function Analytics() {
       {/* Tabla de eventos */}
       <div style={{ background: '#fff', borderRadius: 16, border: '1px solid var(--crema-oscuro)', overflow: 'hidden' }}>
         <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--crema-oscuro)' }}>
-          <p style={{ fontWeight: 600, fontSize: 18, color: 'var(--texto)', margin: 0 }}>Todos los eventos</p>
+          <p style={{ fontWeight: 600, fontSize: 18, color: 'var(--texto)', margin: 0 }}>Interacciones</p>
+          <p style={{ fontSize: 14, color: 'var(--texto-suave)', margin: '4px 0 0' }}>El tiempo promedio de sesión se muestra arriba · cada fila = un tipo de acción</p>
         </div>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
           <thead>
             <tr style={{ background: 'var(--crema)' }}>
-              <th style={{ padding: '10px 20px', textAlign: 'left', color: 'var(--texto-suave)', fontWeight: 500 }}>Evento</th>
-              <th style={{ padding: '10px 20px', textAlign: 'right', color: 'var(--texto-suave)', fontWeight: 500 }}>Total</th>
-              <th style={{ padding: '10px 20px', textAlign: 'right', color: 'var(--texto-suave)', fontWeight: 500 }}>Sesiones únicas</th>
+              <th style={{ padding: '10px 20px', textAlign: 'left', color: 'var(--texto-suave)', fontWeight: 500 }}>Acción</th>
+              <th style={{ padding: '10px 20px', textAlign: 'right', color: 'var(--texto-suave)', fontWeight: 500 }}>Veces</th>
+              <th style={{ padding: '10px 20px', textAlign: 'right', color: 'var(--texto-suave)', fontWeight: 500 }}>Personas distintas</th>
             </tr>
           </thead>
           <tbody>
-            {data.eventos.map((e, i) => (
+            {data.eventos.filter(e => e.event !== 'time_on_page').map((e, i, arr) => (
               <tr key={e.event} style={{ borderTop: i === 0 ? 'none' : '1px solid var(--crema-oscuro)' }}>
-                <td style={{ padding: '12px 20px', color: 'var(--texto)' }}>{e.event}</td>
+                <td style={{ padding: '12px 20px', color: 'var(--texto)' }}>{LABEL_EVENTO[e.event] || e.event}</td>
                 <td style={{ padding: '12px 20px', textAlign: 'right', fontWeight: 500 }}>{fmt(e.total)}</td>
                 <td style={{ padding: '12px 20px', textAlign: 'right', color: 'var(--texto-suave)' }}>{fmt(e.sesiones)}</td>
               </tr>
             ))}
-            {data.eventos.length === 0 && (
+            {data.eventos.filter(e => e.event !== 'time_on_page').length === 0 && (
               <tr><td colSpan={3} style={{ padding: '32px', textAlign: 'center', color: 'var(--texto-suave)', fontStyle: 'italic' }}>Sin datos aún</td></tr>
             )}
           </tbody>
