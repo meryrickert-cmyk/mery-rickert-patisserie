@@ -18,7 +18,7 @@ router.post('/admin/login', (req, res) => {
     return res.status(401).json({ error: 'Credenciales incorrectas' });
   }
 
-  const token = jwt.sign({ rol: 'admin', email: email || usuario }, process.env.JWT_SECRET, { expiresIn: '8h' });
+  const token = jwt.sign({ rol: 'admin', email: email || usuario }, process.env.JWT_SECRET);
   res.json({ token });
 });
 

@@ -5,6 +5,7 @@ import api from '../../api/index.js';
 export default function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const expired = new URLSearchParams(window.location.search).get('expired');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -81,6 +82,11 @@ export default function AdminLogin() {
                 onBlur={e => e.target.style.borderBottomColor = 'var(--crema-oscuro)'} />
             </div>
 
+            {expired && !error && (
+              <p style={{ color: '#d97706', fontSize: 13, margin: 0, background: '#fef9e7', padding: '10px 12px', borderRadius: 8 }}>
+                Tu sesión expiró. Volvé a ingresar para continuar.
+              </p>
+            )}
             {error && (
               <p style={{ color: '#c0392b', fontSize: 13, margin: 0 }}>{error}</p>
             )}

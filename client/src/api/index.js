@@ -10,4 +10,16 @@ api.interceptors.request.use(config => {
   return config;
 });
 
+// Si el servidor responde 401, la sesión expiró → redirigir al login
+api.interceptors.response.use(
+  res => res,
+  err => {
+    if (err.response?.status === 401 && window.location.pathname.startsWith('/admin')) {
+      localStorage.removeItem('mr_token');
+      window.location.href = '/admin/login?expired=1';
+    }
+    return Promise.reject(err);
+  }
+);
+
 export default api;
