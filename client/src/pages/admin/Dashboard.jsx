@@ -35,9 +35,10 @@ function periodos() {
   const y = ahora.getFullYear();
   const m = ahora.getMonth();
   const esteDesde = `${y}-${String(m + 1).padStart(2, '0')}-01`;
-  const esteHasta = `${y}-${String(m + 1).padStart(2, '0')}-31`;
+  const ultimoDia = new Date(y, m + 1, 0).getDate();
+  const esteHasta = `${y}-${String(m + 1).padStart(2, '0')}-${String(ultimoDia).padStart(2, '0')}`;
   const pasadoD = new Date(y, m - 1, 1);
-  const pasadoH = new Date(y, m - 1, 31);
+  const pasadoH = new Date(y, m, 0); // último día real del mes pasado
   return {
     este_mes:   { desde: esteDesde, hasta: esteHasta, label: 'Este mes' },
     mes_pasado: { desde: pasadoD.toISOString().slice(0,10), hasta: pasadoH.toISOString().slice(0,10), label: 'Mes pasado' },

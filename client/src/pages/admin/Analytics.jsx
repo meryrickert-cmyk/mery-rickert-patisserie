@@ -23,9 +23,11 @@ function periodos() {
   const y = ahora.getFullYear();
   const m = ahora.getMonth();
   const esteDesde = `${y}-${String(m + 1).padStart(2, '0')}-01`;
-  const esteHasta = `${y}-${String(m + 1).padStart(2, '0')}-31`;
+  const ultimoDiaEste = new Date(y, m + 1, 0).getDate();
+  const esteHasta = `${y}-${String(m + 1).padStart(2, '0')}-${String(ultimoDiaEste).padStart(2, '0')}`;
   const pasadoD = new Date(y, m - 1, 1);
-  const pasadoH = new Date(y, m - 1, 31);
+  const ultimoDiaPasado = new Date(y, m, 0).getDate();
+  const pasadoH = new Date(y, m - 1, ultimoDiaPasado);
   return {
     '7d':       { label: '7 días',     dias: 7 },
     '30d':      { label: '30 días',    dias: 30 },
