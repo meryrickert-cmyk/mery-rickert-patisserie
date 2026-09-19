@@ -36,14 +36,14 @@ router.get('/', authAdmin, (req, res) => {
   const kpiActual = db.prepare(`
     SELECT
       COUNT(DISTINCT p.id) as pedidos,
-      COALESCE(SUM(p.total), 0) as ventas,
+      COALESCE((SELECT SUM(total) FROM pedidos WHERE date(creado_en) BETWEEN ? AND ? AND estado != 'cancelado'), 0) as ventas,
       COALESCE(SUM(pi.cantidad * pi.precio_unitario), 0) as ventas_items,
       COALESCE(SUM(CASE WHEN pi.costo_unitario IS NOT NULL THEN pi.cantidad * pi.costo_unitario ELSE NULL END), 0) as costo_total,
       COUNT(CASE WHEN pi.costo_unitario IS NOT NULL THEN 1 END) as items_con_costo
     FROM pedidos p
     LEFT JOIN pedido_items pi ON pi.pedido_id = p.id
     WHERE date(p.creado_en) BETWEEN ? AND ? AND p.estado != 'cancelado'
-  `).get(desde, hasta);
+  `).get(desde, hasta, desde, hasta);
 
   const kpiPasado = db.prepare(`
     SELECT COUNT(DISTINCT p.id) as pedidos, COALESCE(SUM(p.total), 0) as ventas
