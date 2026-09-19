@@ -182,8 +182,15 @@ router.put('/:id', authAdmin, (req, res) => {
 router.patch('/:id/pago', authAdmin, (req, res) => {
   const { estado_pago } = req.body;
   if (!['pendiente', 'seña', 'pagado'].includes(estado_pago)) return res.status(400).json({ error: 'Estado inválido' });
-  db.prepare('UPDATE pedidos SET estado_pago = ? WHERE id = ?').run(estado_pago, req.params.id);
-  res.json({ ok: true });
+  try {
+    // Asegurar que la columna existe (por si la migration falló antes)
+    try { db.exec(`ALTER TABLE pedidos ADD COLUMN estado_pago TEXT DEFAULT 'pendiente'`); } catch {}
+    db.prepare('UPDATE pedidos SET estado_pago = ? WHERE id = ?').run(estado_pago, req.params.id);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('PATCH pago error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // DELETE admin — eliminar pedido

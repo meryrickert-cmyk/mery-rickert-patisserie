@@ -227,9 +227,14 @@ function PedidoRow({ pedido: p, onVer, onEditar, onEliminar, onPagoChange }) {
 
   async function setPago(estado) {
     setCambiandoPago(true);
-    await api.patch(`/pedidos/${p.id}/pago`, { estado_pago: estado });
-    onPagoChange();
-    setCambiandoPago(false);
+    try {
+      await api.patch(`/pedidos/${p.id}/pago`, { estado_pago: estado });
+      onPagoChange();
+    } catch (e) {
+      alert('No se pudo guardar el estado de pago. Intentá de nuevo.');
+    } finally {
+      setCambiandoPago(false);
+    }
   }
 
   return (
