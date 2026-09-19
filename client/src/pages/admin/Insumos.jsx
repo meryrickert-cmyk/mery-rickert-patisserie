@@ -296,7 +296,7 @@ function TabRecetas() {
       {categorias.map(cat => {
         const recsDecat = recetasOrdenadas.filter(r => r.categoria === cat);
         // Columnas: nombre | costo/u | precio | margen | acciones
-        const COLS = 'minmax(180px,1fr) 110px 110px 80px 100px';
+        const COLS = 'minmax(180px,1fr) 110px 120px 100px 100px';
         return (
           <div key={cat} style={{ marginBottom: 40 }}>
             {/* Header de sección */}
