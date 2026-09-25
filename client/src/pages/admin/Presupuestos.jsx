@@ -145,25 +145,6 @@ function Preview({ form, fotosExtra }) {
         </div>
       )}
 
-      {/* Forma de pago */}
-      <div style={{ background: '#fff', borderRadius: 10, padding: '14px 18px', marginBottom: 24, border: '1px solid var(--crema-oscuro)' }}>
-        <p style={{ fontSize: 12, color: 'var(--texto-suave)', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 8px' }}>Forma de pago</p>
-        <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--bordeaux)', flexShrink: 0 }} />
-            <p style={{ fontSize: 15, color: 'var(--texto)', margin: 0 }}>
-              Seña: <strong>50%</strong> al confirmar{total > 0 ? ` — $${fmt(Math.round(total * 0.5))}` : ''}
-            </p>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--bordeaux)', flexShrink: 0 }} />
-            <p style={{ fontSize: 15, color: 'var(--texto)', margin: 0 }}>
-              Saldo: <strong>50%</strong> el día de la entrega{total > 0 ? ` — $${fmt(Math.round(total * 0.5))}` : ''}
-            </p>
-          </div>
-        </div>
-      </div>
-
       {/* Nota */}
       {form.nota && (
         <div style={{ background: '#fff', borderRadius: 10, padding: '14px 18px', marginBottom: 24, border: '1px solid var(--crema-oscuro)' }}>
@@ -192,12 +173,17 @@ function Preview({ form, fotosExtra }) {
       )}
 
       {/* Pie */}
-      <div style={{ marginTop: 32, paddingTop: 20, borderTop: '1px solid var(--crema-oscuro)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
-        <p style={{ fontSize: 13, color: 'var(--texto-suave)', margin: 0 }}>
-          Km 47.5, Pilar · @meryrickertpatisserie
-        </p>
-        <p style={{ fontSize: 12, color: 'var(--texto-suave)', margin: 0 }}>
-          Presupuesto válido por 15 días
+      <div style={{ marginTop: 32, paddingTop: 20, borderTop: '1px solid var(--crema-oscuro)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
+          <p style={{ fontSize: 13, color: 'var(--texto-suave)', margin: 0 }}>
+            Km 47.5, Pilar · @meryrickertpatisserie
+          </p>
+          <p style={{ fontSize: 12, color: 'var(--texto-suave)', margin: 0 }}>
+            Presupuesto válido por 15 días
+          </p>
+        </div>
+        <p style={{ fontSize: 12, color: 'var(--texto-suave)', margin: 0, lineHeight: 1.5 }}>
+          Forma de pago: 50% de seña al confirmar · 50% restante el día de la entrega.
         </p>
       </div>
     </div>
@@ -570,7 +556,11 @@ function DetallePresupuesto({ pres, onVolver, onEditar }) {
     *{box-sizing:border-box;margin:0;padding:0}
     :root{--bordeaux:#7B1F2E;--crema:#FAF7F2;--crema-oscuro:#F0EBE1;--texto:#2C1A1F;--texto-suave:#9b7b6b;--serif:'Cormorant Garamond',serif;--sans:'Inter',sans-serif}
     body{font-family:var(--sans);background:#FAF7F2;padding:0}
-    @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+    @page{margin:0;size:A4}
+    @media print{
+      body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      #presupuesto-preview{border:none;border-radius:0;padding:40px 48px}
+    }
   </style>
 </head>
 <body>${contenido.outerHTML}</body>
