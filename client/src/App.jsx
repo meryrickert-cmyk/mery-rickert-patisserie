@@ -15,6 +15,7 @@ import Clientes from './pages/admin/Clientes';
 import Contenido from './pages/admin/Contenido';
 import Insumos from './pages/admin/Insumos';
 import Analytics from './pages/admin/Analytics';
+import Presupuestos from './pages/admin/Presupuestos';
 
 function PublicLayout({ children }) {
   return (
@@ -45,6 +46,7 @@ export default function App() {
             <Route path="clientes" element={<Clientes />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="insumos" element={<Insumos />} />
+            <Route path="presupuestos" element={<Presupuestos />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />

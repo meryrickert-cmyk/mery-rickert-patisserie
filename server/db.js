@@ -310,6 +310,30 @@ try { db.exec(`CREATE INDEX IF NOT EXISTS idx_analytics_session ON analytics_eve
 // Costo snapshot por ítem (congelado al momento del pedido)
 try { db.exec(`ALTER TABLE pedido_items ADD COLUMN costo_unitario REAL DEFAULT NULL`); } catch {}
 
+// Presupuestos
+db.exec(`
+  CREATE TABLE IF NOT EXISTS presupuestos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    fecha TEXT NOT NULL,
+    cliente TEXT NOT NULL,
+    personas INTEGER DEFAULT 1,
+    nota TEXT DEFAULT '',
+    items TEXT DEFAULT '[]',
+    total REAL DEFAULT 0,
+    creado_en TEXT NOT NULL DEFAULT (datetime('now'))
+  )
+`);
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS presupuesto_fotos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    presupuesto_id INTEGER NOT NULL REFERENCES presupuestos(id) ON DELETE CASCADE,
+    url TEXT NOT NULL,
+    descripcion TEXT DEFAULT '',
+    orden INTEGER DEFAULT 0
+  )
+`);
+
 // Seed de recetas (solo corre una vez, ver seeds/recetas.js)
 seedRecetas(db);
 

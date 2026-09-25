@@ -15,6 +15,7 @@ import configRoutes from './routes/config.js';
 import heroRoutes from './routes/hero.js';
 import insumosRoutes from './routes/insumos.js';
 import analyticsRoutes from './routes/analytics.js';
+import presupuestosRoutes from './routes/presupuestos.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -69,6 +70,7 @@ app.use('/api/config', configRoutes);
 app.use('/api/hero', heroRoutes);
 app.use('/api/insumos', insumosRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/presupuestos', presupuestosRoutes);
 
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 

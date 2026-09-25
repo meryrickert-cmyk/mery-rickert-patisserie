@@ -8,7 +8,8 @@ const links = [
   { to: '/admin/productos', icon: '🧁', label: 'Productos' },
   { to: '/admin/analytics', icon: '📈', label: 'Analytics' },
   { to: '/admin/contenido', icon: '✏️', label: 'Contenido' },
-  { to: '/admin/insumos',  icon: '🧾', label: 'Insumos' },
+  { to: '/admin/insumos',       icon: '🧾', label: 'Insumos' },
+  { to: '/admin/presupuestos', icon: '📋', label: 'Presupuestos' },
 ];
 
 export default function AdminLayout() {
