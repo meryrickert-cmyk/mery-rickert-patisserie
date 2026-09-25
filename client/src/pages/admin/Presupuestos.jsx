@@ -15,6 +15,25 @@ function fmtFecha(str) {
 }
 
 const ITEM_VACIO = { productoId: '', descripcion: '', cantidad: 1, precio: '', imagenUrl: '', manual: false };
+const OPCION_VACIA = () => ({ items: [{ ...ITEM_VACIO }] });
+
+// Parsea items guardados (flat array legacy → opción única; objeto con opciones → multi)
+function parseOpciones(raw) {
+  if (!raw) return [OPCION_VACIA()];
+  try {
+    const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+    if (Array.isArray(parsed)) {
+      // legacy: flat array de ítems
+      return [{ items: parsed.length ? parsed : [{ ...ITEM_VACIO }] }];
+    }
+    if (parsed?.opciones?.length) return parsed.opciones;
+  } catch {}
+  return [OPCION_VACIA()];
+}
+
+function totalOpcion(items) {
+  return (items || []).reduce((s, it) => s + (parseFloat(it.precio) || 0) * (parseInt(it.cantidad) || 1), 0);
+}
 
 const btn = {
   base: { padding: '9px 20px', borderRadius: 10, border: 'none', cursor: 'pointer', fontSize: 17, fontFamily: 'var(--sans)', transition: 'opacity 0.15s' },
@@ -50,24 +69,69 @@ function Logo() {
   );
 }
 
-// ── Preview ───────────────────────────────────────────────────────────────
-function Preview({ form, fotosExtra }) {
-  const itemsValidos = form.items.filter(it => it.descripcion);
-  const total = itemsValidos.reduce((s, it) => s + (parseFloat(it.precio) || 0) * (parseInt(it.cantidad) || 1), 0);
+// ── Tabla de ítems para el preview ────────────────────────────────────────
+function TablaItems({ items }) {
+  const validos = items.filter(it => it.descripcion);
+  if (!validos.length) return null;
+  const total = totalOpcion(validos);
+  return (
+    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <thead>
+        <tr style={{ background: 'var(--crema-oscuro)' }}>
+          <th style={{ padding: '10px 14px', textAlign: 'left', fontSize: 13, color: 'var(--texto-suave)', fontWeight: 500 }}>Descripción</th>
+          <th style={{ padding: '10px 14px', textAlign: 'center', fontSize: 13, color: 'var(--texto-suave)', fontWeight: 500, width: 80 }}>Cant.</th>
+          <th style={{ padding: '10px 14px', textAlign: 'right', fontSize: 13, color: 'var(--texto-suave)', fontWeight: 500, width: 140 }}>Precio unit.</th>
+          <th style={{ padding: '10px 14px', textAlign: 'right', fontSize: 13, color: 'var(--texto-suave)', fontWeight: 500, width: 140 }}>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        {validos.map((it, i) => {
+          const cant = parseInt(it.cantidad) || 1;
+          const precio = parseFloat(it.precio) || 0;
+          return (
+            <tr key={i} style={{ borderBottom: '1px solid var(--crema-oscuro)' }}>
+              <td style={{ padding: '11px 14px', fontSize: 16, color: 'var(--texto)' }}>{it.descripcion}</td>
+              <td style={{ padding: '11px 14px', textAlign: 'center', fontSize: 16, color: 'var(--texto)' }}>{cant}</td>
+              <td style={{ padding: '11px 14px', textAlign: 'right', fontSize: 16, color: 'var(--texto)' }}>
+                {precio ? `$${fmt(precio)}` : '—'}
+              </td>
+              <td style={{ padding: '11px 14px', textAlign: 'right', fontSize: 16, color: 'var(--texto)', fontWeight: 500 }}>
+                {precio ? `$${fmt(cant * precio)}` : '—'}
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colSpan={3} style={{ padding: '14px 14px', textAlign: 'right', fontSize: 17, color: 'var(--texto-suave)', fontWeight: 500 }}>
+            Total
+          </td>
+          <td style={{ padding: '14px 14px', textAlign: 'right', fontFamily: 'var(--serif)', fontSize: 24, color: 'var(--bordeaux)', fontWeight: 400 }}>
+            ${fmt(total)}
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  );
+}
 
-  // Imágenes de catálogo de los ítems seleccionados (deduplicadas)
+// ── Preview ───────────────────────────────────────────────────────────────
+function Preview({ form, opciones, fotosExtra }) {
+  const multiOpcion = opciones.length > 1;
+
+  // Imágenes de catálogo (de todos los ítems de todas las opciones, deduplicadas)
   const imgsCatalogo = [];
   const vistas = new Set();
-  for (const it of itemsValidos) {
-    if (it.imagenUrl && !vistas.has(it.imagenUrl)) {
-      vistas.add(it.imagenUrl);
-      imgsCatalogo.push(it.imagenUrl);
+  for (const op of opciones) {
+    for (const it of (op.items || [])) {
+      if (it.imagenUrl && !vistas.has(it.imagenUrl)) {
+        vistas.add(it.imagenUrl);
+        imgsCatalogo.push(it.imagenUrl);
+      }
     }
   }
-
-  // Fotos extra cargadas manualmente
   const fotosRef = fotosExtra.map(f => f.url || f.preview);
-
   const todasImagenes = [...imgsCatalogo, ...fotosRef];
 
   return (
@@ -101,49 +165,24 @@ function Preview({ form, fotosExtra }) {
         </div>
       </div>
 
-      {/* Tabla ítems */}
-      {itemsValidos.length > 0 && (
-        <div style={{ marginBottom: 24 }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ background: 'var(--crema-oscuro)' }}>
-                <th style={{ padding: '10px 14px', textAlign: 'left', fontSize: 13, color: 'var(--texto-suave)', fontWeight: 500 }}>Descripción</th>
-                <th style={{ padding: '10px 14px', textAlign: 'center', fontSize: 13, color: 'var(--texto-suave)', fontWeight: 500, width: 80 }}>Cant.</th>
-                <th style={{ padding: '10px 14px', textAlign: 'right', fontSize: 13, color: 'var(--texto-suave)', fontWeight: 500, width: 140 }}>Precio unit.</th>
-                <th style={{ padding: '10px 14px', textAlign: 'right', fontSize: 13, color: 'var(--texto-suave)', fontWeight: 500, width: 140 }}>Subtotal</th>
-              </tr>
-            </thead>
-            <tbody>
-              {itemsValidos.map((it, i) => {
-                const cant = parseInt(it.cantidad) || 1;
-                const precio = parseFloat(it.precio) || 0;
-                return (
-                  <tr key={i} style={{ borderBottom: '1px solid var(--crema-oscuro)' }}>
-                    <td style={{ padding: '11px 14px', fontSize: 16, color: 'var(--texto)' }}>{it.descripcion}</td>
-                    <td style={{ padding: '11px 14px', textAlign: 'center', fontSize: 16, color: 'var(--texto)' }}>{cant}</td>
-                    <td style={{ padding: '11px 14px', textAlign: 'right', fontSize: 16, color: 'var(--texto)' }}>
-                      {precio ? `$${fmt(precio)}` : '—'}
-                    </td>
-                    <td style={{ padding: '11px 14px', textAlign: 'right', fontSize: 16, color: 'var(--texto)', fontWeight: 500 }}>
-                      {precio ? `$${fmt(cant * precio)}` : '—'}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colSpan={3} style={{ padding: '14px 14px', textAlign: 'right', fontSize: 17, color: 'var(--texto-suave)', fontWeight: 500 }}>
-                  Total
-                </td>
-                <td style={{ padding: '14px 14px', textAlign: 'right', fontFamily: 'var(--serif)', fontSize: 24, color: 'var(--bordeaux)', fontWeight: 400 }}>
-                  ${fmt(total)}
-                </td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      )}
+      {/* Opciones */}
+      {opciones.map((op, oi) => {
+        const validos = (op.items || []).filter(it => it.descripcion);
+        if (!validos.length) return null;
+        return (
+          <div key={oi} style={{ marginBottom: multiOpcion ? 28 : 24 }}>
+            {multiOpcion && (
+              <p style={{
+                fontFamily: 'var(--serif)', fontSize: 20, color: 'var(--bordeaux)',
+                margin: '0 0 12px', fontWeight: 400, letterSpacing: '0.01em',
+              }}>
+                Opción {oi + 1}
+              </p>
+            )}
+            <TablaItems items={op.items} />
+          </div>
+        );
+      })}
 
       {/* Nota */}
       {form.nota && (
@@ -161,12 +200,7 @@ function Preview({ form, fotosExtra }) {
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: 10 }}>
             {todasImagenes.map((url, i) => (
-              <img
-                key={i}
-                src={url}
-                alt=""
-                style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: 10, border: '1px solid var(--crema-oscuro)', display: 'block' }}
-              />
+              <img key={i} src={url} alt="" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: 10, border: '1px solid var(--crema-oscuro)', display: 'block' }} />
             ))}
           </div>
         </div>
@@ -190,20 +224,12 @@ function Preview({ form, fotosExtra }) {
   );
 }
 
-// ── Fila de ítem del form ─────────────────────────────────────────────────
+// ── Fila de ítem ─────────────────────────────────────────────────────────
 function ItemRow({ it, i, catalogo, onChange, onQuitar }) {
-  const esManual = it.manual;
-
   const handleProducto = (e) => {
     const val = e.target.value;
-    if (!val) {
-      onChange(i, { ...ITEM_VACIO });
-      return;
-    }
-    if (val === '__manual__') {
-      onChange(i, { ...ITEM_VACIO, manual: true });
-      return;
-    }
+    if (!val) { onChange(i, { ...ITEM_VACIO }); return; }
+    if (val === '__manual__') { onChange(i, { ...ITEM_VACIO, manual: true }); return; }
     const prod = catalogo.find(p => String(p.id) === val);
     if (prod) {
       onChange(i, {
@@ -219,13 +245,8 @@ function ItemRow({ it, i, catalogo, onChange, onQuitar }) {
 
   return (
     <div style={{ background: '#fff', border: '1px solid var(--crema-oscuro)', borderRadius: 12, padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-      {/* Selector de producto o descripción manual */}
-      {!esManual ? (
-        <select
-          value={it.productoId || ''}
-          onChange={handleProducto}
-          style={{ ...inp.base }}
-        >
+      {!it.manual ? (
+        <select value={it.productoId || ''} onChange={handleProducto} style={inp.base}>
           <option value="">— Elegir producto del catálogo —</option>
           {catalogo.map(p => (
             <option key={p.id} value={p.id}>{p.nombre} — ${fmt(p.precio)}</option>
@@ -239,59 +260,87 @@ function ItemRow({ it, i, catalogo, onChange, onQuitar }) {
             value={it.descripcion}
             onChange={e => onChange(i, { ...it, descripcion: e.target.value })}
             placeholder="Descripción del ítem"
-            style={{ ...inp.base }}
+            style={inp.base}
             autoFocus
           />
-          <button
-            onClick={() => onChange(i, { ...ITEM_VACIO })}
-            title="Volver a catálogo"
-            style={{ ...btn.base, ...btn.ghost, padding: '8px 12px', fontSize: 14, whiteSpace: 'nowrap', flexShrink: 0 }}
-          >
+          <button onClick={() => onChange(i, { ...ITEM_VACIO })} style={{ ...btn.base, ...btn.ghost, padding: '8px 12px', fontSize: 14, whiteSpace: 'nowrap', flexShrink: 0 }}>
             Catálogo
           </button>
         </div>
       )}
 
-      {/* Miniatura del producto (si tiene) */}
       {it.imagenUrl && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <img src={it.imagenUrl} alt="" style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 8, border: '1px solid var(--crema-oscuro)' }} />
-          <span style={{ fontSize: 13, color: 'var(--texto-suave)' }}>Imagen del catálogo incluida en el presupuesto</span>
+          <span style={{ fontSize: 13, color: 'var(--texto-suave)' }}>Imagen incluida en el presupuesto</span>
         </div>
       )}
 
-      {/* Cantidad y precio */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 36px', gap: 8, alignItems: 'center' }}>
         <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           <span style={{ fontSize: 12, color: 'var(--texto-suave)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Cantidad</span>
-          <input
-            type="number"
-            value={it.cantidad}
-            onChange={e => onChange(i, { ...it, cantidad: e.target.value })}
-            min={1}
-            style={{ ...inp.base, textAlign: 'center' }}
-          />
+          <input type="number" value={it.cantidad} onChange={e => onChange(i, { ...it, cantidad: e.target.value })} min={1} style={{ ...inp.base, textAlign: 'center' }} />
         </label>
         <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           <span style={{ fontSize: 12, color: 'var(--texto-suave)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Precio unitario</span>
-          <input
-            type="number"
-            value={it.precio}
-            onChange={e => onChange(i, { ...it, precio: e.target.value })}
-            placeholder="0"
-            min={0}
-            style={{ ...inp.base, textAlign: 'right' }}
-          />
+          <input type="number" value={it.precio} onChange={e => onChange(i, { ...it, precio: e.target.value })} placeholder="0" min={0} style={{ ...inp.base, textAlign: 'right' }} />
         </label>
         <button onClick={() => onQuitar(i)} style={{ ...btn.base, ...btn.danger, padding: '8px', fontSize: 16, marginTop: 20 }} title="Quitar">✕</button>
       </div>
 
-      {/* Subtotal */}
       {(parseFloat(it.precio) > 0) && (
         <p style={{ fontSize: 14, color: 'var(--texto-suave)', margin: 0, textAlign: 'right' }}>
           Subtotal: <strong style={{ color: 'var(--bordeaux)' }}>${fmt((parseInt(it.cantidad) || 1) * parseFloat(it.precio))}</strong>
         </p>
       )}
+    </div>
+  );
+}
+
+// ── Bloque de una opción en el form ──────────────────────────────────────
+function OpcionBlock({ op, oi, totalOpciones, catalogo, onChange, onQuitar }) {
+  const setItem = (ii, nuevoItem) => {
+    const items = [...op.items];
+    items[ii] = nuevoItem;
+    onChange(oi, { ...op, items });
+  };
+  const quitarItem = (ii) => onChange(oi, { ...op, items: op.items.filter((_, j) => j !== ii) });
+  const agregarItem = () => onChange(oi, { ...op, items: [...op.items, { ...ITEM_VACIO }] });
+
+  const total = totalOpcion(op.items);
+
+  return (
+    <div style={{ background: 'var(--crema)', borderRadius: 14, border: '1px solid var(--crema-oscuro)', padding: '18px 18px 14px' }}>
+      {/* Header de la opción */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          {totalOpciones > 1 && (
+            <p style={{ fontFamily: 'var(--serif)', fontSize: 20, color: 'var(--bordeaux)', margin: 0, fontWeight: 400 }}>
+              Opción {oi + 1}
+            </p>
+          )}
+          {total > 0 && (
+            <p style={{ fontSize: 15, color: 'var(--bordeaux)', margin: 0 }}>
+              {totalOpciones > 1 ? '— ' : ''}<span style={{ fontFamily: 'var(--serif)', fontSize: 18 }}>${fmt(total)}</span>
+            </p>
+          )}
+        </div>
+        {totalOpciones > 1 && (
+          <button onClick={() => onQuitar(oi)} style={{ ...btn.base, ...btn.danger, padding: '6px 14px', fontSize: 14 }}>
+            Quitar opción
+          </button>
+        )}
+      </div>
+
+      {/* Ítems */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {op.items.map((it, ii) => (
+          <ItemRow key={ii} it={it} i={ii} catalogo={catalogo} onChange={setItem} onQuitar={quitarItem} />
+        ))}
+      </div>
+      <button onClick={agregarItem} style={{ ...btn.base, ...btn.ghost, marginTop: 10, fontSize: 15 }}>
+        + Agregar ítem
+      </button>
     </div>
   );
 }
@@ -303,8 +352,8 @@ function FormPresupuesto({ inicial, catalogo, onGuardado, onCancelar }) {
     cliente: inicial?.cliente || '',
     personas: inicial?.personas || '',
     nota: inicial?.nota || '',
-    items: inicial?.items?.length ? inicial.items : [{ ...ITEM_VACIO }],
   });
+  const [opciones, setOpciones] = useState(() => parseOpciones(inicial?.items));
   const [fotosExistentes, setFotosExistentes] = useState(inicial?.fotos || []);
   const [fotasNuevas, setFotasNuevas] = useState([]);
   const [fotosEliminar, setFotosEliminar] = useState([]);
@@ -315,14 +364,9 @@ function FormPresupuesto({ inicial, catalogo, onGuardado, onCancelar }) {
 
   const set = (campo, val) => setForm(f => ({ ...f, [campo]: val }));
 
-  const setItem = (i, nuevoItem) => setForm(f => {
-    const items = [...f.items];
-    items[i] = nuevoItem;
-    return { ...f, items };
-  });
-
-  const agregarItem = () => setForm(f => ({ ...f, items: [...f.items, { ...ITEM_VACIO }] }));
-  const quitarItem = (i) => setForm(f => ({ ...f, items: f.items.filter((_, j) => j !== i) }));
+  const setOpcion = (i, op) => setOpciones(prev => { const next = [...prev]; next[i] = op; return next; });
+  const quitarOpcion = (i) => setOpciones(prev => prev.filter((_, j) => j !== i));
+  const agregarOpcion = () => setOpciones(prev => [...prev, OPCION_VACIA()]);
 
   const onFotos = (e) => {
     const files = Array.from(e.target.files);
@@ -347,8 +391,9 @@ function FormPresupuesto({ inicial, catalogo, onGuardado, onCancelar }) {
       fd.append('cliente', form.cliente);
       fd.append('personas', form.personas || '');
       fd.append('nota', form.nota || '');
-      fd.append('items', JSON.stringify(form.items));
-      const total = form.items.reduce((s, it) => s + (parseFloat(it.precio) || 0) * (parseInt(it.cantidad) || 1), 0);
+      // Guardar como objeto con opciones para soportar multi
+      fd.append('items', JSON.stringify({ opciones }));
+      const total = opciones.reduce((s, op) => s + totalOpcion(op.items), 0);
       fd.append('total', total);
       fotasNuevas.forEach(({ file }) => fd.append('fotos', file));
 
@@ -374,8 +419,6 @@ function FormPresupuesto({ inicial, catalogo, onGuardado, onCancelar }) {
     ...fotasNuevas.map(n => ({ preview: n.preview })),
   ];
 
-  const total = form.items.reduce((s, it) => s + (parseFloat(it.precio) || 0) * (parseInt(it.cantidad) || 1), 0);
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       {/* Campos principales */}
@@ -394,25 +437,21 @@ function FormPresupuesto({ inicial, catalogo, onGuardado, onCancelar }) {
         </label>
       </div>
 
-      {/* Ítems */}
-      <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 12 }}>
-          <p style={{ fontSize: 13, color: 'var(--texto-suave)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>
-            Ítems del presupuesto
-          </p>
-          {total > 0 && (
-            <p style={{ fontSize: 15, color: 'var(--bordeaux)', fontFamily: 'var(--serif)', margin: 0 }}>
-              Total: ${fmt(total)}
-            </p>
-          )}
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          {form.items.map((it, i) => (
-            <ItemRow key={i} it={it} i={i} catalogo={catalogo} onChange={setItem} onQuitar={quitarItem} />
-          ))}
-        </div>
-        <button onClick={agregarItem} style={{ ...btn.base, ...btn.ghost, marginTop: 10, fontSize: 15 }}>
-          + Agregar ítem
+      {/* Opciones */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        {opciones.map((op, oi) => (
+          <OpcionBlock
+            key={oi}
+            op={op}
+            oi={oi}
+            totalOpciones={opciones.length}
+            catalogo={catalogo}
+            onChange={setOpcion}
+            onQuitar={quitarOpcion}
+          />
+        ))}
+        <button onClick={agregarOpcion} style={{ ...btn.base, ...btn.outline, alignSelf: 'flex-start', fontSize: 15 }}>
+          + Agregar opción
         </button>
       </div>
 
@@ -434,7 +473,7 @@ function FormPresupuesto({ inicial, catalogo, onGuardado, onCancelar }) {
           Fotos adicionales
         </p>
         <p style={{ fontSize: 14, color: 'var(--texto-suave)', margin: '0 0 10px' }}>
-          Las imágenes de los productos del catálogo se incluyen automáticamente en el presupuesto.
+          Las imágenes del catálogo se incluyen automáticamente.
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
           {fotosExistentes.map((f) => (
@@ -477,7 +516,7 @@ function FormPresupuesto({ inicial, catalogo, onGuardado, onCancelar }) {
 
       {showPreview && (
         <div style={{ marginTop: 8 }}>
-          <Preview form={form} fotosExtra={fotosPreview} />
+          <Preview form={form} opciones={opciones} fotosExtra={fotosPreview} />
         </div>
       )}
     </div>
@@ -504,7 +543,9 @@ function ListaPresupuestos({ presupuestos, onEditar, onEliminar, onNuevo }) {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         {presupuestos.map(p => {
-          const total = p.total || p.items?.reduce((s, it) => s + (parseFloat(it.precio) || 0) * (parseInt(it.cantidad) || 1), 0) || 0;
+          const opciones = parseOpciones(p.items);
+          const total = p.total || opciones.reduce((s, op) => s + totalOpcion(op.items), 0);
+          const nOpciones = opciones.length;
           return (
             <div key={p.id} style={{ background: '#fff', borderRadius: 14, border: '1px solid var(--crema-oscuro)', padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
               <div style={{ flex: 1, minWidth: 180 }}>
@@ -512,7 +553,7 @@ function ListaPresupuestos({ presupuestos, onEditar, onEliminar, onNuevo }) {
                 <p style={{ fontSize: 14, color: 'var(--texto-suave)', margin: 0 }}>
                   {p.fecha ? fmtFecha(p.fecha) : ''}
                   {p.personas ? ` · ${p.personas} personas` : ''}
-                  {p.items?.length ? ` · ${p.items.length} ítems` : ''}
+                  {nOpciones > 1 ? ` · ${nOpciones} opciones` : ''}
                 </p>
               </div>
               {total > 0 && (
@@ -557,10 +598,7 @@ function DetallePresupuesto({ pres, onVolver, onEditar }) {
     :root{--bordeaux:#7B1F2E;--crema:#FAF7F2;--crema-oscuro:#F0EBE1;--texto:#2C1A1F;--texto-suave:#9b7b6b;--serif:'Cormorant Garamond',serif;--sans:'Inter',sans-serif}
     body{font-family:var(--sans);background:#FAF7F2;padding:0}
     @page{margin:0;size:A4}
-    @media print{
-      body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-      #presupuesto-preview{border:none;border-radius:0;padding:40px 48px}
-    }
+    @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}#presupuesto-preview{border:none;border-radius:0;padding:40px 48px}}
   </style>
 </head>
 <body>${contenido.outerHTML}</body>
@@ -570,7 +608,7 @@ function DetallePresupuesto({ pres, onVolver, onEditar }) {
     setTimeout(() => { w.print(); w.close(); }, 800);
   };
 
-  // Armar fotos extra (las subidas, no las de catálogo)
+  const opciones = parseOpciones(pres.items);
   const fotosExtra = (pres.fotos || []).map(f => ({ url: f.url }));
 
   return (
@@ -580,7 +618,7 @@ function DetallePresupuesto({ pres, onVolver, onEditar }) {
         <button onClick={onEditar} style={{ ...btn.base, ...btn.outline }}>Editar</button>
         <button onClick={imprimirPDF} style={{ ...btn.base, ...btn.bordeaux }}>Descargar PDF</button>
       </div>
-      <Preview form={pres} fotosExtra={fotosExtra} />
+      <Preview form={pres} opciones={opciones} fotosExtra={fotosExtra} />
     </div>
   );
 }
