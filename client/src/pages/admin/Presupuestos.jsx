@@ -195,9 +195,6 @@ function Preview({ form, opciones, fotosExtra }) {
       {/* Imágenes de referencia */}
       {todasImagenes.length > 0 && (
         <div style={{ marginBottom: 24 }}>
-          <p style={{ fontSize: 12, color: 'var(--texto-suave)', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 12px' }}>
-            Referencia visual
-          </p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: 10 }}>
             {todasImagenes.map((url, i) => (
               <img key={i} src={url} alt="" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: 10, border: '1px solid var(--crema-oscuro)', display: 'block' }} />
