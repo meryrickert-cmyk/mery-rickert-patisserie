@@ -167,6 +167,23 @@ body {
     border-top: 1px solid var(--crema-oscuro);
     z-index: 100;
     padding-bottom: env(safe-area-inset-bottom);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .admin-bottomnav::-webkit-scrollbar { display: none; }
+  .admin-bottomnav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    text-decoration: none;
+    min-width: 68px;
+    flex-shrink: 0;
+    padding: 8px 6px 7px;
+    border-radius: 10px;
+    margin: 4px 2px;
+    transition: background 0.15s;
   }
 
   .admin-page {
@@ -178,6 +195,25 @@ body {
   .admin-kpi-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 10px !important;
+  }
+  .admin-kpi-value {
+    font-size: 24px !important;
+    word-break: break-all;
+  }
+
+  /* Dashboard heading más chico en mobile */
+  .admin-page h2 {
+    font-size: 28px !important;
+  }
+
+  /* KPI cards: menos padding en mobile */
+  .admin-kpi-grid > div {
+    padding: 14px 12px !important;
+  }
+
+  /* Eje Y derecho del chart (pedidos): ocultarlo en mobile para no solapar */
+  .recharts-yAxis:last-of-type {
+    display: none;
   }
 
   /* Grids de 2 columnas → 1 columna */

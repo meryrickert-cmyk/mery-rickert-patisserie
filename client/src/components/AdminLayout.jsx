@@ -89,7 +89,10 @@ export default function AdminLayout() {
         {links.map(l => {
           const isActive = location.pathname.startsWith(l.to);
           return (
-            <NavLink key={l.to} to={l.to} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, textDecoration: 'none', flex: 1, padding: '8px 4px 6px', color: isActive ? 'var(--bordeaux)' : 'var(--texto-suave)' }}>
+            <NavLink key={l.to} to={l.to} className="admin-bottomnav-item" style={{
+              color: isActive ? 'var(--bordeaux)' : 'var(--texto-suave)',
+              background: isActive ? 'var(--crema)' : 'transparent',
+            }}>
               <span style={{ fontSize: 20 }}>{l.icon}</span>
               <span style={{ fontSize: 10, fontWeight: isActive ? 600 : 400, letterSpacing: '0.02em' }}>{l.label}</span>
             </NavLink>

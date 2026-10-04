@@ -281,18 +281,20 @@ export default function Dashboard() {
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid var(--crema-oscuro)' }}>
-                  {['#', 'Cliente', 'Total', 'Origen', 'Fecha'].map(h => (
-                    <th key={h} style={{ textAlign: 'left', padding: '0 8px 10px', color: 'var(--texto-suave)', fontWeight: 500, fontSize: 12 }}>{h}</th>
-                  ))}
+                  <th className="hide-mobile" style={{ textAlign: 'left', padding: '0 8px 10px', color: 'var(--texto-suave)', fontWeight: 500, fontSize: 12 }}>#</th>
+                  <th style={{ textAlign: 'left', padding: '0 8px 10px', color: 'var(--texto-suave)', fontWeight: 500, fontSize: 12 }}>Cliente</th>
+                  <th style={{ textAlign: 'left', padding: '0 8px 10px', color: 'var(--texto-suave)', fontWeight: 500, fontSize: 12 }}>Total</th>
+                  <th className="hide-mobile" style={{ textAlign: 'left', padding: '0 8px 10px', color: 'var(--texto-suave)', fontWeight: 500, fontSize: 12 }}>Origen</th>
+                  <th style={{ textAlign: 'left', padding: '0 8px 10px', color: 'var(--texto-suave)', fontWeight: 500, fontSize: 12 }}>Fecha</th>
                 </tr>
               </thead>
               <tbody>
                 {data.ultimosPedidos.map(p => (
                   <tr key={p.id} style={{ borderBottom: '1px solid var(--crema-oscuro)' }}>
-                    <td style={{ padding: '12px 8px', color: 'var(--texto-suave)' }}>#{p.id}</td>
+                    <td className="hide-mobile" style={{ padding: '12px 8px', color: 'var(--texto-suave)' }}>#{p.id}</td>
                     <td style={{ padding: '12px 8px', color: 'var(--texto)', fontWeight: 500 }}>{p.nombre_cliente || '—'}</td>
                     <td style={{ padding: '12px 8px', color: 'var(--bordeaux)', fontWeight: 600 }}>${p.total.toLocaleString('es-AR')}</td>
-                    <td style={{ padding: '12px 8px' }}>
+                    <td className="hide-mobile" style={{ padding: '12px 8px' }}>
                       <span style={{ padding: '3px 10px', borderRadius: 50, fontSize: 14, background: p.origen === 'manual' ? '#f0ebe1' : '#e8f0fe', color: p.origen === 'manual' ? 'var(--bordeaux-oscuro)' : '#1a56db' }}>
                         {p.origen === 'manual' ? 'Manual' : 'Web'}
                       </span>
@@ -389,7 +391,7 @@ function KpiCard({ label, valor, sub, color }) {
   return (
     <div style={{ background: '#fff', borderRadius: 16, padding: '20px 22px', border: '1px solid var(--crema-oscuro)' }}>
       <p style={{ fontSize: 16, color: 'var(--texto-suave)', marginBottom: 8, letterSpacing: '0.05em' }}>{label}</p>
-      <p style={{ fontFamily: 'var(--serif)', fontSize: 36, fontWeight: 400, color: 'var(--texto)', margin: '0 0 6px' }}>{valor}</p>
+      <p className="admin-kpi-value" style={{ fontFamily: 'var(--serif)', fontSize: 36, fontWeight: 400, color: 'var(--texto)', margin: '0 0 6px' }}>{valor}</p>
       {sub && <p style={{ fontSize: 16, color: color || 'var(--texto-suave)', margin: 0 }}>{sub}</p>}
     </div>
   );
