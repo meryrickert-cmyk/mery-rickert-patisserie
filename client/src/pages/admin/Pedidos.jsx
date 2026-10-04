@@ -237,73 +237,70 @@ function PedidoRow({ pedido: p, onVer, onEditar, onEliminar, onPagoChange }) {
     }
   }
 
+  const pagoSelect = (
+    <div style={{ position: 'relative', flexShrink: 0 }}>
+      <select
+        value={p.estado_pago || 'pendiente'}
+        disabled={cambiandoPago}
+        onChange={e => setPago(e.target.value)}
+        style={{
+          padding: '3px 10px', borderRadius: 50, fontSize: 13, cursor: 'pointer',
+          border: 'none', outline: 'none', appearance: 'none', WebkitAppearance: 'none',
+          background: cfg.bg, color: cfg.color, fontFamily: 'var(--sans)', fontWeight: 600,
+          paddingRight: 22,
+        }}
+      >
+        <option value="pendiente">Sin pago</option>
+        <option value="seña">Seña</option>
+        <option value="pagado">Pagado ✓</option>
+      </select>
+      <span style={{ position: 'absolute', right: 6, top: '50%', transform: 'translateY(-50%)', fontSize: 10, color: cfg.color, pointerEvents: 'none' }}>▾</span>
+    </div>
+  );
+
   return (
-    <div style={{ background: '#fff', borderRadius: 14, border: '1px solid var(--crema-oscuro)', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-      {/* Número */}
-      <span style={{ fontSize: 16, color: 'var(--texto-suave)', width: 32, flexShrink: 0 }}>#{p.id}</span>
-
-      {/* Origen */}
-      <span style={{
-        fontSize: 14, padding: '3px 10px', borderRadius: 50, flexShrink: 0,
-        background: p.origen === 'manual' ? '#f0ebe1' : '#e8f0fe',
-        color: p.origen === 'manual' ? 'var(--bordeaux-oscuro)' : '#1a56db',
-      }}>
-        {p.origen === 'manual' ? 'Manual' : 'Web'}
-      </span>
-
-      {/* Estado de pago — selector inline */}
-      <div style={{ position: 'relative', flexShrink: 0 }}>
-        <select
-          value={p.estado_pago || 'pendiente'}
-          disabled={cambiandoPago}
-          onChange={e => setPago(e.target.value)}
-          style={{
-            padding: '3px 10px', borderRadius: 50, fontSize: 14, cursor: 'pointer',
-            border: 'none', outline: 'none', appearance: 'none', WebkitAppearance: 'none',
-            background: cfg.bg, color: cfg.color, fontFamily: 'var(--sans)', fontWeight: 600,
-            paddingRight: 24,
-          }}
-        >
-          <option value="pendiente">Sin pago</option>
-          <option value="seña">Seña</option>
-          <option value="pagado">Pagado ✓</option>
-        </select>
-        <span style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', fontSize: 11, color: cfg.color, pointerEvents: 'none' }}>▾</span>
+    <div className="pedido-row" style={{ background: '#fff', borderRadius: 14, border: '1px solid var(--crema-oscuro)', padding: '14px 16px' }}>
+      {/* Layout desktop: fila única */}
+      <div className="pedido-row-desktop" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <span style={{ fontSize: 15, color: 'var(--texto-suave)', width: 32, flexShrink: 0 }}>#{p.id}</span>
+        <span style={{ fontSize: 13, padding: '3px 10px', borderRadius: 50, flexShrink: 0, background: p.origen === 'manual' ? '#f0ebe1' : '#e8f0fe', color: p.origen === 'manual' ? 'var(--bordeaux-oscuro)' : '#1a56db' }}>
+          {p.origen === 'manual' ? 'Manual' : 'Web'}
+        </span>
+        {pagoSelect}
+        <p style={{ fontWeight: 500, fontSize: 17, color: 'var(--texto)', margin: 0, flexShrink: 0 }}>{p.nombre_cliente || '—'}</p>
+        <p style={{ fontSize: 15, color: 'var(--texto-suave)', margin: 0, flex: 2, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {p.items?.map(i => `${i.nombre_producto} x${i.cantidad}`).join(' · ')}
+        </p>
+        <p style={{ fontFamily: 'var(--serif)', fontSize: 22, color: 'var(--bordeaux)', margin: 0, flexShrink: 0 }}>${p.total.toLocaleString('es-AR')}</p>
+        <p style={{ fontSize: 15, color: 'var(--texto-suave)', margin: 0, flexShrink: 0 }}>{formatFecha(p.creado_en)}</p>
+        <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+          <button onClick={onVer} style={{ padding: '5px 12px', borderRadius: 8, border: '1px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', fontSize: 15, cursor: 'pointer' }}>Ver</button>
+          <button onClick={onEditar} style={{ padding: '5px 12px', borderRadius: 8, border: '1px solid var(--bordeaux)', background: '#fff', color: 'var(--bordeaux)', fontSize: 15, cursor: 'pointer' }}>Editar</button>
+          <button onClick={onEliminar} style={{ padding: '5px 8px', borderRadius: 8, border: 'none', background: '#fff', color: '#ddd', fontSize: 20, cursor: 'pointer', lineHeight: 1 }}
+            onMouseEnter={e => e.target.style.color = '#c0392b'} onMouseLeave={e => e.target.style.color = '#ddd'}>×</button>
+        </div>
       </div>
 
-      {/* Cliente */}
-      <p style={{ fontWeight: 500, fontSize: 18, color: 'var(--texto)', margin: 0, flexShrink: 0, whiteSpace: 'nowrap' }}>
-        {p.nombre_cliente || '—'}
-      </p>
-
-      {/* Items resumen */}
-      <p style={{ fontSize: 16, color: 'var(--texto-suave)', margin: 0, flex: 2, minWidth: 0 }}>
-        {p.items?.map(i => `${i.nombre_producto} x${i.cantidad}`).join(' · ')}
-      </p>
-
-      {/* Total */}
-      <p style={{ fontFamily: 'var(--serif)', fontSize: 23, color: 'var(--bordeaux)', margin: 0, flexShrink: 0 }}>
-        ${p.total.toLocaleString('es-AR')}
-      </p>
-
-      {/* Fecha */}
-      <p style={{ fontSize: 16, color: 'var(--texto-suave)', margin: 0, flexShrink: 0 }}>
-        {formatFecha(p.creado_en)}
-      </p>
-
-      {/* Acciones */}
-      <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-        <button onClick={onVer} style={{ padding: '6px 14px', borderRadius: 8, border: '1px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', fontSize: 16, cursor: 'pointer' }}>
-          Ver
-        </button>
-        <button onClick={onEditar} style={{ padding: '6px 14px', borderRadius: 8, border: '1px solid var(--bordeaux)', background: '#fff', color: 'var(--bordeaux)', fontSize: 16, cursor: 'pointer' }}>
-          Editar
-        </button>
-        <button onClick={onEliminar} style={{ padding: '6px 10px', borderRadius: 8, border: 'none', background: '#fff', color: '#ddd', fontSize: 21, cursor: 'pointer', lineHeight: 1 }}
-          onMouseEnter={e => e.target.style.color = '#c0392b'}
-          onMouseLeave={e => e.target.style.color = '#ddd'}>
-          ×
-        </button>
+      {/* Layout mobile: card estructurado */}
+      <div className="pedido-row-mobile">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+          <p style={{ fontWeight: 600, fontSize: 17, color: 'var(--texto)', margin: 0 }}>{p.nombre_cliente || '—'}</p>
+          <p style={{ fontFamily: 'var(--serif)', fontSize: 20, color: 'var(--bordeaux)', margin: 0 }}>${p.total.toLocaleString('es-AR')}</p>
+        </div>
+        <p style={{ fontSize: 14, color: 'var(--texto-suave)', margin: '0 0 10px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {p.items?.map(i => `${i.nombre_producto} x${i.cantidad}`).join(' · ')}
+        </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 13, color: 'var(--texto-suave)' }}>{formatFecha(p.creado_en)}</span>
+          <span style={{ fontSize: 13, color: 'var(--texto-suave)' }}>·</span>
+          {pagoSelect}
+          <div style={{ display: 'flex', gap: 6, marginLeft: 'auto' }}>
+            <button onClick={onVer} style={{ padding: '5px 12px', borderRadius: 8, border: '1px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', fontSize: 14, cursor: 'pointer' }}>Ver</button>
+            <button onClick={onEditar} style={{ padding: '5px 12px', borderRadius: 8, border: '1px solid var(--bordeaux)', background: '#fff', color: 'var(--bordeaux)', fontSize: 14, cursor: 'pointer' }}>Editar</button>
+            <button onClick={onEliminar} style={{ padding: '5px 8px', borderRadius: 8, border: 'none', background: '#fff', color: '#ccc', fontSize: 18, cursor: 'pointer', lineHeight: 1 }}
+              onMouseEnter={e => e.target.style.color = '#c0392b'} onMouseLeave={e => e.target.style.color = '#ccc'}>×</button>
+          </div>
+        </div>
       </div>
     </div>
   );

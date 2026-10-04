@@ -143,6 +143,10 @@ body {
   display: none;
 }
 
+/* Pedidos card: desktop muestra fila, mobile muestra card */
+.pedido-row-mobile { display: none; }
+.pedido-row-desktop { display: flex; }
+
 /* Padding de páginas admin */
 .admin-page {
   padding: 40px 40px;
@@ -242,6 +246,10 @@ body {
 
   /* Ocultar columnas secundarias en tablas móvil */
   .hide-mobile { display: none !important; }
+
+  /* Pedidos: mostrar solo card mobile */
+  .pedido-row-desktop { display: none !important; }
+  .pedido-row-mobile { display: block !important; }
 }
 
 /* Line clamp */

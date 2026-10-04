@@ -103,61 +103,44 @@ function ClienteRow({ cliente: c, activa, onClick }) {
       style={{
         background: '#fff', borderRadius: 14, cursor: 'pointer',
         border: `1.5px solid ${activa ? 'var(--bordeaux)' : 'var(--crema-oscuro)'}`,
-        padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap',
-        transition: 'border-color 0.15s',
+        padding: '14px 18px', transition: 'border-color 0.15s',
       }}
     >
-      {/* Avatar inicial */}
-      <div style={{
-        width: 38, height: 38, borderRadius: '50%', flexShrink: 0,
-        background: 'var(--crema)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontFamily: 'var(--serif)', fontSize: 21, color: 'var(--bordeaux)', fontWeight: 400,
-      }}>
-        {c.nombre?.[0]?.toUpperCase() ?? '?'}
-      </div>
-
-      {/* Nombre + referido */}
-      <div style={{ flex: 1, minWidth: 140 }}>
-        <p style={{ margin: 0, fontWeight: 500, fontSize: 18, color: 'var(--texto)' }}>{c.nombre}</p>
-        {c.recomendado_por && (
-          <p style={{ margin: 0, fontSize: 16, color: 'var(--texto-suave)', marginTop: 2 }}>
-            Referida por {c.recomendado_por}
+      {/* Fila principal */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, justifyContent: 'space-between' }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{ margin: 0, fontWeight: 600, fontSize: 17, color: 'var(--texto)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.nombre}</p>
+          {c.recomendado_por && (
+            <p style={{ margin: '2px 0 0', fontSize: 14, color: 'var(--texto-suave)' }}>ref. {c.recomendado_por}</p>
+          )}
+        </div>
+        <div style={{ textAlign: 'right', flexShrink: 0 }}>
+          <p style={{ margin: 0, fontFamily: 'var(--serif)', fontSize: 20, color: 'var(--bordeaux)', lineHeight: 1 }}>
+            ${parseFloat(c.total_gastado).toLocaleString('es-AR')}
           </p>
-        )}
+          <p style={{ margin: '2px 0 0', fontSize: 13, color: 'var(--texto-suave)' }}>
+            {c.total_pedidos} pedido{c.total_pedidos !== 1 ? 's' : ''}
+          </p>
+        </div>
       </div>
-
-      {/* Pedidos */}
-      <div style={{ textAlign: 'center', minWidth: 60 }}>
-        <p style={{ margin: 0, fontSize: 23, fontFamily: 'var(--serif)', color: 'var(--texto)', lineHeight: 1 }}>{c.total_pedidos}</p>
-        <p style={{ margin: 0, fontSize: 14, color: 'var(--texto-suave)', marginTop: 2 }}>pedidos</p>
-      </div>
-
-      {/* Último pedido */}
-      <div style={{ textAlign: 'right', minWidth: 110 }}>
-        <p style={{ margin: 0, fontSize: 16, color: 'var(--texto-suave)' }}>último pedido</p>
-        <p style={{ margin: 0, fontSize: 17, color: 'var(--texto)', fontWeight: 500, marginTop: 2 }}>
-          {formatFecha(c.ultimo_pedido_fecha)}
+      {/* Fila secundaria: último pedido */}
+      {c.ultimo_pedido_fecha && (
+        <p style={{ margin: '6px 0 0', fontSize: 13, color: 'var(--texto-suave)' }}>
+          Último pedido: {formatFecha(c.ultimo_pedido_fecha)}
         </p>
-      </div>
-
-      {/* Total histórico */}
-      <div style={{ textAlign: 'right', minWidth: 100 }}>
-        <p style={{ margin: 0, fontSize: 16, color: 'var(--texto-suave)' }}>total histórico</p>
-        <p style={{ margin: 0, fontFamily: 'var(--serif)', fontSize: 23, color: 'var(--bordeaux)', lineHeight: 1, marginTop: 2 }}>
-          ${parseFloat(c.total_gastado).toLocaleString('es-AR')}
-        </p>
-      </div>
+      )}
     </div>
   );
 }
 
 function ModalDetalle({ detalle: c, cargando, onClose, onGuardar }) {
   const [editando, setEditando] = useState(false);
+  const [nombre, setNombre] = useState(c.nombre || '');
   const [recomendado, setRecomendado] = useState(c.recomendado_por || '');
   const [notas, setNotas] = useState(c.notas || '');
 
   function guardar() {
-    onGuardar({ recomendado_por: recomendado, notas });
+    onGuardar({ nombre: nombre.trim() || c.nombre, recomendado_por: recomendado, notas });
     setEditando(false);
   }
 
@@ -171,14 +154,9 @@ function ModalDetalle({ detalle: c, cargando, onClose, onGuardar }) {
       }}>
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', borderBottom: '1px solid var(--crema-oscuro)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'var(--crema)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--serif)', fontSize: 26, color: 'var(--bordeaux)' }}>
-              {c.nombre?.[0]?.toUpperCase()}
-            </div>
-            <div>
-              <h3 style={{ fontFamily: 'var(--serif)', fontWeight: 400, fontSize: 29, color: 'var(--texto)', margin: 0 }}>{c.nombre}</h3>
-              <p style={{ margin: 0, fontSize: 16, color: 'var(--texto-suave)' }}>cliente desde {formatFecha(c.creado_en)}</p>
-            </div>
+          <div>
+            <h3 style={{ fontFamily: 'var(--serif)', fontWeight: 400, fontSize: 29, color: 'var(--texto)', margin: 0 }}>{c.nombre}</h3>
+            <p style={{ margin: 0, fontSize: 15, color: 'var(--texto-suave)' }}>cliente desde {formatFecha(c.creado_en)}</p>
           </div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 29, cursor: 'pointer', color: 'var(--texto-suave)', lineHeight: 1, padding: 4 }}>×</button>
         </div>
@@ -195,6 +173,10 @@ function ModalDetalle({ detalle: c, cargando, onClose, onGuardar }) {
           {editando ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <div>
+                <label style={labelStyle}>Nombre</label>
+                <input value={nombre} onChange={e => setNombre(e.target.value)} placeholder="Nombre de la cliente" style={inputStyle} />
+              </div>
+              <div>
                 <label style={labelStyle}>Referida por</label>
                 <input value={recomendado} onChange={e => setRecomendado(e.target.value)} placeholder="¿Quién la recomendó?" style={inputStyle} />
               </div>
@@ -203,7 +185,7 @@ function ModalDetalle({ detalle: c, cargando, onClose, onGuardar }) {
                 <textarea value={notas} onChange={e => setNotas(e.target.value)} rows={3} placeholder="Preferencias, alergias, detalles..." style={{ ...inputStyle, resize: 'none' }} />
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
-                <button onClick={() => setEditando(false)} style={{ flex: 1, padding: '10px', borderRadius: 10, border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', cursor: 'pointer', fontSize: 13 }}>Cancelar</button>
+                <button onClick={() => { setEditando(false); setNombre(c.nombre || ''); }} style={{ flex: 1, padding: '10px', borderRadius: 10, border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', cursor: 'pointer', fontSize: 13 }}>Cancelar</button>
                 <button onClick={guardar} style={{ flex: 1, padding: '10px', borderRadius: 10, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', cursor: 'pointer', fontSize: 17, fontWeight: 500 }}>Guardar</button>
               </div>
             </div>
@@ -215,10 +197,10 @@ function ModalDetalle({ detalle: c, cargando, onClose, onGuardar }) {
                   {c.notas && <InfoPill label="Notas" valor={c.notas} />}
                 </>
               ) : (
-                <p style={{ fontSize: 17, color: 'var(--texto-suave)', fontStyle: 'italic' }}>Sin notas aún</p>
+                <p style={{ fontSize: 16, color: 'var(--texto-suave)', fontStyle: 'italic' }}>Sin notas aún</p>
               )}
-              <button onClick={() => setEditando(true)} style={{ alignSelf: 'flex-start', padding: '7px 16px', borderRadius: 8, border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', cursor: 'pointer', fontSize: 12 }}>
-                ✏️ Editar datos
+              <button onClick={() => setEditando(true)} style={{ alignSelf: 'flex-start', padding: '7px 16px', borderRadius: 8, border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', cursor: 'pointer', fontSize: 13 }}>
+                Editar datos
               </button>
             </div>
           )}
