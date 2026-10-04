@@ -147,6 +147,19 @@ body {
 .pedido-row-mobile { display: none; }
 .pedido-row-desktop { display: flex; }
 
+/* Pedido item row en formulario — desktop: grilla horizontal */
+.pedido-item-row {
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  gap: 8px;
+  align-items: start;
+}
+.pedido-item-nums {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
 /* Padding de páginas admin */
 .admin-page {
   padding: 40px 40px;
@@ -250,6 +263,39 @@ body {
   /* Pedidos: mostrar solo card mobile */
   .pedido-row-desktop { display: none !important; }
   .pedido-row-mobile { display: block !important; }
+
+  /* Pedido item row: stack en mobile */
+  .pedido-item-row {
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+  }
+  .pedido-item-nums {
+    display: grid !important;
+    grid-template-columns: 80px 1fr 32px !important;
+    gap: 6px !important;
+  }
+
+  /* Insumos: fuentes más pequeñas en mobile */
+  .admin-page .insumos-page p,
+  .admin-page .insumos-page span,
+  .admin-page .insumos-page button,
+  .admin-page .insumos-page label,
+  .admin-page .insumos-page input,
+  .admin-page .insumos-page select,
+  .admin-page .insumos-page th,
+  .admin-page .insumos-page td { font-size: 14px !important; }
+  .admin-page .insumos-page h1 { font-size: 24px !important; }
+  .admin-page .insumos-page > p:first-of-type { font-size: 14px !important; }
+  .insumos-sync-card { flex-wrap: wrap !important; }
+  .insumos-sync-card p { font-size: 13px !important; }
+  .insumos-sync-card button { font-size: 13px !important; width: 100%; margin-top: 8px; }
+
+  /* Tabla insumos: scroll horizontal */
+  .insumos-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* Próximos pedidos: items se apilan en mobile */
+  .proximo-pedido-row { flex-wrap: wrap !important; }
+  .proximo-pedido-row .proximo-items { display: none !important; }
 }
 
 /* Line clamp */

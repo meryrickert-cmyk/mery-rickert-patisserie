@@ -8,25 +8,25 @@ export default function Insumos() {
   const [tab, setTab] = useState('insumos');
 
   return (
-    <div className="admin-page" style={{ maxWidth: 1400, margin: '0 auto', paddingBottom: 80, fontSize: 16 }}>
+    <div className="admin-page insumos-page" style={{ maxWidth: 1400, margin: '0 auto', paddingBottom: 80, fontSize: 16 }}>
       <h1 style={{ fontFamily: 'var(--serif)', fontSize: 39, fontWeight: 400, color: 'var(--texto)', marginBottom: 6 }}>
         Insumos & Costos
       </h1>
-      <p style={{ color: 'var(--texto-suave)', fontSize: 23, marginBottom: 32 }}>
-        Precios de materias primas · Recetas con costo automático · Análisis de márgenes por producto
+      <p style={{ color: 'var(--texto-suave)', fontSize: 16, marginBottom: 24 }}>
+        Precios de materias primas · Recetas con costo automático · Análisis de márgenes
       </p>
 
-      <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid var(--crema-oscuro)', marginBottom: 36 }}>
+      <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid var(--crema-oscuro)', marginBottom: 28 }}>
         {[
           { id: 'insumos', label: '📦 Insumos' },
           { id: 'recetas', label: '📋 Recetas' },
           { id: 'analisis', label: '📊 Análisis' },
         ].map(t => (
           <button key={t.id} onClick={() => setTab(t.id)} style={{
-            padding: '12px 24px', border: 'none', background: 'transparent',
+            padding: '10px 16px', border: 'none', background: 'transparent',
             borderBottom: tab === t.id ? '2px solid var(--bordeaux)' : '2px solid transparent',
             color: tab === t.id ? 'var(--bordeaux)' : 'var(--texto-suave)',
-            fontSize: 21, fontWeight: tab === t.id ? 600 : 400, cursor: 'pointer',
+            fontSize: 16, fontWeight: tab === t.id ? 600 : 400, cursor: 'pointer',
             fontFamily: 'var(--sans)', transition: 'all 0.2s',
           }}>
             {t.label}
@@ -94,9 +94,9 @@ function TabInsumos() {
 
   const rowInsumo = (ins, isLast) => (
     <tr key={ins.id} style={{ borderBottom: isLast ? 'none' : '1px solid var(--crema-oscuro)' }}>
-      <td style={{ padding: '9px 16px', fontSize: 23, fontWeight: 500, color: 'var(--texto)', fontFamily: 'var(--serif)' }}>{ins.nombre}</td>
-      <td style={{ padding: '9px 16px', fontSize: 23, color: 'var(--texto-suave)', fontFamily: 'var(--serif)' }}>{ins.unidad}</td>
-      <td style={{ padding: '9px 16px', fontSize: 23, fontWeight: 500, color: 'var(--bordeaux)', fontFamily: 'var(--serif)' }}>
+      <td style={{ padding: '9px 16px', fontSize: 15, fontWeight: 500, color: 'var(--texto)', fontFamily: 'var(--serif)' }}>{ins.nombre}</td>
+      <td style={{ padding: '9px 16px', fontSize: 14, color: 'var(--texto-suave)', fontFamily: 'var(--serif)' }}>{ins.unidad}</td>
+      <td style={{ padding: '9px 16px', fontSize: 15, fontWeight: 500, color: 'var(--bordeaux)', fontFamily: 'var(--serif)' }}>
         ${parseFloat(ins.costo).toLocaleString('es-AR')} / {ins.unidad}
       </td>
       <td style={{ padding: '9px 16px' }}>
@@ -105,7 +105,7 @@ function TabInsumos() {
           <button onClick={() => eliminar(ins.id)} style={{ ...btnTabla, color: '#c0392b' }}>✕</button>
         </div>
       </td>
-      <td style={{ padding: '9px 16px', fontSize: 23, color: 'var(--texto-suave)', fontFamily: 'var(--serif)' }}>
+      <td style={{ padding: '9px 16px', fontSize: 13, color: 'var(--texto-suave)', fontFamily: 'var(--serif)' }}>
         {ins.actualizado_en ? new Date(ins.actualizado_en).toLocaleDateString('es-AR') : '—'}
       </td>
     </tr>
@@ -139,18 +139,18 @@ function TabInsumos() {
       )}
 
       {/* Sync Base Brownie */}
-      <div style={{ background: '#fffbf0', border: '1px solid #f0e0a0', borderRadius: 10, padding: '12px 16px', marginBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-        <p style={{ margin: 0, fontSize: 23, color: '#7a5c00' }}>
-          💡 <strong>Base Brownie (1 receta)</strong> es un insumo derivado. Al actualizar los costos de sus ingredientes, sincronizalo para que todas las recetas que lo usan reflejen el precio real.
+      <div className="insumos-sync-card" style={{ background: '#fffbf0', border: '1px solid #f0e0a0', borderRadius: 10, padding: '12px 16px', marginBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+        <p style={{ margin: 0, fontSize: 14, color: '#7a5c00' }}>
+          💡 <strong>Base Brownie (1 receta)</strong> es un insumo derivado. Sincronizalo cuando actualices sus ingredientes.
         </p>
-        <button onClick={sincronizarBase} style={{ ...btnSecundario, whiteSpace: 'nowrap', flexShrink: 0, borderColor: '#d4a800', color: '#7a5c00' }}>
+        <button onClick={sincronizarBase} style={{ ...btnSecundario, whiteSpace: 'nowrap', flexShrink: 0, borderColor: '#d4a800', color: '#7a5c00', fontSize: 14 }}>
           ↻ Sincronizar precio
         </button>
       </div>
 
       {/* Tabla principal */}
-      <div style={{ background: '#fff', borderRadius: 16, border: '1px solid var(--crema-oscuro)', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <div className="insumos-table-wrap" style={{ background: '#fff', borderRadius: 16, border: '1px solid var(--crema-oscuro)', overflow: 'hidden' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 500 }}>
           <thead>
             <tr style={{ borderBottom: '1px solid var(--crema-oscuro)', background: 'var(--crema)' }}>
               {['Insumo', 'Unidad', 'Costo actual', '', 'Actualizado'].map(h => (
@@ -336,21 +336,21 @@ function TabRecetas() {
                     >
                       {/* Nombre */}
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
-                        <span style={{ fontSize: 23, color: 'var(--texto-suave)', flexShrink: 0 }}>{isOpen ? '▾' : '▸'}</span>
-                        <span style={{ fontFamily: 'var(--serif)', fontSize: 23, color: 'var(--texto)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <span style={{ fontSize: 14, color: 'var(--texto-suave)', flexShrink: 0 }}>{isOpen ? '▾' : '▸'}</span>
+                        <span style={{ fontFamily: 'var(--serif)', fontSize: 16, color: 'var(--texto)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {rec.nombre}
                         </span>
                       </div>
                       {/* Costo/u */}
-                      <span style={{ textAlign: 'right', fontSize: 23, color: 'var(--texto)', fontWeight: 500, fontFamily: 'var(--serif)' }}>
+                      <span style={{ textAlign: 'right', fontSize: 15, color: 'var(--texto)', fontWeight: 500, fontFamily: 'var(--serif)' }}>
                         {costoPorU > 0 ? `$${Math.round(costoPorU).toLocaleString('es-AR')}` : '—'}
                       </span>
                       {/* Precio */}
-                      <span style={{ textAlign: 'right', fontSize: 23, color: rec.precio_venta ? 'var(--bordeaux)' : 'var(--texto-suave)', fontWeight: 500, fontFamily: 'var(--serif)' }}>
+                      <span style={{ textAlign: 'right', fontSize: 15, color: rec.precio_venta ? 'var(--bordeaux)' : 'var(--texto-suave)', fontWeight: 500, fontFamily: 'var(--serif)' }}>
                         {rec.precio_venta ? `$${rec.precio_venta.toLocaleString('es-AR')}` : '—'}
                       </span>
                       {/* Margen */}
-                      <span style={{ textAlign: 'right', fontSize: 23, fontWeight: 600, color: margenPct !== null ? margenColor : 'var(--texto-suave)', fontFamily: 'var(--serif)' }}>
+                      <span style={{ textAlign: 'right', fontSize: 15, fontWeight: 600, color: margenPct !== null ? margenColor : 'var(--texto-suave)', fontFamily: 'var(--serif)' }}>
                         {margenPct !== null ? `${margenPct.toFixed(0)}%` : '—'}
                       </span>
                       {/* Acciones */}
@@ -724,12 +724,12 @@ function Kpi({ label, value, color }) {
 }
 
 /* Estilos compartidos */
-const btnPrimario = { padding: '9px 20px', borderRadius: 50, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 23, fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--sans)', whiteSpace: 'nowrap' };
-const btnSecundario = { padding: '9px 18px', borderRadius: 50, border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', fontSize: 23, cursor: 'pointer', fontFamily: 'var(--sans)', whiteSpace: 'nowrap' };
-const btnTabla = { padding: '5px 12px', borderRadius: 8, border: '1px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', fontSize: 18, cursor: 'pointer', fontFamily: 'var(--sans)' };
-const inputStyle = { width: '100%', padding: '10px 14px', borderRadius: 10, border: '1.5px solid var(--crema-oscuro)', background: '#fff', fontSize: 23, color: 'var(--texto)', outline: 'none', fontFamily: 'var(--sans)', boxSizing: 'border-box' };
-const labelStyle = { display: 'block', fontSize: 23, color: 'var(--texto-suave)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 5 };
-const thStyle = { padding: '10px 14px', textAlign: 'left', fontSize: 23, color: 'var(--texto-suave)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' };
-const tdR = { padding: '11px 14px', textAlign: 'right', fontSize: 23, color: 'var(--texto)', fontFamily: 'var(--serif)' };
+const btnPrimario = { padding: '9px 20px', borderRadius: 50, border: 'none', background: 'var(--bordeaux)', color: '#FAF7F2', fontSize: 15, fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--sans)', whiteSpace: 'nowrap' };
+const btnSecundario = { padding: '9px 18px', borderRadius: 50, border: '1.5px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', fontSize: 15, cursor: 'pointer', fontFamily: 'var(--sans)', whiteSpace: 'nowrap' };
+const btnTabla = { padding: '5px 12px', borderRadius: 8, border: '1px solid var(--crema-oscuro)', background: '#fff', color: 'var(--texto-suave)', fontSize: 14, cursor: 'pointer', fontFamily: 'var(--sans)' };
+const inputStyle = { width: '100%', padding: '10px 14px', borderRadius: 10, border: '1.5px solid var(--crema-oscuro)', background: '#fff', fontSize: 16, color: 'var(--texto)', outline: 'none', fontFamily: 'var(--sans)', boxSizing: 'border-box' };
+const labelStyle = { display: 'block', fontSize: 13, color: 'var(--texto-suave)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 5 };
+const thStyle = { padding: '10px 14px', textAlign: 'left', fontSize: 13, color: 'var(--texto-suave)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' };
+const tdR = { padding: '9px 14px', textAlign: 'right', fontSize: 15, color: 'var(--texto)', fontFamily: 'var(--serif)' };
 const kpiLabel = { fontSize: 10, color: 'var(--texto-suave)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 };
 const colHead = { fontSize: 10, color: 'var(--texto-suave)', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600 };

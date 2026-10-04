@@ -107,6 +107,16 @@ router.get('/', authAdmin, (req, res) => {
     p.items = db.prepare('SELECT * FROM pedido_items WHERE pedido_id = ?').all(p.id);
   }
 
+  // Próximos pedidos: fecha de entrega >= hoy
+  const proximosPedidos = db.prepare(`
+    SELECT * FROM pedidos
+    WHERE date(creado_en) >= date('now') AND estado != 'cancelado'
+    ORDER BY creado_en ASC LIMIT 20
+  `).all();
+  for (const p of proximosPedidos) {
+    p.items = db.prepare('SELECT * FROM pedido_items WHERE pedido_id = ?').all(p.id);
+  }
+
   // Ganancia y margen solo sobre ítems con costo cargado
   const ganancia = kpiActual.costo_total > 0
     ? kpiActual.ventas_items - kpiActual.costo_total
@@ -122,7 +132,7 @@ router.get('/', authAdmin, (req, res) => {
     items_con_costo: kpiActual.items_con_costo,
     itemsVendidos: itemsVendidos.total,
     porCategoria,
-    mesMes, topProductos, topCompradores, ultimosPedidos,
+    mesMes, topProductos, topCompradores, ultimosPedidos, proximosPedidos,
   });
 });
 

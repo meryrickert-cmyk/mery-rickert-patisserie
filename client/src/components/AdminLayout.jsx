@@ -2,14 +2,14 @@ import { NavLink, useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 
 const links = [
-  { to: '/admin/dashboard', icon: '📊', label: 'Dashboard' },
-  { to: '/admin/pedidos',   icon: '📦', label: 'Pedidos' },
-  { to: '/admin/clientes',  icon: '👤', label: 'Clientes' },
-  { to: '/admin/productos', icon: '🧁', label: 'Productos' },
-  { to: '/admin/analytics', icon: '📈', label: 'Analytics' },
-  { to: '/admin/contenido', icon: '✏️', label: 'Contenido' },
-  { to: '/admin/insumos',       icon: '🧾', label: 'Insumos' },
+  { to: '/admin/dashboard',    icon: '📊', label: 'Dashboard' },
+  { to: '/admin/pedidos',      icon: '📦', label: 'Pedidos' },
+  { to: '/admin/clientes',     icon: '👤', label: 'Clientes' },
   { to: '/admin/presupuestos', icon: '📋', label: 'Presupuestos' },
+  { to: '/admin/productos',    icon: '🧁', label: 'Productos' },
+  { to: '/admin/analytics',    icon: '📈', label: 'Analytics' },
+  { to: '/admin/contenido',    icon: '✏️', label: 'Contenido' },
+  { to: '/admin/insumos',      icon: '🧾', label: 'Insumos' },
 ];
 
 export default function AdminLayout() {

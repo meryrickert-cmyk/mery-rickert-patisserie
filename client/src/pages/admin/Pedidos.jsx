@@ -377,30 +377,34 @@ function ModalNuevoPedido({ onClose, onGuardado }) {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {items.map((item, idx) => (
-              <div key={idx} style={{ display: 'grid', gridTemplateColumns: '1fr 60px 100px 28px', gap: 8, alignItems: 'center' }}>
-                <Autocomplete
-                  value={item.nombre_producto}
-                  onChange={val => setItemMulti(idx, { nombre_producto: val, producto_id: null })}
-                  onSelect={nombre => {
-                    const prod = productosData.find(p => p.nombre === nombre);
-                    setItemMulti(idx, {
-                      nombre_producto: nombre,
-                      ...(prod?.precio ? { precio_unitario: prod.precio } : {}),
-                      producto_id: prod?.id || null,
-                    });
-                  }}
-                  opciones={nombresProductos}
-                  precios={preciosMap}
-                  placeholder="Producto"
-                  extraOption="+ Otro (escribir manualmente)"
-                />
-                <Input type="number" min="1" value={item.cantidad} onChange={e => setItem(idx, 'cantidad', e.target.value)} placeholder="Cant." style={{ textAlign: 'center' }} />
-                <Input type="number" min="0" step="100" value={item.precio_unitario} onChange={e => setItem(idx, 'precio_unitario', e.target.value)} placeholder="Precio" />
-                {items.length > 1 && (
-                  <button type="button" onClick={() => removeItem(idx)} style={{ background: 'none', border: 'none', color: '#ccc', fontSize: 26, cursor: 'pointer', lineHeight: 1, padding: 0 }}
-                    onMouseEnter={e => e.target.style.color = '#c0392b'}
-                    onMouseLeave={e => e.target.style.color = '#ccc'}>×</button>
-                )}
+              <div key={idx} className="pedido-item-row">
+                <div className="pedido-item-producto">
+                  <Autocomplete
+                    value={item.nombre_producto}
+                    onChange={val => setItemMulti(idx, { nombre_producto: val, producto_id: null })}
+                    onSelect={nombre => {
+                      const prod = productosData.find(p => p.nombre === nombre);
+                      setItemMulti(idx, {
+                        nombre_producto: nombre,
+                        ...(prod?.precio ? { precio_unitario: prod.precio } : {}),
+                        producto_id: prod?.id || null,
+                      });
+                    }}
+                    opciones={nombresProductos}
+                    precios={preciosMap}
+                    placeholder="Producto"
+                    extraOption="+ Otro (escribir manualmente)"
+                  />
+                </div>
+                <div className="pedido-item-nums">
+                  <Input type="number" min="1" value={item.cantidad} onChange={e => setItem(idx, 'cantidad', e.target.value)} placeholder="Cant." style={{ textAlign: 'center' }} />
+                  <Input type="number" min="0" step="100" value={item.precio_unitario} onChange={e => setItem(idx, 'precio_unitario', e.target.value)} placeholder="Precio $" />
+                  {items.length > 1 ? (
+                    <button type="button" onClick={() => removeItem(idx)} style={{ background: 'none', border: 'none', color: '#ccc', fontSize: 24, cursor: 'pointer', lineHeight: 1, padding: '0 4px', flexShrink: 0 }}
+                      onMouseEnter={e => e.target.style.color = '#c0392b'}
+                      onMouseLeave={e => e.target.style.color = '#ccc'}>×</button>
+                  ) : <span style={{ width: 28 }} />}
+                </div>
               </div>
             ))}
           </div>
@@ -452,7 +456,6 @@ function ModalEditarPedido({ pedido, onClose, onGuardado }) {
 
   const nombresProductos = productosData.map(p => p.nombre);
   const preciosMap = Object.fromEntries(productosData.map(p => [p.nombre, p.precio]));
-  function precioDeProducto(nombre) { return productosData.find(p => p.nombre === nombre)?.precio ?? ''; }
 
   function addItem() { setItems(i => [...i, { ...ITEM_VACIO }]); }
   function removeItem(idx) { setItems(i => i.filter((_, j) => j !== idx)); }
@@ -493,29 +496,33 @@ function ModalEditarPedido({ pedido, onClose, onGuardado }) {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {items.map((item, idx) => (
-              <div key={idx} style={{ display: 'grid', gridTemplateColumns: '1fr 60px 100px 28px', gap: 8, alignItems: 'center' }}>
-                <Autocomplete
-                  value={item.nombre_producto}
-                  onChange={val => setItemMulti(idx, { nombre_producto: val, producto_id: null })}
-                  onSelect={nombre => {
-                    const prod = productosData.find(p => p.nombre === nombre);
-                    setItemMulti(idx, {
-                      nombre_producto: nombre,
-                      ...(prod?.precio ? { precio_unitario: prod.precio } : {}),
-                      producto_id: prod?.id || null,
-                    });
-                  }}
-                  opciones={nombresProductos}
-                  precios={preciosMap}
-                  placeholder="Producto"
-                  extraOption="+ Otro (escribir manualmente)"
-                />
-                <Input type="number" min="1" value={item.cantidad} onChange={e => setItem(idx, 'cantidad', e.target.value)} placeholder="Cant." style={{ textAlign: 'center' }} />
-                <Input type="number" min="0" step="100" value={item.precio_unitario} onChange={e => setItem(idx, 'precio_unitario', e.target.value)} placeholder="Precio" />
-                {items.length > 1 && (
-                  <button type="button" onClick={() => removeItem(idx)} style={{ background: 'none', border: 'none', color: '#ccc', fontSize: 26, cursor: 'pointer', lineHeight: 1, padding: 0 }}
-                    onMouseEnter={e => e.target.style.color = '#c0392b'} onMouseLeave={e => e.target.style.color = '#ccc'}>×</button>
-                )}
+              <div key={idx} className="pedido-item-row">
+                <div className="pedido-item-producto">
+                  <Autocomplete
+                    value={item.nombre_producto}
+                    onChange={val => setItemMulti(idx, { nombre_producto: val, producto_id: null })}
+                    onSelect={nombre => {
+                      const prod = productosData.find(p => p.nombre === nombre);
+                      setItemMulti(idx, {
+                        nombre_producto: nombre,
+                        ...(prod?.precio ? { precio_unitario: prod.precio } : {}),
+                        producto_id: prod?.id || null,
+                      });
+                    }}
+                    opciones={nombresProductos}
+                    precios={preciosMap}
+                    placeholder="Producto"
+                    extraOption="+ Otro (escribir manualmente)"
+                  />
+                </div>
+                <div className="pedido-item-nums">
+                  <Input type="number" min="1" value={item.cantidad} onChange={e => setItem(idx, 'cantidad', e.target.value)} placeholder="Cant." style={{ textAlign: 'center' }} />
+                  <Input type="number" min="0" step="100" value={item.precio_unitario} onChange={e => setItem(idx, 'precio_unitario', e.target.value)} placeholder="Precio $" />
+                  {items.length > 1 ? (
+                    <button type="button" onClick={() => removeItem(idx)} style={{ background: 'none', border: 'none', color: '#ccc', fontSize: 24, cursor: 'pointer', lineHeight: 1, padding: '0 4px', flexShrink: 0 }}
+                      onMouseEnter={e => e.target.style.color = '#c0392b'} onMouseLeave={e => e.target.style.color = '#ccc'}>×</button>
+                  ) : <span style={{ width: 28 }} />}
+                </div>
               </div>
             ))}
           </div>

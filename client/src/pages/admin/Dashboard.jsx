@@ -273,6 +273,37 @@ export default function Dashboard() {
         </Section>
       </div>
 
+      {/* Próximos pedidos */}
+      {data.proximosPedidos?.length > 0 && (
+        <Section titulo="Próximos pedidos" sub="Con fecha de entrega de hoy en adelante" style={{ marginTop: 16 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {data.proximosPedidos.map(p => {
+              const diasRestantes = Math.round((new Date(p.creado_en) - new Date()) / 86400000);
+              const esHoy = diasRestantes === 0;
+              const esMañana = diasRestantes === 1;
+              const etiqueta = esHoy ? 'Hoy' : esMañana ? 'Mañana' : `en ${diasRestantes}d`;
+              return (
+                <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', background: esHoy ? '#fff8f0' : 'var(--crema)', borderRadius: 12, border: esHoy ? '1.5px solid #f0d0a0' : '1px solid transparent', flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: esHoy ? '#c0392b' : '#d97706', background: esHoy ? '#fde8d8' : '#fef3cd', padding: '3px 10px', borderRadius: 20, flexShrink: 0 }}>
+                    {etiqueta}
+                  </span>
+                  <span style={{ fontSize: 16, fontWeight: 600, color: 'var(--texto)', flex: 1, minWidth: 0 }}>{p.nombre_cliente || '—'}</span>
+                  <span style={{ fontSize: 14, color: 'var(--texto-suave)', flex: 2, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {p.items?.map(i => `${i.nombre_producto} x${i.cantidad}`).join(' · ')}
+                  </span>
+                  <span style={{ fontFamily: 'var(--serif)', fontSize: 18, color: 'var(--bordeaux)', fontWeight: 600, flexShrink: 0 }}>
+                    ${p.total.toLocaleString('es-AR')}
+                  </span>
+                  <span style={{ fontSize: 13, color: 'var(--texto-suave)', flexShrink: 0 }}>
+                    {new Date(p.creado_en).toLocaleDateString('es-AR', { weekday: 'short', day: 'numeric', month: 'short' })}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </Section>
+      )}
+
       {/* Últimos pedidos */}
       <Section titulo="Últimos pedidos" style={{ marginTop: 16 }}>
         {data.ultimosPedidos.length === 0
