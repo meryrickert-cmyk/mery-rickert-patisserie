@@ -283,20 +283,28 @@ export default function Dashboard() {
               const esMañana = diasRestantes === 1;
               const etiqueta = esHoy ? 'Hoy' : esMañana ? 'Mañana' : `en ${diasRestantes}d`;
               return (
-                <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', background: esHoy ? '#fff8f0' : 'var(--crema)', borderRadius: 12, border: esHoy ? '1.5px solid #f0d0a0' : '1px solid transparent', flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: esHoy ? '#c0392b' : '#d97706', background: esHoy ? '#fde8d8' : '#fef3cd', padding: '3px 10px', borderRadius: 20, flexShrink: 0 }}>
-                    {etiqueta}
-                  </span>
-                  <span style={{ fontSize: 16, fontWeight: 600, color: 'var(--texto)', flex: 1, minWidth: 0 }}>{p.nombre_cliente || '—'}</span>
-                  <span style={{ fontSize: 14, color: 'var(--texto-suave)', flex: 2, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {p.items?.map(i => `${i.nombre_producto} x${i.cantidad}`).join(' · ')}
-                  </span>
-                  <span style={{ fontFamily: 'var(--serif)', fontSize: 18, color: 'var(--bordeaux)', fontWeight: 600, flexShrink: 0 }}>
-                    ${p.total.toLocaleString('es-AR')}
-                  </span>
-                  <span style={{ fontSize: 13, color: 'var(--texto-suave)', flexShrink: 0 }}>
-                    {new Date(p.creado_en).toLocaleDateString('es-AR', { weekday: 'short', day: 'numeric', month: 'short' })}
-                  </span>
+                <div key={p.id} style={{ padding: '12px 14px', background: esHoy ? '#fff8f0' : 'var(--crema)', borderRadius: 12, border: esHoy ? '1.5px solid #f0d0a0' : '1px solid var(--crema-oscuro)' }}>
+                  {/* Fila 1: badge + nombre + total */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: esHoy ? '#c0392b' : '#d97706', background: esHoy ? '#fde8d8' : '#fef3cd', padding: '2px 8px', borderRadius: 20, flexShrink: 0, whiteSpace: 'nowrap' }}>
+                      {etiqueta}
+                    </span>
+                    <span style={{ fontSize: 15, fontWeight: 600, color: 'var(--texto)', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {p.nombre_cliente || '—'}
+                    </span>
+                    <span style={{ fontFamily: 'var(--serif)', fontSize: 17, color: 'var(--bordeaux)', fontWeight: 600, flexShrink: 0 }}>
+                      ${p.total.toLocaleString('es-AR')}
+                    </span>
+                  </div>
+                  {/* Fila 2: items + fecha */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingLeft: 4 }}>
+                    <span style={{ fontSize: 13, color: 'var(--texto-suave)', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {p.items?.map(i => `${i.nombre_producto} x${i.cantidad}`).join(' · ')}
+                    </span>
+                    <span style={{ fontSize: 12, color: 'var(--texto-suave)', flexShrink: 0, whiteSpace: 'nowrap' }}>
+                      {new Date(p.creado_en).toLocaleDateString('es-AR', { weekday: 'short', day: 'numeric', month: 'short' })}
+                    </span>
+                  </div>
                 </div>
               );
             })}
