@@ -84,12 +84,13 @@ function TabInsumos() {
     setTimeout(() => setSnapMsg(''), 5000);
   }
 
-  async function sincronizarBase() {
+  async function sincronizarSubRecetas() {
     try {
-      const r = await api.post('/insumos/sync-insumo/Base Brownie (1 receta)');
-      alert(`Base Brownie actualizado a $${Math.round(r.data.nuevo_costo).toLocaleString('es-AR')}`);
+      const r = await api.post('/insumos/sync-subrecetas');
+      const nombres = r.data.resultados.map(x => x.nombre_insumo).join(', ');
+      alert(`✓ Sub-recetas actualizadas (${r.data.actualizadas}): ${nombres}`);
       cargar();
-    } catch { alert('No se pudo sincronizar. Verificá que la receta "Base Brownie" esté cargada.'); }
+    } catch { alert('No se pudieron sincronizar las sub-recetas.'); }
   }
 
   const rowInsumo = (ins, isLast) => (
@@ -138,13 +139,13 @@ function TabInsumos() {
         </div>
       )}
 
-      {/* Sync Base Brownie */}
+      {/* Sync sub-recetas */}
       <div className="insumos-sync-card" style={{ background: '#fffbf0', border: '1px solid #f0e0a0', borderRadius: 10, padding: '12px 16px', marginBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
         <p style={{ margin: 0, fontSize: 14, color: '#7a5c00' }}>
-          💡 <strong>Base Brownie (1 receta)</strong> es un insumo derivado. Sincronizalo cuando actualices sus ingredientes.
+          💡 Los <strong>insumos derivados</strong> (sub-recetas) se actualizan solos al guardar. Usá este botón si modificaste el costo de un insumo base.
         </p>
-        <button onClick={sincronizarBase} style={{ ...btnSecundario, whiteSpace: 'nowrap', flexShrink: 0, borderColor: '#d4a800', color: '#7a5c00', fontSize: 14 }}>
-          ↻ Sincronizar precio
+        <button onClick={sincronizarSubRecetas} style={{ ...btnSecundario, whiteSpace: 'nowrap', flexShrink: 0, borderColor: '#d4a800', color: '#7a5c00', fontSize: 14 }}>
+          ↻ Sincronizar sub-recetas
         </button>
       </div>
 

@@ -87,6 +87,7 @@ router.post('/recetas', authAdmin, (req, res) => {
       for (const ing of ingredientes) ins.run(receta_id, ing.insumo_id, ing.cantidad);
     }
     db.exec('COMMIT');
+    if (categoria === 'sub-receta') syncSubReceta(receta_id, nombre, rendimiento || 1);
     res.json({ id: receta_id });
   } catch (e) {
     db.exec('ROLLBACK');
@@ -106,6 +107,7 @@ router.put('/recetas/:id', authAdmin, (req, res) => {
       for (const ing of ingredientes) ins.run(req.params.id, ing.insumo_id, ing.cantidad);
     }
     db.exec('COMMIT');
+    if (categoria === 'sub-receta') syncSubReceta(req.params.id, nombre, rendimiento || 1);
     res.json({ ok: true });
   } catch (e) {
     db.exec('ROLLBACK');
@@ -123,6 +125,57 @@ router.patch('/receta-ingredientes/:id', authAdmin, (req, res) => {
   const { cantidad } = req.body;
   db.prepare('UPDATE receta_ingredientes SET cantidad = ? WHERE id = ?').run(parseFloat(cantidad), req.params.id);
   res.json({ ok: true });
+});
+
+/* ── SYNC SUB-RECETAS ─────────────────────────────────────── */
+
+function calcularCostoReceta(receta_id) {
+  const ings = db.prepare(`
+    SELECT ri.cantidad, i.unidad, i.costo
+    FROM receta_ingredientes ri
+    JOIN insumos i ON i.id = ri.insumo_id
+    WHERE ri.receta_id = ?
+  `).all(receta_id);
+  let total = 0;
+  for (const ing of ings) {
+    total += (ing.unidad === 'kg' || ing.unidad === 'L')
+      ? (ing.cantidad / 1000) * ing.costo
+      : ing.cantidad * ing.costo;
+  }
+  return total;
+}
+
+function syncSubReceta(receta_id, nombre, rendimiento) {
+  const costo_total = calcularCostoReceta(receta_id);
+  const costo_por_u = rendimiento > 0 ? costo_total / rendimiento : costo_total;
+  const nombre_insumo = `${nombre} (1u)`;
+  const existente = db.prepare('SELECT id FROM insumos WHERE nombre = ?').get(nombre_insumo);
+  if (existente) {
+    db.prepare("UPDATE insumos SET costo = ?, unidad = 'u', actualizado_en = datetime('now') WHERE id = ?")
+      .run(costo_por_u, existente.id);
+  } else {
+    db.prepare("INSERT INTO insumos (nombre, unidad, costo) VALUES (?, 'u', ?)").run(nombre_insumo, costo_por_u);
+  }
+  return { nombre_insumo, nuevo_costo: costo_por_u };
+}
+
+// Sync manual de todas las sub-recetas (o una específica por nombre)
+router.post('/sync-subrecetas', authAdmin, (req, res) => {
+  const subrecetas = db.prepare("SELECT id, nombre, rendimiento FROM recetas WHERE categoria = 'sub-receta' AND activo = 1").all();
+  const resultados = [];
+  for (const r of subrecetas) {
+    resultados.push(syncSubReceta(r.id, r.nombre, r.rendimiento));
+  }
+  res.json({ ok: true, actualizadas: resultados.length, resultados });
+});
+
+// Sync manual de un insumo específico por nombre (compatibilidad con Base Brownie)
+router.post('/sync-insumo/:nombre', authAdmin, (req, res) => {
+  const nombre = decodeURIComponent(req.params.nombre);
+  const receta = db.prepare("SELECT id, nombre, rendimiento FROM recetas WHERE nombre = ? AND activo = 1").get(nombre);
+  if (!receta) return res.status(404).json({ error: 'Receta no encontrada' });
+  const result = syncSubReceta(receta.id, receta.nombre, receta.rendimiento);
+  res.json({ ok: true, ...result });
 });
 
 /* ── ANÁLISIS ─────────────────────────────────────────────── */
